@@ -1,0 +1,115 @@
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+
+
+
+void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1, QModelIndex index2){
+    int id = index1.sibling(index1.row(), 0).data().toInt();
+    setPicture(id) ;
+}
+
+
+
+void MainWindow::queryData() {
+    //    editSelectedRowId = -2 ;
+        dataModel = new QSqlTableModel();
+//        connect(dataModel, SIGNAL( dataChanged(QModelIndex,QModelIndex,QVector<int>)), SLOT(handleAfterEdit(QModelIndex,QModelIndex,QVector<int>)));
+
+        dataModel->setTable("result");
+        dataModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    //    if (ui->lineEditSearch->text()!="") {
+    //        QString filter_txt = "code like '" + ui->lineEditSearch->text() + "%'";
+    //        dataModel->setFilter(filter_txt);
+    //    }
+
+        dataModel->select();
+        dataModel->removeColumn(3);
+
+        dataModel->setHeaderData(0, Qt::Orientation::Horizontal, tr("ID"));
+        dataModel->setHeaderData(1,  Qt::Orientation::Horizontal, tr("Occupant"));
+        dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, tr("Date"));
+    //    dataModel->setHeaderData(3,  Qt::Orientation::Horizontal, tr("Date"));
+
+
+
+        ui->tableView->setModel(dataModel);
+        QItemSelectionModel *sm = ui->tableView->selectionModel();
+        connect(sm,SIGNAL(currentRowChanged(QModelIndex,QModelIndex) ),this,SLOT(on_tableViewSelectionModel_currentRowChanged(QModelIndex,QModelIndex)) );
+}
+
+void MainWindow::makeDatabase() {
+    db = QSqlDatabase::addDatabase(DRIVER) ;
+    if(QSqlDatabase::isDriverAvailable(DRIVER)) {
+//        QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
+        db.setDatabaseName("results.db");
+        if(!db.open())
+          qWarning() << "ERROR: " << db.lastError();
+        QSqlQuery query("CREATE TABLE IF NOT EXISTS result (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant INTEGER,date varchar(50), imagedata BLOB)");
+        if(!query.isActive())
+            qWarning() << "ERROR: " << query.lastError().text();
+
+    }
+
+}
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+
+    const QString DRIVER("QSQLITE");
+    if(QSqlDatabase::isDriverAvailable(DRIVER)) {
+
+        QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
+        db.setDatabaseName("s.db");
+        db.open() ;
+
+        QSqlQuery query("CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT)");
+
+    }
+
+
+
+    makeDatabase() ;
+    queryData();
+
+//        }
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    Detector detector(ui->lineEdit_url->text().toStdString(),&db);
+    makeDatabase();
+    queryData();
+}
+
+void MainWindow::on_pushButton_Stop_clicked()
+{
+    detector->stopDetector();
+}
+
+void MainWindow::setPicture (int id) {
+//    if (running) return ;
+//    int selectedRowId = id ;
+    QString querytxt ;
+    querytxt = "SELECT imagedata FROM result WHERE id = ?";
+    QSqlQuery query;
+    query.prepare(querytxt);
+    query.bindValue(0, id);
+    query.exec() ;
+    query.first() ;
+
+    QByteArray outByteArray = query.value( 0 ).toByteArray();
+    QPixmap outPixmap = QPixmap();
+    outPixmap.loadFromData( outByteArray );
+    ui->label->setPixmap(outPixmap);
+
+
+}
