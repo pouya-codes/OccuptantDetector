@@ -29,6 +29,8 @@ private slots:
     void on_tableViewSelectionModel_currentRowChanged(QModelIndex index1,QModelIndex index2);
 //    void on_tableViewSelectionModel_currentRowChanged(QModelIndex index1,QModelIndex index2);
 
+    void on_pushButton_Browse_clicked();
+
 private:
     void queryData();
     void setPicture (int id);

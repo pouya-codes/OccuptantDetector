@@ -17,8 +17,13 @@ static const std::string currentDateTime() {
 }
 
 
-static cv::String modelConfiguration = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-spp.cfg";
-static cv::String modelBinary = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-spp.weights";
+//static cv::String modelConfiguration = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-spp.cfg";
+//static cv::String modelBinary = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-spp.weights";
+
+static cv::String modelConfiguration = "c:/yolov3-spp.cfg";
+static cv::String modelBinary = "c:/yolov3-spp.weights";
+
+
 static float confidentThredshold = 0.1 ;
 static bool detectDriver = false ;
 static int numberOfDetection = 3 ;

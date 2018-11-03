@@ -13,6 +13,7 @@ struct CarOccupant {
     //    bool driver_detected = true ;
     cv::Mat next_driver_detected = cv::Mat(numberOfDetection,1,CV_8U, cv::Scalar(0));
     cv::Mat CarImage ;
+    float ConfidentCar ;
 
 };
 struct DetectionResult {

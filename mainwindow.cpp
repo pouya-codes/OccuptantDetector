@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "QFileDialog"
 
 
 
@@ -112,4 +113,15 @@ void MainWindow::setPicture (int id) {
     ui->label->setPixmap(outPixmap);
 
 
+}
+
+void MainWindow::on_pushButton_Browse_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(
+                this, "Select a file", QDir::currentPath() ,"Videos (*.mp4);;All Files (*)");
+
+    if(fileName!="") {
+        ui->lineEdit_url->setText(fileName);
+
+    }
 }

@@ -99,6 +99,7 @@ void Detector::processDetection(std::vector<DetectionResult> detection_results,s
                 if ((car_occupant.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/3)) {
                     exist=true;
                     car_occupant.ROI = detection_result.ROI;
+                    car_occupant.ConfidentCar = detection_result.Confidence ;
                     break;
                 }
             }
@@ -107,6 +108,7 @@ void Detector::processDetection(std::vector<DetectionResult> detection_results,s
                 newCar.ROI =detection_result.ROI ;
                 newCar.Color =getRandomColors() ;
                 newCar.OccupantNumber= detectDriver? 0 : 1 ;
+                newCar.ConfidentCar = detection_result.Confidence ;
                 car_occupants.push_back(newCar);
             }
 
@@ -172,7 +174,7 @@ void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants
 {
 
     for (auto& car_occupant:car_occupants){
-        if ( (!car_occupant.CarImage.empty() && car_occupant.CarImage.rows < car_occupant.ROI.height && car_occupant.CarImage.cols > car_occupant.ROI.width) ||
+        if ( (!car_occupant.CarImage.empty() && car_occupant.ConfidentCar > 0.98) ||
              ( (cv::countNonZero(car_occupant.next_driver_detected)==numberOfDetection || cv::countNonZero(car_occupant.driver_detected)==numberOfDetection)&& car_occupant.CarImage.empty() )){
             frame(car_occupant.ROI).copyTo(car_occupant.CarImage);
         }
@@ -256,7 +258,7 @@ void Detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs,floa
             double confidence;
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (confidence > confThreshold && (classIdPoint.x==0 or (classIdPoint.x==2 && confidence > 0.5)))
+            if (confidence > confThreshold && (classIdPoint.x==0 || (classIdPoint.x==2 && confidence > 0.5)))
             {
                 //                std::cout << confidence << ":" << classIdPoint.x << std::endl ;
                 int centerX = (int)(data[0] * frame.cols);

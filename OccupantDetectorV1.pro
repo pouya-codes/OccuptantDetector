@@ -28,3 +28,15 @@ unix {
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv
 }
+
+win32 {
+INCLUDEPATH += includes
+
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_core400.dll
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_highgui400.dll
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_imgproc400.dll
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_videoio400.dll
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_dnn400.dll
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_imgcodecs400.dll
+LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_objdetect400.dll
+}
