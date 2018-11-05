@@ -6,7 +6,7 @@
 #include <QApplication>
 struct CarOccupant {
     //    CarOccupant() : driver_detected(true) , next_driver_detected(false) {}
-    cv::Rect2d ROI ;
+    cv::Rect ROI ;
     cv::Scalar Color ;
     int OccupantNumber ;
     cv::Mat driver_detected =cv::Mat(numberOfDetection,1,CV_8U, cv::Scalar(detectDriver? 0 : 1));
@@ -18,7 +18,7 @@ struct CarOccupant {
 };
 struct DetectionResult {
     //    CarOccupant() : driver_detected(true) , next_driver_detected(false) {}
-    cv::Rect2d ROI ;
+    cv::Rect ROI ;
     int ClassIdx ;
     float Confidence ;
 };
@@ -42,13 +42,18 @@ private :
     void postprocessCar(cv::Mat& frame,cv::Mat& input, const std::vector<cv::Mat>& outs,float confThreshold,int classidx,cv::Rect carRect);
     int runDetector() ;
     void insertResult(CarOccupant occupant);
+    bool isThereAnyCar(cv::Mat image) ;
+    bool postprocesstiny(const std::vector<cv::Mat>& outs) ;
 
     std::string source ;
     cv::dnn::Net net ;
+    cv::dnn::Net net_tiny ;
     std::vector<std::string> classes;
     QLabel* image ;
     bool run ;
     QSqlDatabase *db ;
+    cv::Rect ROI ;
+    int pad = 25 ;
 
 //    cv::RNG rng(1);
 

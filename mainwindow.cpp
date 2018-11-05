@@ -60,19 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    const QString DRIVER("QSQLITE");
-    if(QSqlDatabase::isDriverAvailable(DRIVER)) {
-
-        QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
-        db.setDatabaseName("s.db");
-        db.open() ;
-
-        QSqlQuery query("CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT)");
-
-    }
-
-
-
     makeDatabase() ;
     queryData();
 
