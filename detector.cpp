@@ -339,8 +339,8 @@ void Detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs,floa
                                                                                    ) ;
 
         detection_result.push_back({ROI,classIds[idx],confidences[idx]});
-//        drawPred(classIds[idx], confidences[idx], box.x, box.y,
-//                 box.x + box.width, box.y + box.height, frame , cv::Scalar(0,255,0));
+        drawPred(classIds[idx], confidences[idx], box.x, box.y,
+                 box.x + box.width, box.y + box.height, frame , cv::Scalar(0,255,0));
     }
 
 
