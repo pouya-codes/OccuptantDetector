@@ -46,7 +46,7 @@ private :
     bool postprocesstiny(const std::vector<cv::Mat>& outs) ;
 
     std::string source ;
-    cv::dnn::Net net ;
+    cv::dnn::Net net_spp ;
     cv::dnn::Net net_tiny ;
     std::vector<std::string> classes;
     QLabel* image ;

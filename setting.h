@@ -28,7 +28,7 @@ static cv::String modelBinaryTiny = "/home/pouya/Develop/Sarbazi/yolo/darknet/yo
 //static cv::String modelBinary = "c:/yolov3-spp.weights";
 
 static cv::String modelConfiguration = "/home/pouya/Develop/Sarbazi/yolo/darknet/Train/yolov3-tiny.cfg";
-static cv::String modelBinary = "/home/pouya/Develop/Sarbazi/yolo/darknet/Train/yolov3-tiny_10000.weights";
+static cv::String modelBinary = "/media/pouya/My Passport/yolov3-tiny_20000.weights";
 
 
 

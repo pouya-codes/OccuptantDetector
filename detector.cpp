@@ -246,16 +246,18 @@ void Detector::drawPred(int classId, float conf, int left, int top, int right, i
 std::vector<cv::String> Detector::getOutputsNames(const cv::dnn::Net& net)
 {
     static std::vector<cv::String> names;
-    if (names.empty())
-    {
+//    if (names.empty())
+//    {
         std::vector<int> outLayers = net.getUnconnectedOutLayers();
         std::vector<cv::String> layersNames = net.getLayerNames();
         names.resize(outLayers.size());
         for (size_t i = 0; i < outLayers.size(); ++i)
             names[i] = layersNames[outLayers[i] - 1];
-    }
+//    }
     return names;
 }
+
+
 
 bool Detector::postprocesstiny(const std::vector<cv::Mat>& outs)
 {
@@ -299,7 +301,8 @@ void Detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs,floa
             double confidence;
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (confidence > confThreshold && (classIdPoint.x==0 || (classIdPoint.x==2 && confidence > 0.3)))
+//            if (confidence > confThreshold && (classIdPoint.x==0 || (classIdPoint.x==2 && confidence > 0.3)))
+            if (confidence > confThreshold )
             {
                 //                std::cout << confidence << ":" << classIdPoint.x << std::endl ;
                 int centerX = (int)(data[0] * frame.cols);
@@ -340,7 +343,7 @@ void Detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs,floa
 
         detection_result.push_back({ROI,classIds[idx],confidences[idx]});
         drawPred(classIds[idx], confidences[idx], box.x, box.y,
-                 box.x + box.width, box.y + box.height, frame , cv::Scalar(0,255,0));
+                 box.x + box.width, box.y + box.height, frame , classIds[idx]==1 ? cv::Scalar(0,255,0) : cv::Scalar(0,0,255));
     }
 
 
@@ -426,7 +429,7 @@ bool Detector::isThereAnyCar(cv::Mat image) {
 
 int Detector::runDetector(){
 
-    net = cv::dnn::readNetFromDarknet(modelConfiguration, modelBinary);
+    net_spp = cv::dnn::readNetFromDarknet(modelConfiguration, modelBinary);
     net_tiny = cv::dnn::readNetFromDarknet(modelConfigurationTiny, modelBinaryTiny);
     std::vector<CarOccupant> car_occupant ;
 
@@ -484,17 +487,18 @@ int Detector::runDetector(){
             break;
 
         if (frame_counter%1==0
-                //&& isThereAnyCar(frame)
+                && isThereAnyCar(frame)
                 ) {
             cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
-            net.setInput(inputBlob);                   //set the network input
+            net_spp.setInput(inputBlob);                   //set the network input
             std::vector<cv::Mat> outs;
 
             std::vector<DetectionResult> detection_results;
-            net.forward(outs, getOutputsNames(net));  //compute output
+            net_spp.forward(outs, getOutputsNames(net_spp));  //compute output
             postprocess(frame, outs,confidentThredshold,detection_results);
-            processDetection(detection_results,car_occupant,frame) ;
-            drawResult(frame,car_occupant) ;
+
+//            processDetection(detection_results,car_occupant,frame) ;
+//            drawResult(frame,car_occupant) ;
 
         }
         time(&end);
