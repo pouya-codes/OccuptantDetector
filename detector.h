@@ -4,6 +4,12 @@
 #include <asmOpenCV.h>
 #include <QLabel>
 #include <QApplication>
+#include "QBuffer"
+#include "cardetector.h"
+#include "windowsdetector.h"
+#include "occupantdetector.h"
+
+
 struct CarOccupant {
     //    CarOccupant() : driver_detected(true) , next_driver_detected(false) {}
     cv::Rect ROI ;
@@ -16,12 +22,7 @@ struct CarOccupant {
     float ConfidentCar ;
 
 };
-struct DetectionResult {
-    //    CarOccupant() : driver_detected(true) , next_driver_detected(false) {}
-    cv::Rect ROI ;
-    int ClassIdx ;
-    float Confidence ;
-};
+
 
 class Detector
 {
@@ -36,19 +37,15 @@ private :
     cv::Scalar getRandomColors() ;
     void processDetection(std::vector<DetectionResult> detection_results,std::vector<CarOccupant>& car_occupants,cv::Mat image) ;
     void drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants ) ;
-    void drawPred(int classId, float conf, int left, int top, int right, int bottom,cv::Mat& frame,cv::Scalar color );
-    std::vector<cv::String> getOutputsNames(const cv::dnn::Net& net);
-    void postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs,float confThreshold,std::vector<DetectionResult>& detection_result);
-    void postprocessCar(cv::Mat& frame,cv::Mat& input, const std::vector<cv::Mat>& outs,float confThreshold,int classidx,cv::Rect carRect);
+    void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Rect base = cv::Rect()) ;
     int runDetector() ;
     void insertResult(CarOccupant occupant);
-    bool isThereAnyCar(cv::Mat image) ;
-    bool postprocesstiny(const std::vector<cv::Mat>& outs) ;
 
     std::string source ;
     cv::dnn::Net net_spp ;
     cv::dnn::Net net_tiny ;
     std::vector<std::string> classes;
+    cv::Size image_size ;
     QLabel* image ;
     bool run ;
     QSqlDatabase *db ;

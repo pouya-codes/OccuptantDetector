@@ -15,12 +15,19 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    detector.cpp
+    windowsdetector.cpp \
+    detector.cpp \
+    cardetector.cpp \
+    occupantdetector.cpp
 
 HEADERS  += mainwindow.h \
     detector.h \
     setting.h \
-    asmOpenCV.h
+    asmOpenCV.h \
+    windowsdetector.h \
+    objectdetector.h \
+    cardetector.h \
+    occupantdetector.h
 
 FORMS    += mainwindow.ui
 

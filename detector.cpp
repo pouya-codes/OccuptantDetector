@@ -1,5 +1,4 @@
 #include "detector.h"
-#include "QBuffer"
 
 cv::RNG rng(1);
 
@@ -20,6 +19,7 @@ Detector::Detector(cv::String source,QSqlDatabase* db)
                 qWarning() << "ERROR: " << db.lastError();
         }
     }
+
 
 }
 void Detector::stopDetector() {
@@ -103,7 +103,7 @@ void Detector::processDetection(std::vector<DetectionResult> detection_results,s
 
 
     for (auto detection_result:detection_results){
-        if (detection_result.ClassIdx==2) {
+        if (detection_result.ClassName==car) {
             bool exist= false ;
             for (auto& car_occupant:car_occupants){
                 if ((car_occupant.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/3)) {
@@ -140,7 +140,7 @@ void Detector::processDetection(std::vector<DetectionResult> detection_results,s
     }
 
     for (auto detection_result:detection_results){
-        if (detection_result.ClassIdx==0)
+        if (detection_result.ClassName==occupant)
         {
             for (auto& car_occupant:car_occupants){
                 if ( (car_occupant.ROI & detection_result.ROI)==detection_result.ROI
@@ -223,239 +223,72 @@ void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants
 
 }
 
-
-void Detector::drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame,cv::Scalar color )
+void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border , bool show_conf, cv::Rect base )
 {
-    cv::rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), color);
-
-    std::string label = cv::format("%.2f", conf);
-    if (!classes.empty())
-    {
-        CV_Assert(classId < (int)classes.size());
-        label = classes[classId] + ": " + label;
-    }
-
-    int baseLine;
-    cv::Size labelSize = getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
-
-    top = cv::max(top, labelSize.height);
-    cv::rectangle(frame, cv::Point(left, top - labelSize.height),cv::Point(left + labelSize.width, top + baseLine), cv::Scalar::all(255) , cv::FILLED);
-    cv::putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar());
-}
-
-std::vector<cv::String> Detector::getOutputsNames(const cv::dnn::Net& net)
-{
-    static std::vector<cv::String> names;
-//    if (names.empty())
-//    {
-        std::vector<int> outLayers = net.getUnconnectedOutLayers();
-        std::vector<cv::String> layersNames = net.getLayerNames();
-        names.resize(outLayers.size());
-        for (size_t i = 0; i < outLayers.size(); ++i)
-            names[i] = layersNames[outLayers[i] - 1];
-//    }
-    return names;
-}
-
-
-
-bool Detector::postprocesstiny(const std::vector<cv::Mat>& outs)
-{
-
-    for (size_t i = 0; i < outs.size(); ++i)
-    {
-        float* data = (float*)outs[i].data;
-        for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
-        {
-            cv::Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
-            cv::Point classIdPoint;
-            double confidence;
-            minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-
-            if (classIdPoint.x==2 && confidence > 0.5)
-                return true ;
+    for(DetectionResult detection_result:detection_results) {
+        cv::Scalar color ;
+        switch (detection_result.ClassName) {
+        case car:
+            color = car_color ;
+            break;
+        case occupant:
+            color = occupant_color ;
+            break;
+        case wind_window:
+            color = windwindow_color ;
+            break;
+        case front_rear:
+            color = front_rear_color ;
+            break;
+        case back_rear:
+            color = back_rear_color ;
+            break;
         }
+        if(!base.empty()) {
+            cv::Rect draw_rect = {detection_result.ROI.x+base.x,detection_result.ROI.y+base.y
+                                 ,detection_result.ROI.width,detection_result.ROI.height} ;
+            cv::rectangle(frame, draw_rect , color,border);
+        }
+        else
+            cv::rectangle(frame, detection_result.ROI , color,border);
+        if(show_conf){
+            std::string label = cv::format("%.2f", detection_result.Confidence);
+            int baseLine;
+            cv::Size labelSize = getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 
-    }
-    return false ;
-
-}
-
-
-
-void Detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs,float confThreshold,std::vector<DetectionResult>& detection_result)
-{
-    std::vector<int> classIds;
-    std::vector<float> confidences;
-    std::vector<cv::Rect> boxes;
-    for (size_t i = 0; i < outs.size(); ++i)
-    {
-        // Network produces output blob with a shape NxC where N is a number of
-        // detected objects and C is a number of classes + 4 where the first 4
-        // numbers are [center_x, center_y, width, height]
-        float* data = (float*)outs[i].data;
-        for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
-        {
-            cv::Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
-            cv::Point classIdPoint;
-            double confidence;
-            minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-
-//            if (confidence > confThreshold && (classIdPoint.x==0 || (classIdPoint.x==2 && confidence > 0.3)))
-            if (confidence > confThreshold )
-            {
-                //                std::cout << confidence << ":" << classIdPoint.x << std::endl ;
-                int centerX = (int)(data[0] * frame.cols);
-                int centerY = (int)(data[1] * frame.rows);
-                int width = (int)(data[2] * frame.cols);
-                int height = (int)(data[3] * frame.rows);
-                int left = centerX - width / 2;
-                int top = centerY - height / 2;
-                //                if(classIdPoint.x==2 && (cv::Rect(left, top, width, height).area() < 30000 || (left + width + 20 > frame.cols)
-                //                    || (top +  height > frame.rows) ))
-                //                    continue ;
-                cv::Rect ROI_Detected = cv::Rect(left, top, width, height);
-//                if ( classIdPoint.x==2 && (ROI & ROI_Detected).area()!=ROI_Detected.area() )
-//                    continue ;
-                classIds.push_back(classIdPoint.x);
-                confidences.push_back((float)confidence);
-                boxes.push_back(ROI_Detected);
-
-
-
-
-                //                ROIs.push_back(Rect(left > 0 ? left : 0 , top > 0 ? top : 0  , width, height));
-            }
+            int top = cv::max(detection_result.ROI.y, labelSize.height);
+            cv::rectangle(frame, cv::Point(detection_result.ROI.x, top - labelSize.height),cv::Point(detection_result.ROI.x + labelSize.width, top + baseLine), cv::Scalar::all(255) , cv::FILLED);
+            cv::putText(frame, label, cv::Point(detection_result.ROI.x, top), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar());
         }
     }
-    std::vector<int> indices;
-    cv::dnn::NMSBoxes(boxes, confidences, confThreshold, 0.4f, indices);
-    for (size_t i = 0; i < indices.size(); ++i)
-    {
-        int idx = indices[i];
-        cv::Rect box = boxes[idx];
-        //        std::cout << Rect(box.x > 0 ? box.x : 0 , box.y > 0 ? box.y : 0  , box.width, box.height) << std::endl ;
-        cv::Rect ROI = cv::Rect(box.x > 0 ? box.x : 0 ,
-                                box.y > 0 ? box.y : 0 ,
-                                box.width + (box.x > 0 ? box.x : 0) > frame.cols ? frame.cols-(box.x > 0 ? box.x : 0) : box.width,
-                                box.height+ (box.y > 0 ? box.y : 0) > frame.rows ? frame.rows-(box.y > 0 ? box.y : 0) : box.height
-                                                                                   ) ;
-
-        detection_result.push_back({ROI,classIds[idx],confidences[idx]});
-        drawPred(classIds[idx], confidences[idx], box.x, box.y,
-                 box.x + box.width, box.y + box.height, frame , classIds[idx]==1 ? cv::Scalar(0,255,0) : cv::Scalar(0,0,255));
-    }
 
 
 }
 
-void Detector::postprocessCar(cv::Mat& frame,cv::Mat& input, const std::vector<cv::Mat>& outs,float confThreshold,int classidx,cv::Rect carRect)
-{
-    std::vector<int> classIds;
-    std::vector<float> confidences;
-    std::vector<cv::Rect> boxes;
-    for (size_t i = 0; i < outs.size(); ++i)
-    {
-        // Network produces output blob with a shape NxC where N is a number of
-        // detected objects and C is a number of classes + 4 where the first 4
-        // numbers are [center_x, center_y, width, height]
-        float* data = (float*)outs[i].data;
-        for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
-        {
-            cv::Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
-            cv::Point classIdPoint;
-            double confidence;
-            minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-            if (confidence > confThreshold && classIdPoint.x==classidx)
-            {
-                int centerX = (int)(data[0] * frame.cols);
-                int centerY = (int)(data[1] * frame.rows);
-                int width = (int)(data[2] * frame.cols);
-                int height = (int)(data[3] * frame.rows);
-                int left = centerX - width / 2;
-                int top = centerY - height / 2;
-                classIds.push_back(classIdPoint.x);
-                confidences.push_back((float)confidence);
-                boxes.push_back(cv::Rect(left, top, width, height));
-            }
-        }
-    }
-    std::vector<int> indices;
-    cv::dnn::NMSBoxes(boxes, confidences, confThreshold, 0.4f, indices);
-    for (size_t i = 0; i < indices.size(); ++i)
-    {
-        int idx = indices[i];
-        cv::Rect box = boxes[idx];
-        drawPred(classIds[idx], confidences[idx], carRect.x + box.x, carRect.y + box.y,
-                 carRect.x + box.x + box.width, carRect.y + box.y + box.height, input ,cv::Scalar(0,0,255));
-    }
 
-
-}
-
-bool Detector::isThereAnyCar(cv::Mat image) {
-
-    cv::Mat inputBlob = cv::dnn::blobFromImage(image, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
-    net_tiny.setInput(inputBlob);                   //set the network input
-    std::vector<cv::Mat> outs;
-
-    net_tiny.forward(outs, getOutputsNames(net_tiny));  //compute output
-    return postprocesstiny(outs);
-
-}
-
-//Mat equalizeIntensity(const Mat& inputImage)
-//{
-//    if(inputImage.channels() >= 3)
-//    {
-//        Mat ycrcb;
-
-//        cvtColor(inputImage,ycrcb,CV_BGR2YCrCb);
-
-//        vector<Mat> channels;
-//        split(ycrcb,channels);
-
-//        equalizeHist(channels[0], channels[0]);
-
-//        Mat result;
-//        merge(channels,ycrcb);
-
-//        cvtColor(ycrcb,result,CV_YCrCb2BGR);
-
-//        return result;
-//    }
-//    return Mat();
-//}
 
 int Detector::runDetector(){
 
     net_spp = cv::dnn::readNetFromDarknet(modelConfiguration, modelBinary);
     net_tiny = cv::dnn::readNetFromDarknet(modelConfigurationTiny, modelBinaryTiny);
-    std::vector<CarOccupant> car_occupant ;
-
-
+    CarDetector cardetector;
+    WindowsDetector windowsdetector ;
+    OccupantDetector occupantdetector ;
 
 
     cv::Mat frame;
-
-
     cv::VideoCapture cap(source);
-
-
-
-    // Default resolution of the frame is obtained.The default resolution is system dependent.
     int frame_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
     int frame_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
     int frame_rate = cap.get(cv::CAP_PROP_FPS);
 
     cv::Point a;
     cv::Point b;
-    a.x = 20;
-    a.y = 20;
-    b.x = frame_width - 40 ;
-    b.y = frame_height - 40;
+    a.x = ROI_PAD;
+    a.y = ROI_PAD;
+    b.x = frame_width  - (ROI_PAD*2) ;
+    b.y = frame_height - (ROI_PAD*2) ;
     ROI = cv::Rect(a,b);
-
 
     int ex = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC)); // Get Codec Type- Int form
     std::string::size_type pAt = source.find_last_of('.');
@@ -463,48 +296,46 @@ int Detector::runDetector(){
     cv::VideoWriter outputVideo;
     outputVideo.open(NAME, ex, frame_rate, cv::Size(frame_width,frame_height), true);
 
-    time_t start, end;
-
     int frame_counter = 1;
+    std::vector<CarOccupant> car_occupant ;
+
     for ( ;; ){
         if(!run) {
             break ;
             cv::destroyAllWindows() ;
 
         }
-        time(&start);
-        // get frame from the video
+
         cap >> frame;
-
-
-        //        frame = equalizeIntensity(frame) ;
-        //        frame = rotateImage(frame, 12);
-
-
         frame_counter++ ;
         // stop the program if no more images
         if(frame.rows==0 || frame.cols==0)
             break;
-
+        std::vector<DetectionResult> car_results = cardetector.detect(frame);
         if (frame_counter%1==0
-                && isThereAnyCar(frame)
+                && car_results.size()>0
                 ) {
-            cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
-            net_spp.setInput(inputBlob);                   //set the network input
-            std::vector<cv::Mat> outs;
 
-            std::vector<DetectionResult> detection_results;
-            net_spp.forward(outs, getOutputsNames(net_spp));  //compute output
-            postprocess(frame, outs,confidentThredshold,detection_results);
+            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
+//            for (DetectionResult occupant_result :occupant_results) {
+//                if (occupant_result.ClassName==car) {
+            std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
 
-//            processDetection(detection_results,car_occupant,frame) ;
+
+//                }
+//            }
+
+
+            drawPred(windows_results,frame,2,true);
+            drawPred(occupant_results,frame,2,true);
+//             drawPred(car_results,frame,2,true);
+
+
+//            processDetection(occupant_results,car_occupant,frame) ;
 //            drawResult(frame,car_occupant) ;
 
         }
-        time(&end);
-        double seconds = difftime (end, start);
 
-        //        putText(frame, std::to_string( 1/seconds), Point(25, 25), FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0,255,0));
         outputVideo << frame;
         //        QImage qt_img = ASM::cvMatToQImage( frame );
         //        image.setPixmap(QPixmap::fromImage(qt_img));
