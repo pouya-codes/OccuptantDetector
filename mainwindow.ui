@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QLineEdit" name="lineEdit_url">
       <property name="text">
-       <string>/home/pouya/Trafic.MP4</string>
+       <string>D:/Trafic.MP4</string>
       </property>
      </widget>
     </item>
@@ -71,7 +71,7 @@
      <x>0</x>
      <y>0</y>
      <width>1014</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

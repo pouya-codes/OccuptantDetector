@@ -10,6 +10,7 @@
 #include <QtSql/QSqlQuery>
 #include <time.h>
 #include <QDateTime>
+#include <QDir>
 
 
 
@@ -19,39 +20,32 @@ static const std::string currentDateTime() {
 }
 
 
-static cv::String modelConfiguration = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-spp.cfg";
-static cv::String modelBinary = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-spp.weights";
+const cv::String modelConfiguration = QString(QDir::currentPath() + "/Model/spp/yolov3-spp.cfg").toStdString();
+const cv::String modelBinary =QString(QDir::currentPath() + "/Model/spp/yolov3-spp.weights").toStdString();
 
 
-static cv::String modelConfigurationTiny = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-tiny.cfg";
-static cv::String modelBinaryTiny = "/home/pouya/Develop/Sarbazi/yolo/darknet/yolov3-tiny.weights";
+const cv::String modelConfigurationTiny = QString(QDir::currentPath() + "/Model/tiny/yolov3-tiny.cfg").toStdString();
+const cv::String modelBinaryTiny = QString(QDir::currentPath() + "/Model/tiny/yolov3-tiny.weights").toStdString();
 
-//static cv::String modelConfiguration = "c:/yolov3-spp.cfg";
-//static cv::String modelBinary = "c:/yolov3-spp.weights";
-
-//static cv::String modelConfiguration = "/home/pouya/Develop/Sarbazi/yolo/darknet/Train/yolov3-tiny.cfg";
-//static cv::String modelBinary = "/media/pouya/My Passport/yolov3-tiny_20000.weights";
-
-static cv::String modelConfigurationWindows = "/home/pouya/Develop/Sarbazi/yolo/darknet/Train/yolov3-tiny.cfg";
-static cv::String modelBinaryWindows  = "/media/pouya/My Passport/yolov3-tiny_20000.weights";
+const cv::String modelConfigurationWindows = QString(QDir::currentPath() + "/Model/windows/yolov3-tiny.cfg").toStdString();
+const cv::String modelBinaryWindows  = QString(QDir::currentPath() +  "/Model/windows/yolov3-tiny_20000.weights").toStdString() ;
 
 
-static float WINDOW_THREADSHOLD = 0.3 ;
-static float CAR_THREADSHOLD = 0.8 ;
-static float TINY_CAR_THREADSHOLD = 0.3 ;
-static float OCCUPANT_THREADSHOLD = 0.1 ;
+const float WINDOW_THREADSHOLD = 0.3 ;
+const float CAR_THREADSHOLD = 0.8 ;
+const float TINY_CAR_THREADSHOLD = 0.3 ;
+const float OCCUPANT_THREADSHOLD = 0.1 ;
 
-static cv::Scalar car_color = cv::Scalar(255,0,0);
-static cv::Scalar occupant_color = cv::Scalar(0,255,0);
-static cv::Scalar windwindow_color = cv::Scalar(0,0,255);
-static cv::Scalar back_rear_color = cv::Scalar(100,100,100);
-static cv::Scalar front_rear_color = cv::Scalar(200,200,200);
+const cv::Scalar car_color = cv::Scalar(255,0,0);
+const cv::Scalar occupant_color = cv::Scalar(0,255,0);
+const cv::Scalar windwindow_color = cv::Scalar(0,0,255);
+const cv::Scalar back_rear_color = cv::Scalar(100,100,100);
+const cv::Scalar front_rear_color = cv::Scalar(200,200,200);
 
-
-static float confidentThredshold = 0.2 ;
-static bool detectDriver = false ;
-static int numberOfDetection = 3 ;
-static int ROI_PAD = 20 ;
+const float confidentThredshold = 0.2 ;
+const bool detectDriver = false ;
+const int numberOfDetection = 3 ;
+const int ROI_PAD = 20 ;
 const QString DRIVER("QSQLITE");
 #endif // SETTING
 

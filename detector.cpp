@@ -23,7 +23,7 @@ Detector::Detector(cv::String source,QSqlDatabase* db)
 
 }
 void Detector::stopDetector() {
-    //    this->run = false ;
+        this->run = false ;
 }
 
 

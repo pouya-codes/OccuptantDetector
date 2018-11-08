@@ -37,13 +37,15 @@ unix: PKGCONFIG += opencv
 }
 
 win32 {
-INCLUDEPATH += includes
+INCLUDEPATH += D:/Develop/OpenCV/buildMSVC/install/include
 
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_core400.dll
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_highgui400.dll
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_imgproc400.dll
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_videoio400.dll
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_dnn400.dll
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_imgcodecs400.dll
-LIBS += C:\opencv\opencv\build\install\x86\mingw\bin\libopencv_objdetect400.dll
+LIBS += -LD:/Develop/OpenCV/buildMSVC/install/x64/vc15/lib \
+-lopencv_core400 \
+-lopencv_imgproc400 \
+-lopencv_highgui400 \
+-lopencv_imgcodecs400 \
+-lopencv_dnn400 \
+-lopencv_videoio400
+
+
 }
