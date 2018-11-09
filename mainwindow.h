@@ -10,6 +10,8 @@
 #include <QItemSelectionModel>
 #include <QSqlQueryModel>
 #include <QSqlTableModel>
+#include <appsettings.h>
+#include <appsettingsdialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -37,8 +39,12 @@ private:
     QSqlDatabase db ;
     void makeDatabase() ;
     Ui::MainWindow *ui;
-    Detector *detector ;
+    Detector* detector ;
     QSqlTableModel *dataModel;
+    AppSettings* settings ;
+
+
+
 
 //    QSqlDatabase *db ;
 };

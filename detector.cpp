@@ -1,4 +1,5 @@
 #include "detector.h"
+#include "QSysInfo"
 
 cv::RNG rng(1);
 
@@ -215,10 +216,6 @@ void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants
         if(cv::countNonZero(car_occupant.next_driver_detected)==numberOfDetection)
             cv::circle(frame,cv::Point(car_occupant.ROI.x+30,car_occupant.ROI.y-10),5,cv::Scalar(0,0,255),-1);
 
-
-
-        //            std::cout << ;
-
     }
 
 }
@@ -278,6 +275,8 @@ int Detector::runDetector(){
 
     cv::Mat frame;
     cv::VideoCapture cap(source);
+    if (!cap.isOpened())
+        return 1 ;
     int frame_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
     int frame_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
     int frame_rate = cap.get(cv::CAP_PROP_FPS);
@@ -289,6 +288,8 @@ int Detector::runDetector(){
     b.x = frame_width  - (ROI_PAD*2) ;
     b.y = frame_height - (ROI_PAD*2) ;
     ROI = cv::Rect(a,b);
+
+//    std::cout << QSysInfo::productType().toStdString() << std::endl ;
 
     int ex = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC)); // Get Codec Type- Int form
     std::string::size_type pAt = source.find_last_of('.');
@@ -313,10 +314,10 @@ int Detector::runDetector(){
             break;
         std::vector<DetectionResult> car_results = cardetector.detect(frame);
         if (frame_counter%1==0
-                && car_results.size()>0
+//                && car_results.size()>0
                 ) {
 
-            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
+//            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
 //            for (DetectionResult occupant_result :occupant_results) {
 //                if (occupant_result.ClassName==car) {
             std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
@@ -327,7 +328,7 @@ int Detector::runDetector(){
 
 
             drawPred(windows_results,frame,2,true);
-            drawPred(occupant_results,frame,2,true);
+//            drawPred(occupant_results,frame,2,true);
 //             drawPred(car_results,frame,2,true);
 
 

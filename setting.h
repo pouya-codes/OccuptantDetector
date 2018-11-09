@@ -19,7 +19,6 @@ static const std::string currentDateTime() {
     return a.toString("yyyy-MM-dd hh,mm,ss,zzz").toStdString();
 }
 
-
 const cv::String modelConfiguration = QString(QDir::currentPath() + "/Model/spp/yolov3-spp.cfg").toStdString();
 const cv::String modelBinary =QString(QDir::currentPath() + "/Model/spp/yolov3-spp.weights").toStdString();
 
@@ -32,7 +31,7 @@ const cv::String modelBinaryWindows  = QString(QDir::currentPath() +  "/Model/wi
 
 
 const float WINDOW_THREADSHOLD = 0.3 ;
-const float CAR_THREADSHOLD = 0.8 ;
+const float CAR_THREADSHOLD = 0.5 ;
 const float TINY_CAR_THREADSHOLD = 0.3 ;
 const float OCCUPANT_THREADSHOLD = 0.1 ;
 

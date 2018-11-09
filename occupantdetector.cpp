@@ -28,11 +28,13 @@ std::vector<DetectionResult> OccupantDetector::postprocess(cv::Mat& frame, const
             cv::Point classIdPoint;
             double confidence;
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-
+//            if(confidence>0.50){
+//                std::cout << classIdPoint.x << ":"<<confidence << std::endl;
+//            }
             if (
                     (confidence > OCCUPANT_THREADSHOLD && classIdPoint.x==0)
                     ||
-                    (confidence > CAR_THREADSHOLD && classIdPoint.x==2)
+                    (confidence > CAR_THREADSHOLD && (classIdPoint.x==2 || classIdPoint.x==7 ))
                     )
             {
                 int centerX = (int)(data[0] * frame.cols);

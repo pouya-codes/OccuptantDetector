@@ -18,7 +18,10 @@ SOURCES += main.cpp\
     windowsdetector.cpp \
     detector.cpp \
     cardetector.cpp \
-    occupantdetector.cpp
+    occupantdetector.cpp \
+    caroccupancy.cpp \
+    appsettingsdialog.cpp \
+    appsettings.cpp
 
 HEADERS  += mainwindow.h \
     detector.h \
@@ -27,13 +30,17 @@ HEADERS  += mainwindow.h \
     windowsdetector.h \
     objectdetector.h \
     cardetector.h \
-    occupantdetector.h
+    occupantdetector.h \
+    caroccupancy.h \
+    appsettingsdialog.h \
+    appsettings.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    appsettingsdialog.ui
 
 unix {
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += opencv
+unix: PKGCONFIG += opencv4
 }
 
 win32 {

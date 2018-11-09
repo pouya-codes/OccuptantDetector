@@ -4,6 +4,7 @@
 
 
 
+
 void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1, QModelIndex index2){
     int id = index1.sibling(index1.row(), 0).data().toInt();
     setPicture(id) ;
@@ -51,6 +52,8 @@ void MainWindow::makeDatabase() {
             qWarning() << "ERROR: " << query.lastError().text();
 
     }
+    settings = new AppSettings() ;
+
 
 }
 
@@ -73,14 +76,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    Detector detector(ui->lineEdit_url->text().toStdString(),&db);
+    detector = new Detector(ui->lineEdit_url->text().toStdString(),&db);
     makeDatabase();
     queryData();
 }
 
 void MainWindow::on_pushButton_Stop_clicked()
 {
-    detector->stopDetector();
+    AppSettingsDialog *objMyNewDialog;
+    objMyNewDialog= new AppSettingsDialog(*settings,this);
+    objMyNewDialog->setModal(true) ;
+    objMyNewDialog->show();
 }
 
 void MainWindow::setPicture (int id) {
