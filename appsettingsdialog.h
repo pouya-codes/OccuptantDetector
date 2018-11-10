@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QDoubleSpinBox>
 #include <clickablelabel.h>
+#include <QCheckBox>
 
 namespace Ui {
 class AppSettingsDialog;
@@ -48,6 +49,10 @@ private slots:
 
 
 
+    void on_cb_save_videos_stateChanged(int arg1);
+
+    void on_cb_driver_detection_stateChanged(int arg1);
+
 private:
     std::vector<QString> line_edits_keys ;
     std::vector<QLineEdit*> line_edits;
@@ -55,6 +60,9 @@ private:
     std::vector<QDoubleSpinBox*> spin_boxs;
     std::vector<QString> color_lable_keys;
     std::vector<ClickableLabel*> color_lables;
+    std::vector<QString> checkbox_keys;
+    std::vector<QCheckBox*> checkboxs;
+
     AppSettings* settings ;
     QString browseFile(QString selectFilter = "All Files (*.*)") ;
     QString browsePath() ;

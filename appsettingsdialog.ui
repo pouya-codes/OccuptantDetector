@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>733</width>
-    <height>546</height>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -128,7 +128,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>حسایت تشخیص ماشین ها</string>
+         <string>حسایت وجود ماشین</string>
         </property>
        </widget>
       </item>
@@ -202,14 +202,14 @@
            </size>
           </property>
           <property name="text">
-           <string>            </string>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>رنگ ماشین</string>
+           <string>رنگ ناحیه ماشین</string>
           </property>
          </widget>
         </item>
@@ -232,14 +232,14 @@
            </size>
           </property>
           <property name="text">
-           <string>            </string>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_16">
           <property name="text">
-           <string>رنگ سرنشین</string>
+           <string>رنگ ناحیه سرنشین</string>
           </property>
          </widget>
         </item>
@@ -262,14 +262,14 @@
            </size>
           </property>
           <property name="text">
-           <string>            </string>
+           <string/>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_17">
           <property name="text">
-           <string>رنگ پنجره</string>
+           <string>رنگ ناحیه پنجره</string>
           </property>
          </widget>
         </item>

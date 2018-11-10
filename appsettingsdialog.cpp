@@ -47,12 +47,12 @@ void AppSettingsDialog::loadSettings() {
     line_edits = { ui->le_source1, ui->le_source2 ,
                                 ui->le_spp_cfg , ui->le_spp_weight,
                                 ui->le_tiny_cfg, ui->le_tiny_weight,
-                                ui->le_windows_cfg, ui->le_windows_weight } ;
+                                ui->le_windows_cfg, ui->le_windows_weight, ui->le_save_path } ;
 
     line_edits_keys = {settings->KEY_SOURCE_1, settings->KEY_SOURCE_2,
                       settings->KEY_OCCUPANT_CFG, settings->KEY_OCCUPANT_WEIGHTS,
                       settings->KEY_TINY_CFG, settings->KEY_TINY_WEIGHTS,
-                      settings->KEY_WINDOWS_CFG, settings->KEY_WINDOWS_WEIGHTS} ;
+                      settings->KEY_WINDOWS_CFG, settings->KEY_WINDOWS_WEIGHTS, settings->KEY_SAVE_VIDEOS_PATH} ;
 
     spin_boxs = {ui->sb_car_spp,ui->sb_car_tiny,
                  ui->sb_occupant,ui->sb_windows};
@@ -67,6 +67,10 @@ void AppSettingsDialog::loadSettings() {
     color_lable_keys = {settings->KEY_COLOR_CAR,settings->KEY_COLOR_OCCUPANT,
                      settings->KEY_COLOR_WINDOWS};
 
+    checkboxs = {ui->cb_driver_detection,ui->cb_save_videos};
+
+    checkbox_keys = {settings->KEY_DETECT_DRIVER,settings->KEY_SAVE_VIDEOS};
+
 
 
 
@@ -80,7 +84,13 @@ void AppSettingsDialog::loadSettings() {
     for (unsigned idx = 0; idx < color_lable_keys.size(); ++idx)
         setLableColor(color_lables[idx],settings->getSetting(color_lable_keys[idx]).value<QColor>()) ;
 
+    for (unsigned idx = 0; idx < checkbox_keys.size(); ++idx)
+        checkboxs[idx]->setChecked(settings->getSetting(checkbox_keys[idx]).value<bool>()) ;
 
+    if(!ui->cb_save_videos->isChecked()){
+        ui->btn_save_path->setEnabled(false) ;
+        ui->le_save_path->setEnabled(false) ;
+    }
 
 }
 
@@ -93,6 +103,9 @@ void AppSettingsDialog::saveSettings() {
 
     for (unsigned idx = 0; idx < color_lable_keys.size(); ++idx)
         settings->setSetting(color_lable_keys[idx],color_lables[idx]->color);
+
+    for (unsigned idx = 0; idx < checkbox_keys.size(); ++idx)
+        settings->setSetting(checkbox_keys[idx],checkboxs[idx]->isChecked()) ;
 
 }
 
@@ -186,3 +199,15 @@ void AppSettingsDialog::color_window_label1clicked(){
 
 }
 
+
+void AppSettingsDialog::on_cb_save_videos_stateChanged(int arg1)
+{
+    ui->le_save_path->setEnabled(ui->cb_save_videos->isChecked()) ;
+    ui->btn_save_path->setEnabled(ui->cb_save_videos->isChecked()) ;
+    settings->setSetting(settings->KEY_SAVE_VIDEOS,ui->cb_save_videos->isChecked()) ;
+}
+
+void AppSettingsDialog::on_cb_driver_detection_stateChanged(int arg1)
+{
+    settings->setSetting(settings->KEY_DETECT_DRIVER,ui->cb_driver_detection->isChecked()) ;
+}

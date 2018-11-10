@@ -1,8 +1,10 @@
 #include "cardetector.h"
 
-CarDetector::CarDetector()
+CarDetector::CarDetector(AppSettings& settings)
 {
-    net = cv::dnn::readNetFromDarknet(modelConfigurationTiny, modelBinaryTiny);
+    net = cv::dnn::readNetFromDarknet(settings.getSetting(settings.KEY_TINY_CFG).toString().toStdString()
+                                      ,settings.getSetting(settings.KEY_TINY_WEIGHTS).toString().toStdString());
+    this->settings = &settings ;
 }
 
 std::vector<DetectionResult> CarDetector::detect(cv::Mat frame) {
@@ -29,7 +31,7 @@ std::vector<DetectionResult> CarDetector::postprocess(cv::Mat& frame, const std:
             double confidence;
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (confidence > TINY_CAR_THREADSHOLD && classIdPoint.x==2)
+            if (confidence > settings->getSetting(settings->KEY_TINY_CAR_THREADSHOLD).toDouble() && classIdPoint.x==2)
             {
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
@@ -47,7 +49,7 @@ std::vector<DetectionResult> CarDetector::postprocess(cv::Mat& frame, const std:
         }
     }
     std::vector<int> indices;
-    cv::dnn::NMSBoxes(boxes, confidences, TINY_CAR_THREADSHOLD, 0.4f, indices);
+    cv::dnn::NMSBoxes(boxes, confidences, settings->getSetting(settings->KEY_TINY_CAR_THREADSHOLD).toDouble() , 0.4f, indices);
     for (size_t i = 0; i < indices.size(); ++i)
     {
         int idx = indices[i];

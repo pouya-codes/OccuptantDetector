@@ -1,13 +1,15 @@
 #include "windowsdetector.h"
 
-WindowsDetector::WindowsDetector()
+WindowsDetector::WindowsDetector(AppSettings& settings)
 {
-    net = cv::dnn::readNetFromDarknet(modelConfigurationWindows, modelBinaryWindows);
+    net = cv::dnn::readNetFromDarknet(settings.getSetting(settings.KEY_WINDOWS_CFG).toString().toStdString()
+                                      ,settings.getSetting(settings.KEY_WINDOWS_WEIGHTS).toString().toStdString());
+    this->settings = &settings ;
 
 }
 
 std::vector<DetectionResult> WindowsDetector::detect(cv::Mat frame) {
-    cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(832, 832), cv::Scalar(), true, false); //Convert Mat to batch of images
+    cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
     net.setInput(inputBlob);
     std::vector<cv::Mat> outs;
     net.forward(outs, getOutputsNames(net));  //compute output
@@ -30,7 +32,7 @@ std::vector<DetectionResult> WindowsDetector::postprocess(cv::Mat& frame, const 
             double confidence;
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
 
-            if (confidence > WINDOW_THREADSHOLD )
+            if (confidence > settings->getSetting(settings->KEY_WINDOW_THREADSHOLD).toDouble() )
             {
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
@@ -48,7 +50,7 @@ std::vector<DetectionResult> WindowsDetector::postprocess(cv::Mat& frame, const 
         }
     }
     std::vector<int> indices;
-    cv::dnn::NMSBoxes(boxes, confidences, WINDOW_THREADSHOLD, 0.4f, indices);
+    cv::dnn::NMSBoxes(boxes, confidences, settings->getSetting(settings->KEY_WINDOW_THREADSHOLD).toDouble(), 0.4f, indices);
     for (size_t i = 0; i < indices.size(); ++i)
     {
         int idx = indices[i];

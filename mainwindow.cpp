@@ -76,7 +76,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    detector = new Detector(ui->lineEdit_url->text().toStdString(),&db);
+    detector = new Detector(ui->lineEdit_url->text().toStdString(),&db,*settings);
     makeDatabase();
     queryData();
 }

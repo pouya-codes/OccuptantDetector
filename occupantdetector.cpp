@@ -1,12 +1,14 @@
 #include "occupantdetector.h"
 
-OccupantDetector::OccupantDetector()
+OccupantDetector::OccupantDetector(AppSettings& settings)
 {
-     net = cv::dnn::readNetFromDarknet(modelConfiguration, modelBinary);
+     net = cv::dnn::readNetFromDarknet(settings.getSetting(settings.KEY_OCCUPANT_CFG).toString().toStdString()
+                                       ,settings.getSetting(settings.KEY_OCCUPANT_WEIGHTS).toString().toStdString());
+     this->settings = &settings ;
 }
 
 std::vector<DetectionResult> OccupantDetector::detect(cv::Mat frame) {
-    cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(832, 832), cv::Scalar(), true, false); //Convert Mat to batch of images
+    cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
     net.setInput(inputBlob);
     std::vector<cv::Mat> outs;
     net.forward(outs, getOutputsNames(net));  //compute output
@@ -32,9 +34,9 @@ std::vector<DetectionResult> OccupantDetector::postprocess(cv::Mat& frame, const
 //                std::cout << classIdPoint.x << ":"<<confidence << std::endl;
 //            }
             if (
-                    (confidence > OCCUPANT_THREADSHOLD && classIdPoint.x==0)
+                    (confidence > settings->getSetting(settings->KEY_OCCUPANT_THREADSHOLD).toDouble()  && classIdPoint.x==0)
                     ||
-                    (confidence > CAR_THREADSHOLD && (classIdPoint.x==2 || classIdPoint.x==7 ))
+                    (confidence > settings->getSetting(settings->KEY_CAR_THREADSHOLD).toDouble()  && (classIdPoint.x==2 || classIdPoint.x==7 ))
                     )
             {
                 int centerX = (int)(data[0] * frame.cols);
@@ -53,7 +55,7 @@ std::vector<DetectionResult> OccupantDetector::postprocess(cv::Mat& frame, const
         }
     }
     std::vector<int> indices;
-    cv::dnn::NMSBoxes(boxes, confidences, OCCUPANT_THREADSHOLD, 0.4f, indices);
+    cv::dnn::NMSBoxes(boxes, confidences, settings->getSetting(settings->KEY_OCCUPANT_THREADSHOLD).toDouble() , 0.4f, indices);
     for (size_t i = 0; i < indices.size(); ++i)
     {
         int idx = indices[i];

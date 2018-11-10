@@ -10,6 +10,7 @@ class AppSettings
 public:
     AppSettings();
     QVariant getSetting(QString key) ;
+    cv::Scalar getSettingColor(QString key);
     void setSetting(QString key,QVariant value) ;
 
     QString KEY_OCCUPANT_WEIGHTS = "OCCUPANT_WEIGHTS" ;
@@ -22,8 +23,8 @@ public:
     QString KEY_WINDOWS_CFG     = "WINDOWS_CFG" ;
 
 
-    QString KEY_WINDOW_THREADSHOLD   = "WINDOW_THREADSHOLD  " ;
-    QString KEY_CAR_THREADSHOLD      = "CAR_THREADSHOLD     " ;
+    QString KEY_WINDOW_THREADSHOLD   = "WINDOW_THREADSHOLD" ;
+    QString KEY_CAR_THREADSHOLD      = "CAR_THREADSHOLD" ;
     QString KEY_TINY_CAR_THREADSHOLD = "TINY_CAR_THREADSHOLD" ;
     QString KEY_OCCUPANT_THREADSHOLD = "OCCUPANT_THREADSHOLD" ;
 
@@ -34,6 +35,10 @@ public:
     QString KEY_COLOR_CAR = "COLOR_CAR" ;
     QString KEY_COLOR_OCCUPANT= "COLOR_OCCUPANT" ;
     QString KEY_COLOR_WINDOWS= "COLOR_WINDOWS" ;
+
+    QString KEY_DETECT_DRIVER = "DETECT_DRIVER" ;
+    QString KEY_SAVE_VIDEOS = "SAVE_VIDEOS" ;
+    QString KEY_SAVE_VIDEOS_PATH = "SAVE_VIDEOS_PATH" ;
 
 
 private :

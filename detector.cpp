@@ -4,7 +4,7 @@
 cv::RNG rng(1);
 
 
-Detector::Detector(cv::String source,QSqlDatabase* db)
+Detector::Detector(cv::String source,QSqlDatabase* db,AppSettings& settings )
 {
 
     if(source!="")
@@ -12,7 +12,7 @@ Detector::Detector(cv::String source,QSqlDatabase* db)
         this->db = db ;
         this->source = source;
         run = true ;
-        runDetector() ;
+
         if(QSqlDatabase::isDriverAvailable(DRIVER)) {
             QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
             db.setDatabaseName("results");
@@ -20,6 +20,8 @@ Detector::Detector(cv::String source,QSqlDatabase* db)
                 qWarning() << "ERROR: " << db.lastError();
         }
     }
+    this->settings = &settings;
+    runDetector() ;
 
 
 }
@@ -226,13 +228,13 @@ void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat&
         cv::Scalar color ;
         switch (detection_result.ClassName) {
         case car:
-            color = car_color ;
+            color = settings->getSettingColor(settings->KEY_COLOR_CAR) ;
             break;
         case occupant:
-            color = occupant_color ;
+            color = settings->getSettingColor(settings->KEY_COLOR_OCCUPANT)  ;
             break;
         case wind_window:
-            color = windwindow_color ;
+            color = settings->getSettingColor(settings->KEY_COLOR_WINDOWS)  ;
             break;
         case front_rear:
             color = front_rear_color ;
@@ -266,11 +268,10 @@ void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat&
 
 int Detector::runDetector(){
 
-    net_spp = cv::dnn::readNetFromDarknet(modelConfiguration, modelBinary);
-    net_tiny = cv::dnn::readNetFromDarknet(modelConfigurationTiny, modelBinaryTiny);
-    CarDetector cardetector;
-    WindowsDetector windowsdetector ;
-    OccupantDetector occupantdetector ;
+
+    CarDetector cardetector(*settings);
+    WindowsDetector windowsdetector(*settings) ;
+    OccupantDetector occupantdetector(*settings) ;
 
 
     cv::Mat frame;

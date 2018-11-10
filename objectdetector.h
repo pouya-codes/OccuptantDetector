@@ -1,6 +1,11 @@
 #ifndef OBJECTDETECTOR_H
 #define OBJECTDETECTOR_H
 #include <setting.h>
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/ocl.hpp>
+#include <QString>
+
 
 enum ClassNames {wind_window,front_rear,back_rear,car,occupant} ;
 

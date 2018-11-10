@@ -28,7 +28,7 @@ class Detector
 {
 
 public:
-    Detector(cv::String source,QSqlDatabase* db);
+    Detector(cv::String source,QSqlDatabase* db,AppSettings& settings);
     void stopDetector() ;
     void resumeDetector() ;
 private :
@@ -40,6 +40,7 @@ private :
     void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Rect base = cv::Rect()) ;
     int runDetector() ;
     void insertResult(CarOccupant occupant);
+    AppSettings* settings ;
 
     std::string source ;
     cv::dnn::Net net_spp ;

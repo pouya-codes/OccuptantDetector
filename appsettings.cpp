@@ -9,7 +9,10 @@ AppSettings::AppSettings()
 }
 
 QVariant AppSettings::getSetting(QString key) {
-    return settings->value(key) ;
+        return settings->value(key) ;
+}
+cv::Scalar AppSettings::getSettingColor(QString key) {
+    return qcolor2scalar(settings->value(key).value<QColor>()) ;
 }
 
 void AppSettings::setSetting(QString key,QVariant value) {
@@ -34,6 +37,10 @@ void AppSettings::loadSettings() {
 
     if (settings->value(KEY_WINDOWS_WEIGHTS).toString()=="")
         settings->setValue(KEY_WINDOWS_WEIGHTS, QString(QDir::currentPath() +  "/Model/windows/yolov3-tiny_20000.weights"));
+
+    if (settings->value(KEY_SAVE_VIDEOS_PATH).toString()=="")
+        settings->setValue(KEY_SAVE_VIDEOS_PATH, QString(QDir::currentPath() +  "/"));
+
 
     if (settings->value(KEY_WINDOW_THREADSHOLD).toString()=="")
         settings->setValue(KEY_WINDOW_THREADSHOLD, 0.3);
@@ -61,6 +68,12 @@ void AppSettings::loadSettings() {
 
     if (settings->value(KEY_COLOR_WINDOWS).toString()=="")
         settings->setValue(KEY_COLOR_WINDOWS, QColor(0,0,255));
+
+    if (settings->value(KEY_SAVE_VIDEOS).toString()=="")
+        settings->setValue(KEY_SAVE_VIDEOS, false);
+
+    if (settings->value(KEY_DETECT_DRIVER).toString()=="")
+        settings->setValue(KEY_DETECT_DRIVER, false);
 
 }
 
