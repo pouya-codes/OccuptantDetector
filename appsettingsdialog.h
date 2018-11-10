@@ -6,6 +6,7 @@
 #include <appsettings.h>
 #include <QLineEdit>
 #include <QDoubleSpinBox>
+#include <clickablelabel.h>
 
 namespace Ui {
 class AppSettingsDialog;
@@ -40,18 +41,26 @@ private slots:
 
     void on_buttonBox_accepted();
 
-    void on_label_14_linkActivated(const QString &link);
+
+    void color_car_licked();
+    void color_occupant_label1clicked();
+    void color_window_label1clicked();
+
+
 
 private:
     std::vector<QString> line_edits_keys ;
     std::vector<QLineEdit*> line_edits;
     std::vector<QString> spin_boxs_keys;
     std::vector<QDoubleSpinBox*> spin_boxs;
+    std::vector<QString> color_lable_keys;
+    std::vector<ClickableLabel*> color_lables;
     AppSettings* settings ;
     QString browseFile(QString selectFilter = "All Files (*.*)") ;
     QString browsePath() ;
     void loadSettings();
     void saveSettings();
+    void setLableColor (ClickableLabel* lable, QColor color) ;
     QString settingsFile;
     Ui::AppSettingsDialog *ui;
 };

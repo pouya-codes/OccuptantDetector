@@ -317,7 +317,7 @@ int Detector::runDetector(){
 //                && car_results.size()>0
                 ) {
 
-//            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
+            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
 //            for (DetectionResult occupant_result :occupant_results) {
 //                if (occupant_result.ClassName==car) {
             std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
@@ -328,7 +328,7 @@ int Detector::runDetector(){
 
 
             drawPred(windows_results,frame,2,true);
-//            drawPred(occupant_results,frame,2,true);
+            drawPred(occupant_results,frame,2,true);
 //             drawPred(car_results,frame,2,true);
 
 

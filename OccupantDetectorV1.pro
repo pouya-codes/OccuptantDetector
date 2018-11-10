@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     occupantdetector.cpp \
     caroccupancy.cpp \
     appsettingsdialog.cpp \
-    appsettings.cpp
+    appsettings.cpp \
+    clickablelabel.cpp
 
 HEADERS  += mainwindow.h \
     detector.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     occupantdetector.h \
     caroccupancy.h \
     appsettingsdialog.h \
-    appsettings.h
+    appsettings.h \
+    clickablelabel.h
 
 FORMS    += mainwindow.ui \
     appsettingsdialog.ui

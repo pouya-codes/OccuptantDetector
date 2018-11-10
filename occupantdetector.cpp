@@ -6,7 +6,7 @@ OccupantDetector::OccupantDetector()
 }
 
 std::vector<DetectionResult> OccupantDetector::detect(cv::Mat frame) {
-    cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
+    cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(832, 832), cv::Scalar(), true, false); //Convert Mat to batch of images
     net.setInput(inputBlob);
     std::vector<cv::Mat> outs;
     net.forward(outs, getOutputsNames(net));  //compute output

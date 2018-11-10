@@ -2,7 +2,7 @@
 
 AppSettings::AppSettings()
 {
-    settingsFilePath = QDir::currentPath() + "settings.ini";
+    settingsFilePath = QDir::currentPath() + "/home/pouya/Data/settings.ini";
     settings = new QSettings(settingsFilePath, QSettings::NativeFormat);
     loadSettings() ;
 
@@ -53,7 +53,14 @@ void AppSettings::loadSettings() {
     if (settings->value(KEY_SOURCE_2).toString()=="")
         settings->setValue(KEY_SOURCE_2, "");
 
+    if (settings->value(KEY_COLOR_CAR).toString()=="")
+        settings->setValue(KEY_COLOR_CAR, QColor(255,0,0));
 
+    if (settings->value(KEY_COLOR_OCCUPANT).toString()=="")
+        settings->setValue(KEY_COLOR_OCCUPANT, QColor(0,255,0));
+
+    if (settings->value(KEY_COLOR_WINDOWS).toString()=="")
+        settings->setValue(KEY_COLOR_WINDOWS, QColor(0,0,255));
 
 }
 

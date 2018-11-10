@@ -30,6 +30,12 @@ public:
     QString KEY_SOURCE_1 = "SOURCE_1" ;
     QString KEY_SOURCE_2 = "SOURCE_2" ;
 
+
+    QString KEY_COLOR_CAR = "COLOR_CAR" ;
+    QString KEY_COLOR_OCCUPANT= "COLOR_OCCUPANT" ;
+    QString KEY_COLOR_WINDOWS= "COLOR_WINDOWS" ;
+
+
 private :
     void loadSettings();
 

@@ -2,6 +2,7 @@
 #include "ui_appsettingsdialog.h"
 #include "QFileDialog"
 #include <iostream>
+#include <QColorDialog>
 
 AppSettingsDialog::AppSettingsDialog(AppSettings& settings, QWidget *parent) :
     QDialog(parent),
@@ -10,6 +11,9 @@ AppSettingsDialog::AppSettingsDialog(AppSettings& settings, QWidget *parent) :
     ui->setupUi(this);
     this->settings = &settings;
 
+    connect(ui->label_color_car , SIGNAL(clicked()), this, SLOT(color_car_licked()));
+    connect(ui->label_color_occupant, SIGNAL(clicked()), this, SLOT(color_occupant_label1clicked()));
+    connect(ui->label_color_window, SIGNAL(clicked()), this, SLOT(color_window_label1clicked()));
 
 
     loadSettings() ;
@@ -26,6 +30,16 @@ QString AppSettingsDialog::browseFile(QString selectFilter) {
 
 QString AppSettingsDialog::browsePath(){
     return QFileDialog::getExistingDirectory(this,"Select a file", QDir::currentPath(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+}
+
+void AppSettingsDialog::setLableColor (ClickableLabel* lable, QColor color) {
+    QPalette palette = lable->palette();
+    palette.setColor(lable->backgroundRole(), color);
+    lable->setPalette(palette);
+    lable->setAutoFillBackground(true);
+    lable->color = color ;
+
+
 }
 
 void AppSettingsDialog::loadSettings() {
@@ -47,6 +61,14 @@ void AppSettingsDialog::loadSettings() {
                      settings->KEY_OCCUPANT_THREADSHOLD,settings->KEY_WINDOW_THREADSHOLD};
 
 
+    color_lables = {ui->label_color_car,ui->label_color_occupant,
+                    ui->label_color_window};
+
+    color_lable_keys = {settings->KEY_COLOR_CAR,settings->KEY_COLOR_OCCUPANT,
+                     settings->KEY_COLOR_WINDOWS};
+
+
+
 
     for (unsigned idx = 0; idx < line_edits_keys.size(); ++idx)
         line_edits[idx]->setText(settings->getSetting(line_edits_keys[idx]).toString()) ;
@@ -54,6 +76,11 @@ void AppSettingsDialog::loadSettings() {
 
     for (unsigned idx = 0; idx < spin_boxs_keys.size(); ++idx)
         spin_boxs[idx]->setValue(settings->getSetting(spin_boxs_keys[idx]).toDouble()) ;
+
+    for (unsigned idx = 0; idx < color_lable_keys.size(); ++idx)
+        setLableColor(color_lables[idx],settings->getSetting(color_lable_keys[idx]).value<QColor>()) ;
+
+
 
 }
 
@@ -63,6 +90,9 @@ void AppSettingsDialog::saveSettings() {
 
     for (unsigned idx = 0; idx < spin_boxs_keys.size(); ++idx)
         settings->setSetting(spin_boxs_keys[idx],spin_boxs[idx]->value());
+
+    for (unsigned idx = 0; idx < color_lable_keys.size(); ++idx)
+        settings->setSetting(color_lable_keys[idx],color_lables[idx]->color);
 
 }
 
@@ -136,7 +166,23 @@ void AppSettingsDialog::on_buttonBox_accepted()
     saveSettings();
 }
 
-void AppSettingsDialog::on_label_14_linkActivated(const QString &link)
-{
-    std::cout << "salam" << std::endl ;
+
+void AppSettingsDialog::color_car_licked(){
+    QColor color = QColorDialog::getColor(ui->label_color_car->color,this);
+    if(color.isValid())
+        setLableColor(ui->label_color_car,color) ;
+
 }
+void AppSettingsDialog::color_occupant_label1clicked(){
+    QColor color = QColorDialog::getColor(ui->label_color_occupant->color,this);
+    if(color.isValid())
+        setLableColor(ui->label_color_occupant,color) ;
+
+}
+void AppSettingsDialog::color_window_label1clicked(){
+    QColor color = QColorDialog::getColor(ui->label_color_window->color,this);
+    if(color.isValid())
+        setLableColor(ui->label_color_window,color) ;
+
+}
+
