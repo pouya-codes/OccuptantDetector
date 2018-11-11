@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     caroccupancy.cpp \
     appsettingsdialog.cpp \
     appsettings.cpp \
-    clickablelabel.cpp
+    clickablelabel.cpp \
+    dbmanager.cpp
 
 HEADERS  += mainwindow.h \
     detector.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     caroccupancy.h \
     appsettingsdialog.h \
     appsettings.h \
-    clickablelabel.h
+    clickablelabel.h \
+    dbmanager.h
 
 FORMS    += mainwindow.ui \
     appsettingsdialog.ui

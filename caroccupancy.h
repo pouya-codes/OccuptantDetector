@@ -7,6 +7,13 @@ class CarOccupancy
 {
 public:
     CarOccupancy(cv::Mat front_image= cv::Mat(),cv::Mat back_image=cv::Mat());
+    int FrontOccupantNumber ;
+    int BacktOccupantNumber ;
+
+    cv::Mat FrontCarImage ;
+    cv::Mat FrontCarImageProcessed ;
+    cv::Mat BackCarImage ;
+    cv::Mat BackCarImageProcessed ;
 private :
     void DetectFrontOccupant () ;
     void DetectBackOccupant () ;
@@ -14,11 +21,7 @@ private :
     std::vector <DetectionResult> FrontOccupantROIs ;
     std::vector <DetectionResult> BackOccupantROIs ;
 
-    int FrontOccupantNumber ;
-    int BacktOccupantNumber ;
 
-    cv::Mat FrontCarImage ;
-    cv::Mat BackCarImage ;
 };
 
 #endif // CAROCCUPANT_H

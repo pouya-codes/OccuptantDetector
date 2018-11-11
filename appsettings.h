@@ -60,7 +60,7 @@ private :
     const bool detectDriver = false ;
     const int numberOfDetection = 3 ;
     const int ROI_PAD = 20 ;
-    QString DRIVER = "QSQLITE";
+
 
     cv::Scalar qcolor2scalar(QColor color);
     QColor scalar2qcolor(cv::Scalar color) ;

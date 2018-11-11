@@ -12,6 +12,7 @@
 #include <QSqlTableModel>
 #include <appsettings.h>
 #include <appsettingsdialog.h>
+#include <dbmanager.h>
 
 namespace Ui {
 class MainWindow;
@@ -35,13 +36,10 @@ private slots:
 
 private:
     void queryData();
-    void setPicture (int id);
-    QSqlDatabase db ;
-    void makeDatabase() ;
     Ui::MainWindow *ui;
     Detector* detector ;
-    QSqlTableModel *dataModel;
     AppSettings* settings ;
+    DBManager* dbmanager ;
 
 
 

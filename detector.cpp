@@ -4,25 +4,12 @@
 cv::RNG rng(1);
 
 
-Detector::Detector(cv::String source,QSqlDatabase* db,AppSettings& settings )
+Detector::Detector(cv::String source,DBManager& dbmanager,AppSettings& settings )
 {
 
-    if(source!="")
-    {
-        this->db = db ;
-        this->source = source;
-        run = true ;
-
-        if(QSqlDatabase::isDriverAvailable(DRIVER)) {
-            QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
-            db.setDatabaseName("results");
-            if(!db.open())
-                qWarning() << "ERROR: " << db.lastError();
-        }
-    }
+    this->dbmanager = &dbmanager ;
     this->settings = &settings;
-    runDetector() ;
-
+    runDetector(source) ;
 
 }
 void Detector::stopDetector() {
@@ -61,26 +48,26 @@ cv::Scalar Detector::getRandomColors()
     return cv::Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
 }
 
-void Detector::insertResult(CarOccupant occupant) {
-    if (occupant.OccupantNumber>0 ) {
-        QSqlQuery query = QSqlQuery(*db );
-        query.prepare( "INSERT INTO result (occupant, date , imagedata) VALUES (:occupant, :date , :imageData)" );
+//void Detector::insertResult(CarOccupant occupant) {
+//    if (occupant.OccupantNumber>0 ) {
+//        QSqlQuery query = QSqlQuery(*db );
+//        query.prepare( "INSERT INTO result (occupant, date , imagedata) VALUES (:occupant, :date , :imageData)" );
 
-        QPixmap inPixmap = ASM::cvMatToQPixmap(occupant.CarImage) ;
-        QByteArray inByteArray;
-        QBuffer inBuffer( &inByteArray );
-        inBuffer.open( QIODevice::WriteOnly );
-        inPixmap.save( &inBuffer, "PNG" ); // write inPixmap into inByteArray in PNG format
+//        QPixmap inPixmap = ASM::cvMatToQPixmap(occupant.CarImage) ;
+//        QByteArray inByteArray;
+//        QBuffer inBuffer( &inByteArray );
+//        inBuffer.open( QIODevice::WriteOnly );
+//        inPixmap.save( &inBuffer, "PNG" ); // write inPixmap into inByteArray in PNG format
 
-        query.bindValue( ":occupant", occupant.OccupantNumber );
-        query.bindValue(":date", QString::fromStdString(currentDateTime()));
-        query.bindValue( ":imageData", inByteArray );
+//        query.bindValue( ":occupant", occupant.OccupantNumber );
+//        query.bindValue(":date", QString::fromStdString(currentDateTime()));
+//        query.bindValue( ":imageData", inByteArray );
 
-        if( !query.exec() )
-            qDebug() << "Error inserting image into table:\n" << query.lastError();
-    }
+//        if( !query.exec() )
+//            qDebug() << "Error inserting image into table:\n" << query.lastError();
+//    }
 
-}
+//}
 
 void Detector::processDetection(std::vector<DetectionResult> detection_results,std::vector<CarOccupant>& car_occupants,cv::Mat image){
 
@@ -99,7 +86,7 @@ void Detector::processDetection(std::vector<DetectionResult> detection_results,s
             //|| (car_occupants[idx].ROI.y+car_occupants[idx].ROI.height + 20 > image.rows))
         {
 
-            insertResult(car_occupants[idx]);
+//            insertResult(car_occupants[idx]);
             car_occupants.erase(car_occupants.begin()+ idx);
         }
     }
@@ -266,8 +253,8 @@ void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat&
 
 
 
-int Detector::runDetector(){
-
+int Detector::runDetector(cv::String source){
+    std::cout << source << std::endl ;
 
     CarDetector cardetector(*settings);
     WindowsDetector windowsdetector(*settings) ;
@@ -281,7 +268,7 @@ int Detector::runDetector(){
     int frame_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
     int frame_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
     int frame_rate = cap.get(cv::CAP_PROP_FPS);
-
+//    std::cout << frame_rate << std::endl ;
     cv::Point a;
     cv::Point b;
     a.x = ROI_PAD;
@@ -313,24 +300,16 @@ int Detector::runDetector(){
         // stop the program if no more images
         if(frame.rows==0 || frame.cols==0)
             break;
-        std::vector<DetectionResult> car_results = cardetector.detect(frame);
+//        std::vector<DetectionResult> car_results = cardetector.detect(frame);
         if (frame_counter%1==0
 //                && car_results.size()>0
                 ) {
 
-            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
-//            for (DetectionResult occupant_result :occupant_results) {
-//                if (occupant_result.ClassName==car) {
-            std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
+//            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
+//            std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
+//            drawPred(windows_results,frame,2,true);
+//            drawPred(occupant_results,frame,2,true);
 
-
-//                }
-//            }
-
-
-            drawPred(windows_results,frame,2,true);
-            drawPred(occupant_results,frame,2,true);
-//             drawPred(car_results,frame,2,true);
 
 
 //            processDetection(occupant_results,car_occupant,frame) ;
