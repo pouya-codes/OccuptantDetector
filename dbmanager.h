@@ -18,9 +18,16 @@
 class DBManager
 {
 public:
+    struct DetectionImages{
+        QPixmap Front_Image_Raw ;
+        QPixmap Back_Image_Raw ;
+        QPixmap Front_Image_Processed ;
+        QPixmap Back_Image_Processed ;
+
+    };
     DBManager();
     QSqlTableModel* getDataModel();
-    QPixmap getPicture (int id) ;
+    DetectionImages getPicture (int id) ;
     void insertResult(CarOccupancy occupant);
 private:
     QSqlDatabase db ;

@@ -8,16 +8,18 @@ DBManager::DBManager()
         db.setDatabaseName("results.db");
         if(!db.open())
           qWarning() << "ERROR: " << db.lastError();
-        QSqlQuery query("CREATE TABLE IF NOT EXISTS result (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant INTEGER,date varchar(50), imagedata BLOB)");
+        QSqlQuery query("CREATE TABLE IF NOT EXISTS result (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
+                        "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)");
         if(!query.isActive())
             qWarning() << "ERROR: " << query.lastError().text();
 
     }
 
 }
-QPixmap DBManager::getPicture(int id) {
+DBManager::DetectionImages DBManager::getPicture(int id) {
         QString querytxt ;
-        querytxt = "SELECT imagedata FROM result WHERE id = ?";
+        querytxt = "SELECT imagedata_raw_front, imagedata_raw_back BLOB, imagedata_processed_front BLOB,"
+                   "imagedata_processed_back BLOB FROM result WHERE id = ?";
         QSqlQuery query;
         query.prepare(querytxt);
         query.bindValue(0, id);
@@ -25,9 +27,25 @@ QPixmap DBManager::getPicture(int id) {
         query.first() ;
 
         QByteArray outByteArray = query.value( 0 ).toByteArray();
-        QPixmap outPixmap = QPixmap();
-        outPixmap.loadFromData( outByteArray );
-        return outPixmap;
+        QPixmap FrontRawPixmap = QPixmap();
+        FrontRawPixmap.loadFromData( outByteArray );
+
+        outByteArray = query.value( 1 ).toByteArray();
+        QPixmap BackRawPixmap = QPixmap();
+        BackRawPixmap.loadFromData( outByteArray );
+
+        outByteArray = query.value( 2 ).toByteArray();
+        QPixmap FrontProcessedPixmap = QPixmap();
+        FrontProcessedPixmap.loadFromData( outByteArray );
+
+
+        outByteArray = query.value( 3 ).toByteArray();
+        QPixmap BackProcessedPixmap = QPixmap();
+        BackProcessedPixmap.loadFromData( outByteArray );
+
+
+        DBManager::DetectionImages images = {FrontRawPixmap,BackRawPixmap,FrontProcessedPixmap,BackProcessedPixmap} ;
+        return images;
 
 
 }
@@ -45,11 +63,16 @@ QSqlTableModel* DBManager::getDataModel() {
     //    }
 
         dataModel->select();
+        dataModel->removeColumn(2);
+        dataModel->removeColumn(2);
+        dataModel->removeColumn(3);
+        dataModel->removeColumn(3);
+        dataModel->removeColumn(3);
         dataModel->removeColumn(3);
 
-        dataModel->setHeaderData(0, Qt::Orientation::Horizontal, ("ID"));
-        dataModel->setHeaderData(1,  Qt::Orientation::Horizontal, ("Occupant"));
-        dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, ("Date"));
+        dataModel->setHeaderData(0, Qt::Orientation::Horizontal, ("رکورد"));
+        dataModel->setHeaderData(1,  Qt::Orientation::Horizontal, ("تعداد سرنشین"));
+        dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, ("تاریخ"));
         return  dataModel ;
 
 }

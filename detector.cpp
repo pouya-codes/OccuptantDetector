@@ -4,12 +4,11 @@
 cv::RNG rng(1);
 
 
-Detector::Detector(cv::String source,DBManager& dbmanager,AppSettings& settings )
+Detector::Detector(DBManager& dbmanager,AppSettings& settings )
 {
 
     this->dbmanager = &dbmanager ;
     this->settings = &settings;
-    runDetector(source) ;
 
 }
 void Detector::stopDetector() {
@@ -253,8 +252,8 @@ void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat&
 
 
 
-int Detector::runDetector(cv::String source){
-    std::cout << source << std::endl ;
+int Detector::runDetector(cv::String source1,cv::String source2){
+//    std::cout << source << std::endl ;
 
     CarDetector cardetector(*settings);
     WindowsDetector windowsdetector(*settings) ;
@@ -262,7 +261,7 @@ int Detector::runDetector(cv::String source){
 
 
     cv::Mat frame;
-    cv::VideoCapture cap(source);
+    cv::VideoCapture cap(source1);
     if (!cap.isOpened())
         return 1 ;
     int frame_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -280,13 +279,14 @@ int Detector::runDetector(cv::String source){
 //    std::cout << QSysInfo::productType().toStdString() << std::endl ;
 
     int ex = static_cast<int>(cap.get(cv::CAP_PROP_FOURCC)); // Get Codec Type- Int form
-    std::string::size_type pAt = source.find_last_of('.');
-    const std::string NAME = source.substr(0, pAt) + "_result.avi";   // Form the new name with container
+    std::string::size_type pAt = source1.find_last_of('.');
+    const std::string NAME = source1.substr(0, pAt) + "_result.avi";   // Form the new name with container
     cv::VideoWriter outputVideo;
     outputVideo.open(NAME, ex, frame_rate, cv::Size(frame_width,frame_height), true);
 
     int frame_counter = 1;
     std::vector<CarOccupant> car_occupant ;
+    run=true ;
 
     for ( ;; ){
         if(!run) {
@@ -306,8 +306,8 @@ int Detector::runDetector(cv::String source){
                 ) {
 
 //            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame);
-//            std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
-//            drawPred(windows_results,frame,2,true);
+            std::vector<DetectionResult> windows_results = windowsdetector.detect(frame);
+            drawPred(windows_results,frame,2,true);
 //            drawPred(occupant_results,frame,2,true);
 
 

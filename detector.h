@@ -27,7 +27,8 @@ class Detector
 {
 
 public:
-    Detector(cv::String source,DBManager& dbmanager,AppSettings& settings);
+    Detector(DBManager& dbmanager,AppSettings& settings);
+    int runDetector(cv::String source1,cv::String source2) ;
     void stopDetector() ;
     void resumeDetector() ;
 private :
@@ -37,11 +38,10 @@ private :
     void processDetection(std::vector<DetectionResult> detection_results,std::vector<CarOccupant>& car_occupants,cv::Mat image) ;
     void drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants ) ;
     void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Rect base = cv::Rect()) ;
-    int runDetector(cv::String source) ;
+
 //    void insertResult(CarOccupant occupant);
     AppSettings* settings ;
 
-    std::string source ;
     cv::dnn::Net net_spp ;
     cv::dnn::Net net_tiny ;
     std::vector<std::string> classes;

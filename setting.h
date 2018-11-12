@@ -38,8 +38,8 @@ static const std::string currentDateTime() {
 //const cv::Scalar car_color = cv::Scalar(255,0,0);
 //const cv::Scalar occupant_color = cv::Scalar(0,255,0);
 //const cv::Scalar windwindow_color = cv::Scalar(0,0,255);
-const cv::Scalar back_rear_color = cv::Scalar(100,100,100);
-const cv::Scalar front_rear_color = cv::Scalar(200,200,200);
+const cv::Scalar back_rear_color = cv::Scalar(0,0,200);
+const cv::Scalar front_rear_color = cv::Scalar(0,200,0);
 
 const float confidentThredshold = 0.2 ;
 const bool detectDriver = false ;

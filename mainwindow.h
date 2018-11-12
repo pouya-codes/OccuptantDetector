@@ -34,12 +34,25 @@ private slots:
 
     void on_pushButton_Browse_clicked();
 
+
+    void on_rb_orginal_clicked();
+
+    void on_rb_processed_clicked();
+
+    void front_image_clicked();
+    void back_image_clicked();
+
+    void on_pb_save_images_clicked();
+
 private:
     void queryData();
+    void setPictures() ;
+    int selected_row_id ;
     Ui::MainWindow *ui;
     Detector* detector ;
     AppSettings* settings ;
     DBManager* dbmanager ;
+    QPixmap Front_Image_Raw, Back_Image_Raw, Front_Image_Processed, Back_Image_Processed ;
 
 
 
