@@ -44,8 +44,10 @@ private slots:
 
     void on_pb_save_images_clicked();
 
+    void on_comboBox_date_currentIndexChanged(const QString &arg1);
+
 private:
-    void queryData();
+    void queryData(QString date);
     void setPictures() ;
     int selected_row_id ;
     Ui::MainWindow *ui;

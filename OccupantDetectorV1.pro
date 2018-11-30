@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     appsettingsdialog.cpp \
     appsettings.cpp \
     clickablelabel.cpp \
-    dbmanager.cpp
+    dbmanager.cpp \
+    qdateconvertor.cpp
 
 HEADERS  += mainwindow.h \
     detector.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     appsettingsdialog.h \
     appsettings.h \
     clickablelabel.h \
-    dbmanager.h
+    dbmanager.h \
+    qdateconvertor.h
 
 FORMS    += mainwindow.ui \
     appsettingsdialog.ui
@@ -48,9 +50,9 @@ unix: PKGCONFIG += opencv4
 }
 
 win32 {
-INCLUDEPATH += D:/Develop/OpenCV/buildMSVC/install/include
+INCLUDEPATH += D:/Develop/OpenCV/BulidMSCV4/install/include
 
-LIBS += -LD:/Develop/OpenCV/buildMSVC/install/x64/vc15/lib \
+LIBS += -LD:/Develop/OpenCV/BulidMSCV4/install/x64/vc15/lib \
 -lopencv_core400 \
 -lopencv_imgproc400 \
 -lopencv_highgui400 \

@@ -14,6 +14,7 @@ AppSettingsDialog::AppSettingsDialog(AppSettings& settings, QWidget *parent) :
     connect(ui->label_color_car , SIGNAL(clicked()), this, SLOT(color_car_licked()));
     connect(ui->label_color_occupant, SIGNAL(clicked()), this, SLOT(color_occupant_label1clicked()));
     connect(ui->label_color_window, SIGNAL(clicked()), this, SLOT(color_window_label1clicked()));
+    connect(ui->label_color_window_back, SIGNAL(clicked()), this, SLOT(color_window_back_label1clicked()));
 
 
     loadSettings() ;
@@ -62,10 +63,10 @@ void AppSettingsDialog::loadSettings() {
 
 
     color_lables = {ui->label_color_car,ui->label_color_occupant,
-                    ui->label_color_window};
+                    ui->label_color_window,ui->label_color_window_back};
 
     color_lable_keys = {settings->KEY_COLOR_CAR,settings->KEY_COLOR_OCCUPANT,
-                     settings->KEY_COLOR_WINDOWS};
+                     settings->KEY_COLOR_WINDOW,settings->KEY_COLOR_WINDOW_BACK};
 
     checkboxs = {ui->cb_driver_detection,ui->cb_save_videos};
 
@@ -196,6 +197,13 @@ void AppSettingsDialog::color_window_label1clicked(){
     QColor color = QColorDialog::getColor(ui->label_color_window->color,this);
     if(color.isValid())
         setLableColor(ui->label_color_window,color) ;
+
+}
+
+void AppSettingsDialog::color_window_back_label1clicked(){
+    QColor color = QColorDialog::getColor(ui->label_color_window_back->color,this);
+    if(color.isValid())
+        setLableColor(ui->label_color_window_back,color) ;
 
 }
 

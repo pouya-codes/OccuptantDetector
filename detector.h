@@ -37,7 +37,11 @@ private :
     cv::Scalar getRandomColors() ;
     void processDetection(std::vector<DetectionResult> detection_results,std::vector<CarOccupant>& car_occupants,cv::Mat image) ;
     void drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants ) ;
-    void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Rect base = cv::Rect()) ;
+    void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Point base = cv::Point()) ;
+    int frame_width_camera_1 ;
+    int frame_height_camera_1 ;
+    int frame_width_camera_2 ;
+    int frame_height_camera_2 ;
 
 //    void insertResult(CarOccupant occupant);
     AppSettings* settings ;
@@ -49,7 +53,7 @@ private :
     QLabel* image ;
     bool run ;
     DBManager *dbmanager ;
-    cv::Rect ROI ;
+    cv::Rect ROI_Camera_1,ROI_Camera_2 ;
     int pad = 25 ;
 
 //    cv::RNG rng(1);

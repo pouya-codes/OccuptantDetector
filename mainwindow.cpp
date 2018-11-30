@@ -20,8 +20,8 @@ void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1
 
 
 
-void MainWindow::queryData() {
-    ui->tableView->setModel(dbmanager->getDataModel());
+void MainWindow::queryData(QString date) {
+    ui->tableView->setModel(dbmanager->getDataModel(date));
     QItemSelectionModel *sm = ui->tableView->selectionModel();
     connect(sm,SIGNAL(currentRowChanged(QModelIndex,QModelIndex) ),this,SLOT(on_tableViewSelectionModel_currentRowChanged(QModelIndex,QModelIndex)) );
 }
@@ -45,9 +45,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings = new AppSettings() ;
     dbmanager = new DBManager();
-    queryData();
+
     connect(ui->lable_front_image, SIGNAL(clicked()), this, SLOT (front_image_clicked()));
     connect(ui->lable_back_image , SIGNAL(clicked()), this, SLOT (back_image_clicked()));
+    ui->statusBar->showMessage(dbmanager->currentDateTimeJalali().split(' ')[0]);
+    ui->comboBox_date->addItems(dbmanager->GetTableNames());
+    ui->comboBox_date->setCurrentIndex(0);
+
 
 //    QFile style_file("/home/pouya/darkorange.stylesheet");
 //    if(style_file.open(QIODevice::ReadOnly))
@@ -71,7 +75,7 @@ void MainWindow::on_pushButton_clicked()
     //    }
     detector = new Detector(*dbmanager,*settings);
     detector->runDetector(settings->getSetting(settings->KEY_SOURCE_1).toString().toStdString(),settings->getSetting(settings->KEY_SOURCE_2).toString().toStdString()) ;
-    queryData();
+    queryData(ui->comboBox_date->currentText());
 }
 
 void MainWindow::on_pushButton_Stop_clicked()
@@ -143,4 +147,11 @@ void MainWindow::on_pb_save_images_clicked()
         }
     }
 
+}
+
+
+
+void MainWindow::on_comboBox_date_currentIndexChanged(const QString &arg1)
+{
+    queryData(arg1);
 }

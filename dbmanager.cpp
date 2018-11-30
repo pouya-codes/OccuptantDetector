@@ -8,13 +8,27 @@ DBManager::DBManager()
         db.setDatabaseName("results.db");
         if(!db.open())
           qWarning() << "ERROR: " << db.lastError();
-        QSqlQuery query("CREATE TABLE IF NOT EXISTS result (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
-                        "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)");
+        QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+        QString queryText = "CREATE TABLE IF NOT EXISTS t" + todayDate+
+                " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
+                  "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)" ;
+//        qDebug() << queryText ;
+        QSqlQuery query(queryText);
         if(!query.isActive())
             qWarning() << "ERROR: " << query.lastError().text();
 
     }
 
+}
+QStringList DBManager::GetTableNames () {
+    QString querytxt ;
+    querytxt = "SELECT name FROM sqlite_master WHERE type = 'table' and name!='sqlite_sequence' ORDER BY name DESC";
+    QSqlQuery query;
+    query.exec(querytxt) ;
+    QStringList tableNames ;
+    while (query.next())
+        tableNames.append(query.value(0).toString().replace('t',""));
+    return tableNames ;
 }
 DBManager::DetectionImages DBManager::getPicture(int id) {
         QString querytxt ;
@@ -49,12 +63,12 @@ DBManager::DetectionImages DBManager::getPicture(int id) {
 
 
 }
-QSqlTableModel* DBManager::getDataModel() {
+QSqlTableModel* DBManager::getDataModel(QString date) {
     //    editSelectedRowId = -2 ;
         QSqlTableModel* dataModel = new QSqlTableModel();
     //        connect(dataModel, SIGNAL( dataChanged(QModelIndex,QModelIndex,QVector<int>)), SLOT(handleAfterEdit(QModelIndex,QModelIndex,QVector<int>)));
 
-        dataModel->setTable("result");
+        dataModel->setTable("t"+date);
         dataModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     //    if (ui->lineEditSearch->text()!="") {
@@ -75,6 +89,30 @@ QSqlTableModel* DBManager::getDataModel() {
         dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, ("تاریخ"));
         return  dataModel ;
 
+}
+
+QString DBManager::currentDateTimeJalali() {
+
+    QDateTime a = QDateTime::currentDateTime() ;
+    QString date_string = a.toString("yyyy-MM-dd hh,mm,ss,zzz") ;
+    QStringList parts = date_string.split(' ');
+    QStringList parts_date = parts[0].split('-') ;
+//    return a.toString("yyyy-MM-dd hh,mm,ss,zzz");
+
+    QStringList shamsi=  mdate.ToJalali( parts_date[0],parts_date[1],parts_date[2]);
+    QString JalailDate =shamsi.at(0)+"/"+shamsi.at(1)+"/"+shamsi.at(2)+ " " +parts[1];
+    return JalailDate ;
+//    qDebug()<<JalailDate;
+//    // jalali to gregorian
+//    QStringList m= mdate.ToMiladi("1372","3","6");
+//    QString miladiDate= m.at(0)+"/"+ m.at(1)+"/"+m.at(2);
+//    qDebug()<<miladiDate;
+
+
+}
+QString DBManager::currentDateTimeMiladi() {
+    QDateTime a = QDateTime::currentDateTime() ;
+    return a.toString("yyyy-MM-dd hh,mm,ss,zzz");
 }
 
 void DBManager::insertResult(CarOccupancy occupant) {

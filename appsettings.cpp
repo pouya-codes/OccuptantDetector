@@ -1,9 +1,8 @@
 #include "appsettings.h"
-
 AppSettings::AppSettings()
 {
-    settingsFilePath = QDir::currentPath() + "/home/pouya/Data/settings.ini";
-    settings = new QSettings(settingsFilePath, QSettings::NativeFormat);
+    settingsFilePath = QDir::currentPath() + "/settings.ini";
+    settings = new QSettings(settingsFilePath, QSettings::IniFormat);
     loadSettings() ;
 
 }
@@ -66,8 +65,11 @@ void AppSettings::loadSettings() {
     if (settings->value(KEY_COLOR_OCCUPANT).toString()=="")
         settings->setValue(KEY_COLOR_OCCUPANT, QColor(0,255,0));
 
-    if (settings->value(KEY_COLOR_WINDOWS).toString()=="")
-        settings->setValue(KEY_COLOR_WINDOWS, QColor(0,0,255));
+    if (settings->value(KEY_COLOR_WINDOW).toString()=="")
+        settings->setValue(KEY_COLOR_WINDOW, QColor(0,0,255));
+
+    if (settings->value(KEY_COLOR_WINDOW_BACK).toString()=="")
+        settings->setValue(KEY_COLOR_WINDOW_BACK, QColor(0,255,255));
 
     if (settings->value(KEY_SAVE_VIDEOS).toString()=="")
         settings->setValue(KEY_SAVE_VIDEOS, false);

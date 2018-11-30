@@ -269,14 +269,33 @@
         <item>
          <widget class="QLabel" name="label_17">
           <property name="text">
-           <string>رنگ ناحیه پنجره</string>
+           <string>رنگ ناحیه پنجره جلو</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="ClickableLabel" name="label_color_window_back">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>رنگ ناحیه پنجره عقب</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

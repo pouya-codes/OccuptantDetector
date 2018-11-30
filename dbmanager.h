@@ -14,6 +14,8 @@
 #include <caroccupancy.h>
 #include <asmOpenCV.h>
 #include <QBuffer>
+#include <qdateconvertor.h>
+#include <QStringList>
 
 class DBManager
 {
@@ -26,10 +28,16 @@ public:
 
     };
     DBManager();
-    QSqlTableModel* getDataModel();
+    QSqlTableModel* getDataModel(QString date);
     DetectionImages getPicture (int id) ;
     void insertResult(CarOccupancy occupant);
+    QString currentDateTimeJalali() ;
+    QString currentDateTimeMiladi() ;
+    QStringList GetTableNames();
+
 private:
+    QDateConvertor mdate;
+
     QSqlDatabase db ;
     QString DRIVER = "QSQLITE";
 };

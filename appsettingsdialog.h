@@ -46,6 +46,7 @@ private slots:
     void color_car_licked();
     void color_occupant_label1clicked();
     void color_window_label1clicked();
+    void color_window_back_label1clicked();
 
 
 
