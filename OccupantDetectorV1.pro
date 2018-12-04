@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     appsettings.cpp \
     clickablelabel.cpp \
     dbmanager.cpp \
-    qdateconvertor.cpp
+    qdateconvertor.cpp \
+    videostreamer.cpp
 
 HEADERS  += mainwindow.h \
     detector.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     appsettings.h \
     clickablelabel.h \
     dbmanager.h \
-    qdateconvertor.h
+    qdateconvertor.h \
+    videostreamer.h
 
 FORMS    += mainwindow.ui \
     appsettingsdialog.ui

@@ -116,6 +116,7 @@ QString DBManager::currentDateTimeMiladi() {
 }
 
 void DBManager::insertResult(CarOccupancy occupant) {
+    qDebug () << occupant.FrontOccupantNumber ;
     if (occupant.FrontOccupantNumber+occupant.BacktOccupantNumber>0 ) {
         QSqlQuery query = QSqlQuery(db);
         query.prepare( "INSERT INTO result (occupant, date , imagedata) VALUES (:occupant, :date , :imageData)" );

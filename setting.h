@@ -42,7 +42,7 @@ const cv::Scalar back_rear_color = cv::Scalar(0,0,200);
 const cv::Scalar front_rear_color = cv::Scalar(0,200,0);
 
 const float confidentThredshold = 0.2 ;
-const bool detectDriver = false ;
+//const bool detectDriver = false ;
 const int numberOfDetection = 3 ;
 const int ROI_PAD = 20 ;
 const QString DRIVER("QSQLITE");
