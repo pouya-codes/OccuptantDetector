@@ -47,6 +47,7 @@ private slots:
     void on_comboBox_date_currentIndexChanged(const QString &arg1);
 
 private:
+    QString table_date ;
     void queryData(QString date);
     void setPictures() ;
     int selected_row_id ;

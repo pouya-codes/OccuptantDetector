@@ -7,7 +7,7 @@
 
 void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1, QModelIndex index2){
     selected_row_id = index1.sibling(index1.row(), 0).data().toInt();
-    DBManager::DetectionImages images = dbmanager->getPicture(selected_row_id) ;
+    DBManager::DetectionImages images = dbmanager->getPicture(selected_row_id,table_date) ;
     ui->pb_save_images->setEnabled(true) ;
 
     Front_Image_Raw = images.Front_Image_Raw ;
@@ -136,15 +136,19 @@ void MainWindow::on_pb_save_images_clicked()
     QString path = QFileDialog::getExistingDirectory(this,QDir::currentPath()) ;
     if (path!="" ){
         std::string out_path = QString(path +"/").toStdString() ;
-        if (ui->rb_orginal->isChecked()){
-            cv::imwrite(out_path+std::to_string(selected_row_id)+"_Front_Orginal.jpg",ASM::QPixmapToCvMat(Front_Image_Raw)) ;
-            cv::imwrite(out_path+std::to_string(selected_row_id)+"_Back_Orginal.jpg",ASM::QPixmapToCvMat(Back_Image_Raw)) ;
-        }
-        else
-        {
-            cv::imwrite(out_path+std::to_string(selected_row_id)+"_Front_Processed.jpg",ASM::QPixmapToCvMat(Front_Image_Processed)) ;
-            cv::imwrite(out_path+std::to_string(selected_row_id)+"_Back_Processed.jpg",ASM::QPixmapToCvMat(Back_Image_Processed)) ;
-        }
+//        if (ui->rb_orginal->isChecked()){
+            if (!Front_Image_Raw.isNull())
+                cv::imwrite(out_path+std::to_string(selected_row_id)+"_Front_Orginal.jpg",ASM::QPixmapToCvMat(Front_Image_Raw)) ;
+            if (!Back_Image_Raw.isNull())
+                cv::imwrite(out_path+std::to_string(selected_row_id)+"_Back_Orginal.jpg",ASM::QPixmapToCvMat(Back_Image_Raw)) ;
+//        }
+//        else
+//        {
+            if (!Front_Image_Processed.isNull())
+                cv::imwrite(out_path+std::to_string(selected_row_id)+"_Front_Processed.jpg",ASM::QPixmapToCvMat(Front_Image_Processed)) ;
+            if (!Back_Image_Processed.isNull())
+                cv::imwrite(out_path+std::to_string(selected_row_id)+"_Back_Processed.jpg",ASM::QPixmapToCvMat(Back_Image_Processed)) ;
+//        }
     }
 
 }
@@ -153,5 +157,6 @@ void MainWindow::on_pb_save_images_clicked()
 
 void MainWindow::on_comboBox_date_currentIndexChanged(const QString &arg1)
 {
+    table_date = arg1 ;
     queryData(arg1);
 }

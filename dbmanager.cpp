@@ -30,10 +30,10 @@ QStringList DBManager::GetTableNames () {
         tableNames.append(query.value(0).toString().replace('t',""));
     return tableNames ;
 }
-DBManager::DetectionImages DBManager::getPicture(int id) {
+DBManager::DetectionImages DBManager::getPicture(int id, QString table_name) {
         QString querytxt ;
         querytxt = "SELECT imagedata_raw_front, imagedata_raw_back BLOB, imagedata_processed_front BLOB,"
-                   "imagedata_processed_back BLOB FROM result WHERE id = ?";
+                   "imagedata_processed_back BLOB FROM t"+table_name+" WHERE id = ?";
         QSqlQuery query;
         query.prepare(querytxt);
         query.bindValue(0, id);
@@ -77,7 +77,7 @@ QSqlTableModel* DBManager::getDataModel(QString date) {
     //    }
 
         dataModel->select();
-        dataModel->removeColumn(2);
+        dataModel->removeColumn(1);
         dataModel->removeColumn(2);
         dataModel->removeColumn(3);
         dataModel->removeColumn(3);
@@ -117,9 +117,16 @@ QString DBManager::currentDateTimeMiladi() {
 
 void DBManager::insertResult(CarOccupancy occupant) {
     qDebug () << occupant.FrontOccupantNumber ;
+
     if (occupant.FrontOccupantNumber+occupant.BacktOccupantNumber>0 ) {
         QSqlQuery query = QSqlQuery(db);
-        query.prepare( "INSERT INTO result (occupant, date , imagedata) VALUES (:occupant, :date , :imageData)" );
+
+        QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+        QString queryText = "INSERT INTO t" + todayDate+ +"  (occupant_total, occupant_front, date , imagedata_raw_front, imagedata_processed_front)"
+                                                          " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)" ;
+
+
+        query.prepare( queryText );
 
         QPixmap inPixmap = ASM::cvMatToQPixmap(occupant.FrontCarImage) ;
         QByteArray inByteArray;
@@ -127,9 +134,16 @@ void DBManager::insertResult(CarOccupancy occupant) {
         inBuffer.open( QIODevice::WriteOnly );
         inPixmap.save( &inBuffer, "PNG" ); // write inPixmap into inByteArray in PNG format
 
-        query.bindValue( ":occupant", occupant.FrontOccupantNumber+occupant.BacktOccupantNumber );
+        QPixmap processedPixmap = ASM::cvMatToQPixmap(occupant.FrontCarImageProcessed) ;
+        QByteArray inByteArrayProcessed;
+        QBuffer inBufferProcessed( &inByteArrayProcessed );
+        inBufferProcessed.open( QIODevice::WriteOnly );
+        processedPixmap.save( &inBufferProcessed, "PNG" ); // write inPixmap into inByteArray in PNG format
+
+        query.bindValue( ":occupant_front", occupant.FrontOccupantNumber );
         query.bindValue(":date", QString::fromStdString(currentDateTime()));
-        query.bindValue( ":imageData", inByteArray );
+        query.bindValue( ":imagedata_raw_front", inByteArray );
+        query.bindValue( ":imagedata_processed_front", inByteArrayProcessed );
 
         if( !query.exec() )
             qDebug() << "Error inserting image into table:\n" << query.lastError();

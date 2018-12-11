@@ -29,7 +29,7 @@ public:
     };
     DBManager();
     QSqlTableModel* getDataModel(QString date);
-    DetectionImages getPicture (int id) ;
+    DetectionImages getPicture (int id, QString table_name) ;
     void insertResult(CarOccupancy occupant);
     QString currentDateTimeJalali() ;
     QString currentDateTimeMiladi() ;

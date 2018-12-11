@@ -48,26 +48,7 @@ cv::Scalar Detector::getRandomColors()
     return cv::Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
 }
 
-//void Detector::insertResult(CarOccupant occupant) {
-//    if (occupant.OccupantNumber>0 ) {
-//        QSqlQuery query = QSqlQuery(*db );
-//        query.prepare( "INSERT INTO result (occupant, date , imagedata) VALUES (:occupant, :date , :imageData)" );
 
-//        QPixmap inPixmap = ASM::cvMatToQPixmap(occupant.CarImage) ;
-//        QByteArray inByteArray;
-//        QBuffer inBuffer( &inByteArray );
-//        inBuffer.open( QIODevice::WriteOnly );
-//        inPixmap.save( &inBuffer, "PNG" ); // write inPixmap into inByteArray in PNG format
-
-//        query.bindValue( ":occupant", occupant.OccupantNumber );
-//        query.bindValue(":date", QString::fromStdString(currentDateTime()));
-//        query.bindValue( ":imageData", inByteArray );
-
-//        if( !query.exec() )
-//            qDebug() << "Error inserting image into table:\n" << query.lastError();
-//    }
-
-//}
 void Detector::processDetection(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
 
     for (uint idx = 0 ; idx < car_occupants.size(); idx++ ) {
@@ -85,15 +66,16 @@ void Detector::processDetection(std::vector<DetectionResult> car_detection_resul
         if (car_occupants[idx].ROI.area()<30000 || (ROI_Camera_1 & car_occupants[idx].ROI )!=car_occupants[idx].ROI) //|| !haveCar)// || (car_occupants[idx].ROI.x+car_occupants[idx].ROI.width + 20 > image.cols)
             //|| (car_occupants[idx].ROI.y+car_occupants[idx].ROI.height + 20 > image.rows))
         {
-            qDebug() << "sasa" << car_occupants[idx].NextDriver.Confidence << car_occupants[idx].Driver.Confidence ;
+            qDebug() << car_occupants[idx].NextDriver.Confidence << car_occupants[idx].Driver.Confidence ;
             //            insertResult(car_occupants[idx]);
-            if (car_occupants[idx].NextDriver.Confidence!=0)
+            if (car_occupants[idx].NextDriver.Confidence!=0 && settings->getSetting(settings->KEY_DETECT_DRIVER).toBool())
                 car_occupants[idx].FrontOccupantNumber+= 1 ;
 
-            if (car_occupants[idx].Driver.Confidence!=0)
+            if (car_occupants[idx].Driver.Confidence!=0 )
                 car_occupants[idx].FrontOccupantNumber+= 1 ;
             dbmanager->insertResult(car_occupants[idx]) ;
             car_occupants.erase(car_occupants.begin()+ idx);
+
         }
     }
 
@@ -146,23 +128,29 @@ void Detector::processDetection(std::vector<DetectionResult> car_detection_resul
 
     if (car_occupants.size()==0)
         return ;
-    for (auto& occupancy:car_occupants)
+    for (auto& occupancy:car_occupants){
+
         for (auto windows_result:windows_detection_results){
-            if (windows_result.ClassName==wind_window) {
-                float last_confidence = 0 ;
-                DetectionResult* car_result;
+
+            // check window is in the car area
+            if (windows_result.ClassName==wind_window && (windows_result.ROI & occupancy.ROI).area()>windows_result.ROI.area()/2) {
+                double last_confidence = 0 ;
+//                DetectionResult* car_result;
                 for (auto detection_result:car_detection_results){
                     if (detection_result.ClassName==occupant) {
 
                         // check occupant is in wind area
-                        if ((windows_result.ROI & detection_result.ROI) == detection_result.ROI) {
+                        if ((windows_result.ROI & detection_result.ROI).area() > detection_result.ROI.area()/2) {
 
-                            car_result = & detection_result ;
-                            if((detection_result.ROI.x + detection_result.ROI.width)/2 < (windows_result.ROI.x+windows_result.ROI.width)/2 ){
+//                            car_result = & detection_result ;
+//
+//                            cv::circle(image,cv::Point((detection_result.ROI.x + detection_result.ROI.width/2),detection_result.ROI.y),5,cv::Scalar(0,255,0),-1);
+                            if((detection_result.ROI.x + detection_result.ROI.width/2) > (windows_result.ROI.x+windows_result.ROI.width/2) ){
 
                                 if(detection_result.Confidence > occupancy.NextDriver.Confidence ) {
                                     last_confidence += occupancy.NextDriver.Confidence ;
                                     occupancy.NextDriver.Confidence = detection_result.Confidence;
+                                    occupancy.NextDriver.ROI = detection_result.ROI;
                                     image(detection_result.ROI).copyTo(occupancy.NextDriver.Image);
 
 
@@ -171,13 +159,12 @@ void Detector::processDetection(std::vector<DetectionResult> car_detection_resul
                             }
 
 
-
-
                             else {
 
-                                if(detection_result.Confidence > occupancy.Driver.Confidence && last_confidence!=0 ){
+                                if(detection_result.Confidence > occupancy.Driver.Confidence  ){
                                     last_confidence += occupancy.Driver.Confidence ;
                                     occupancy.Driver.Confidence = detection_result.Confidence;
+                                    occupancy.Driver.ROI = detection_result.ROI;
                                     image(detection_result.ROI).copyTo(occupancy.Driver.Image);
                                 }
                                 occupancy.Driver.ROI = detection_result.ROI ;
@@ -189,17 +176,27 @@ void Detector::processDetection(std::vector<DetectionResult> car_detection_resul
                     }
 
                 }
-                if(last_confidence < (occupancy.Driver.Confidence + occupancy.NextDriver.Confidence))
+                if(last_confidence != 0 && last_confidence < (occupancy.Driver.Confidence + occupancy.NextDriver.Confidence))
                 {
-                    image(car_result->ROI).copyTo(occupancy.FrontCarImage) ;
-                    occupancy.FrontCarImage.copyTo(occupancy.FrontCarImageProcessed) ;
-                    cv::rectangle(occupancy.FrontCarImageProcessed, occupancy.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
-                    cv::rectangle(occupancy.FrontCarImageProcessed, occupancy.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
-                    //                occupancy->PickImage = true ;
+                    for (auto detection_result:car_detection_results){
+                        if (detection_result.ClassName==car && (occupancy.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5)) {
+                            cv::Mat temp ;
+                            image(detection_result.ROI).copyTo(occupancy.FrontCarImage) ;
+                            image.copyTo(temp) ;
+                            cv::rectangle(temp, occupancy.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
+                            cv::rectangle(temp, occupancy.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
+                            temp(detection_result.ROI).copyTo(occupancy.FrontCarImageProcessed) ;
+
+                        }
+                    }
+
                 }
+
 
             }
         }
+    }
+
 }
 
 
@@ -333,9 +330,10 @@ void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupant
         //            idx++ ;
         //        }
 
-        rectangle(frame, car_occupant.ROI, settings->getSettingColor(settings->KEY_COLOR_CAR),4);
-        rectangle(frame, car_occupant.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
-        rectangle(frame, car_occupant.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
+//        rectangle(frame, car_occupant.ROI, settings->getSettingColor(settings->KEY_COLOR_CAR),4);
+        rectangle(frame, car_occupant.ROI, car_occupant.Color,4);
+//        rectangle(frame, car_occupant.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
+//        rectangle(frame, car_occupant.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
 
 
         //        if(cv::countNonZero(car_occupant.driver_detected)==numberOfDetection)
@@ -431,7 +429,7 @@ int Detector::runDetector(cv::String source1,cv::String source2){
 #if defined(WIN32)
     _putenv_s("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
 #else
-    setenv("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
+//    setenv("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
 #endif
 
 
@@ -555,7 +553,7 @@ int Detector::runDetector(cv::String source1,cv::String source2){
 
             //            processDetection(occupant_results,car_occupant,frame_1) ;
             processDetection(occupant_results,windows_results_front,car_occupancy,frame_1) ;
-            //            drawResult(frame_1,car_occupancy) ;
+//                        drawResult(frame_1,car_occupancy) ;
 
             drawPred(windows_results_front,frame_1,2,true);
             drawPred(occupant_results,frame_1,2,true);
