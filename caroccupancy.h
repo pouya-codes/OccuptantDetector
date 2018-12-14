@@ -17,11 +17,13 @@ class CarOccupancy
 
 public:
     CarOccupancy(cv::Mat front_image= cv::Mat(),cv::Mat back_image=cv::Mat());
+    double GetBackOcuupanceConfidence () ;
 
     int FrontOccupantNumber ;
-    int BacktOccupantNumber ;
+    int BackOccupantNumber ;
 
     OccupantResult Driver,NextDriver ;
+    std::vector<OccupantResult> BackOccupants ;
 
     cv::Scalar Color ;
     float ConfidentCar ;

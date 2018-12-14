@@ -38,7 +38,8 @@ private :
     void getRandomColors(std::vector<cv::Scalar>& colors, int numColors);
     cv::Scalar getRandomColors() ;
     void processDetection(std::vector<DetectionResult> detection_results,std::vector<CarOccupant>& car_occupants,cv::Mat image) ;
-    void processDetection(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
+    void processDetectionFront(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
+    void processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
     void drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants ) ;
     void drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupants ) ;
     void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Point base = cv::Point()) ;

@@ -49,7 +49,7 @@ cv::Scalar Detector::getRandomColors()
 }
 
 
-void Detector::processDetection(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
+void Detector::processDetectionFront(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
 
     for (uint idx = 0 ; idx < car_occupants.size(); idx++ ) {
 
@@ -135,16 +135,16 @@ void Detector::processDetection(std::vector<DetectionResult> car_detection_resul
             // check window is in the car area
             if (windows_result.ClassName==wind_window && (windows_result.ROI & occupancy.ROI).area()>windows_result.ROI.area()/2) {
                 double last_confidence = 0 ;
-//                DetectionResult* car_result;
+                //                DetectionResult* car_result;
                 for (auto detection_result:car_detection_results){
                     if (detection_result.ClassName==occupant) {
 
                         // check occupant is in wind area
                         if ((windows_result.ROI & detection_result.ROI).area() > detection_result.ROI.area()/2) {
 
-//                            car_result = & detection_result ;
-//
-//                            cv::circle(image,cv::Point((detection_result.ROI.x + detection_result.ROI.width/2),detection_result.ROI.y),5,cv::Scalar(0,255,0),-1);
+                            //                            car_result = & detection_result ;
+                            //
+                            //                            cv::circle(image,cv::Point((detection_result.ROI.x + detection_result.ROI.width/2),detection_result.ROI.y),5,cv::Scalar(0,255,0),-1);
                             if((detection_result.ROI.x + detection_result.ROI.width/2) > (windows_result.ROI.x+windows_result.ROI.width/2) ){
 
                                 if(detection_result.Confidence > occupancy.NextDriver.Confidence ) {
@@ -186,6 +186,61 @@ void Detector::processDetection(std::vector<DetectionResult> car_detection_resul
                             cv::rectangle(temp, occupancy.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             cv::rectangle(temp, occupancy.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             temp(detection_result.ROI).copyTo(occupancy.FrontCarImageProcessed) ;
+
+                        }
+                    }
+
+                }
+
+
+            }
+        }
+    }
+
+}
+
+void Detector::processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
+
+
+    for (auto& occupancy:car_occupants){
+
+        for (auto windows_result:windows_detection_results){
+
+            // check window is in the car area
+            if (windows_result.ClassName==back_rear) {
+                double new_confidence = 0 ;
+                std::vector <OccupantResult> back_occupants ;
+                for (DetectionResult detection_result:car_detection_results){
+                    if (detection_result.ClassName==occupant) {
+
+                        // check occupant is in the window area
+                        if ((windows_result.ROI & detection_result.ROI).area() > detection_result.ROI.area()/2) {
+                            //cv::circle(image,cv::Point((detection_result.ROI.x + detection_result.ROI.width/2),detection_result.ROI.y),5,cv::Scalar(0,255,0),-1);
+
+                            OccupantResult temp ;
+                            temp.Image = image(detection_result.ROI);
+                            temp.ROI = detection_result.ROI ;
+                            temp.Confidence = detection_result.Confidence  ;
+                            back_occupants.push_back(temp);
+                            new_confidence += (double) detection_result.Confidence ;
+                        }
+
+                    }
+
+                }
+                if(new_confidence != 0 && new_confidence > occupancy.GetBackOcuupanceConfidence())
+                {
+                    occupancy.BackOccupants = back_occupants ;
+                    occupancy.BackOccupantNumber = back_occupants.size() ;
+                    for (auto detection_result:car_detection_results){
+                        if (detection_result.ClassName==car) {
+                            cv::Mat temp ;
+                            image(detection_result.ROI).copyTo(occupancy.BackCarImage) ;
+                            image.copyTo(temp) ;
+                            for(OccupantResult backOccupancy : occupancy.BackOccupants) {
+                                cv::rectangle(temp, backOccupancy.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
+                            }
+                            temp(detection_result.ROI).copyTo(occupancy.BackCarImageProcessed) ;
 
                         }
                     }
@@ -330,10 +385,10 @@ void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupant
         //            idx++ ;
         //        }
 
-//        rectangle(frame, car_occupant.ROI, settings->getSettingColor(settings->KEY_COLOR_CAR),4);
+        //        rectangle(frame, car_occupant.ROI, settings->getSettingColor(settings->KEY_COLOR_CAR),4);
         rectangle(frame, car_occupant.ROI, car_occupant.Color,4);
-//        rectangle(frame, car_occupant.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
-//        rectangle(frame, car_occupant.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
+        //        rectangle(frame, car_occupant.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
+        //        rectangle(frame, car_occupant.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
 
 
         //        if(cv::countNonZero(car_occupant.driver_detected)==numberOfDetection)
@@ -429,19 +484,27 @@ int Detector::runDetector(cv::String source1,cv::String source2){
 #if defined(WIN32)
     _putenv_s("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
 #else
-//    setenv("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
+    //    setenv("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
 #endif
 
-
     cv::VideoCapture cap_1(source1,cv::CAP_FFMPEG);
-    //    cv::VideoCapture cap_2(source2,cv::CAP_FFMPEG);
+    cv::VideoCapture cap_2(source2,cv::CAP_FFMPEG);
 
+    bool second_camera = cap_2.isOpened() ;
+    if (second_camera) {
+        frame_width_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_WIDTH);
+        frame_height_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_HEIGHT);
+
+        ROI_Camera_2 = {cv::Point(ROI_PAD,ROI_PAD),
+                        cv::Point(frame_width_camera_2  - (ROI_PAD*2),
+                        frame_height_camera_2 - (ROI_PAD*2))} ;
+    }
     //    int frame_rate = cap_1.get(cv::CAP_PROP_FPS) > cap_2.get(cv::CAP_PROP_FPS) ?
     //                cap_2.get(cv::CAP_PROP_FPS) : cap_1.get(cv::CAP_PROP_FPS) ;
     if (!cap_1.isOpened())
         return 1 ;
-    //    if (!cap_2.isOpened())
-    //        return 2 ;
+//    if (!cap_2.isOpened())
+//            return 2 ;
     frame_width_camera_1 = cap_1.get(cv::CAP_PROP_FRAME_WIDTH);
     frame_height_camera_1 = cap_1.get(cv::CAP_PROP_FRAME_HEIGHT);
 
@@ -454,12 +517,7 @@ int Detector::runDetector(cv::String source1,cv::String source2){
     //    if (!cap_2.isOpened())
     //        return 2 ;
 
-    //    frame_width_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_WIDTH);
-    //    frame_height_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-    //    ROI_Camera_2 = {cv::Point(ROI_PAD,ROI_PAD),
-    //                    cv::Point(frame_width_camera_2  - (ROI_PAD*2),
-    //                    frame_height_camera_2 - (ROI_PAD*2))} ;
 
 
     //    std::cout << QSysInfo::productType().toStdString() << std::endl ;
@@ -475,8 +533,7 @@ int Detector::runDetector(cv::String source1,cv::String source2){
     std::vector<CarOccupant> car_occupant ;
     std::vector<CarOccupancy> car_occupancy ;
     run=true ;
-    cv::Mat frame_1
-            //            ,frame_2
+    cv::Mat frame_1,frame_2
             ,frame_concat;
     for ( ;; ){
         if(!run) {
@@ -512,60 +569,57 @@ int Detector::runDetector(cv::String source1,cv::String source2){
             return 5;
         std::vector<DetectionResult> car_results_camera_1 =
                 cardetector.detect(frame_1);
-        if (frame_counter%1==0
-                && car_results_camera_1.size()>0 && false
-                ) {
-
-            qDebug() << "Front Camera Detected a car" ;
-            //            std::vector<DetectionResult> car_results_camera_2 = cardetector.detect(frame_2) ;
-            //            while(car_results_camera_2.size()==0) {
-            cap_1.grab();
-            //                cap_2.grab();
-            //                cap_2.retrieve( frame_2 ) ;
-            //                car_results_camera_2 = cardetector.detect(frame_2);
-            //            }
-
-            qDebug() << "Rear Camera Detected a car" ;
-
-            std::vector<DetectionResult> windows_results_front = windowsdetector.detect(frame_1);
-            //            std::vector<DetectionResult> windows_results_rear  = windowsdetector.detect(frame_2);
-            //            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame_2);
-            drawPred(windows_results_front,frame_concat,2,true);
-            //            drawPred(occupant_results,frame_concat,2,true);
-
-            //            drawPred(windows_results_rear,frame_concat,2,true,cv::Point(frame_2.cols,0));
 
 
+            std::vector<DetectionResult> windows_results_front,windows_results_back ;
+            windows_results_front = windowsdetector.detect(frame_1);
+            std::vector<DetectionResult> occupant_results_front , occupant_results_back;
+            occupant_results_front = occupantdetector.detect(frame_1);
+            processDetectionFront(occupant_results_front,windows_results_front,car_occupancy,frame_1) ;
+            if(second_camera) {
+                if(!cap_2.grab()) {
+                    qDebug() << "Can not grab images from camera 2." << endl;
+                    return 4;
+                }
+                cap_2.retrieve( frame_2 ) ;
+                if(car_occupancy.size()==1){
+                    windows_results_back = windowsdetector.detect(frame_2);
+                    int is_back_rear = 0 ;
+                    for(DetectionResult window_result:windows_results_back){
+                        if (window_result.ClassName==back_rear){
+                            is_back_rear += 1 ;
+                        }
+                    }
+                    if (is_back_rear==1) {
+                        occupant_results_back = occupantdetector.detect(frame_2);
+                        processDetectionBack(occupant_results_back,windows_results_back,car_occupancy,frame_2) ;
+                    }
+
+                }
+
+                drawPred(windows_results_front,frame_1,2,true);
+                drawPred(occupant_results_front,frame_1,2,true);
+                drawPred(windows_results_back,frame_2,2,true);
+                drawPred(occupant_results_back,frame_2,2,true);
+
+                cv::hconcat(frame_1,frame_2,frame_concat) ;
+
+            }
+            else {
+                drawPred(windows_results_front,frame_1,2,true);
+                drawPred(occupant_results_front,frame_1,2,true);
+                frame_1.copyTo(frame_concat) ;
+            }
 
 
 
-            //            processDetection(occupant_results,car_occupant,frame) ;
-            //            drawResult(frame,car_occupant) ;
-
-        }
-        else {
-
-            std::vector<DetectionResult> windows_results_front = windowsdetector.detect(frame_1);
-            //            std::vector<DetectionResult> windows_results_rear  = windowsdetector.detect(frame_2);
-            std::vector<DetectionResult> occupant_results = occupantdetector.detect(frame_1);
-
-            //            drawPred(car_results_camera_1,frame_concat,2,true);
-
-            //            processDetection(occupant_results,car_occupant,frame_1) ;
-            processDetection(occupant_results,windows_results_front,car_occupancy,frame_1) ;
-//                        drawResult(frame_1,car_occupancy) ;
-
-            drawPred(windows_results_front,frame_1,2,true);
-            drawPred(occupant_results,frame_1,2,true);
-
-        }
 
         //        outputVideo << frame_concat;
         //        QImage qt_img = ASM::cvMatToQImage( frame );
         //        image.setPixmap(QPixmap::fromImage(qt_img));
         //        image.setText("salalalam");
         //        cv::rectangle(frame_concat,ROI,cv::Scalar(0,255,0),5) ;
-        imshow("tracker",frame_1);
+        imshow("tracker",frame_concat);
         qApp->processEvents();
         //quit on ESC button
         if(cv::waitKey(1)==27){
