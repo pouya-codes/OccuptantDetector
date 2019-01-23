@@ -71,7 +71,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 
-    detector = new Detector(*dbmanager,*settings);
+    detector = new MyDetector(*dbmanager,*settings);
     detector->runDetector(settings->getSetting(settings->KEY_SOURCE_1).toString().toStdString(),settings->getSetting(settings->KEY_SOURCE_2).toString().toStdString()) ;
     queryData(ui->comboBox_date->currentText());
 }
@@ -86,12 +86,7 @@ void MainWindow::on_pushButton_Stop_clicked()
 
 
 
-void MainWindow::on_pushButton_Browse_clicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(
-                this, "Select a file", QDir::currentPath() ,"Videos (*.mp4);;All Files (*)");
 
-}
 
 
 void MainWindow::on_rb_orginal_clicked()

@@ -1,23 +1,25 @@
-#include "detector.h"
+#include "mydetector.h"
 #include "QSysInfo"
 #include "videostreamer.h"
+#include <opencv2/cudacodec.hpp>
+#include <opencv2/core/opengl.hpp>
 
 cv::RNG rng(1);
 
 
-Detector::Detector(DBManager& dbmanager,AppSettings& settings )
+MyDetector::MyDetector(DBManager& dbmanager,AppSettings& settings )
 {
 
     this->dbmanager = &dbmanager ;
     this->settings = &settings;
 
 }
-void Detector::stopDetector() {
+void MyDetector::stopDetector() {
     this->run = false ;
 }
 
 
-cv::Mat Detector::rotateImage (cv::Mat frame,double angle) {
+cv::Mat MyDetector::rotateImage (cv::Mat frame,double angle) {
     // get rotation matrix for rotating the image around its center in pixel coordinates
     cv::Point2f center((frame.cols-1)/2.0, (frame.rows-1)/2.0);
     cv::Mat rot = cv::getRotationMatrix2D(center, angle, 1.0);
@@ -35,7 +37,7 @@ cv::Mat Detector::rotateImage (cv::Mat frame,double angle) {
 
 
 // Fill the vector with random colors
-void Detector::getRandomColors(std::vector<cv::Scalar>& colors, int numColors)
+void MyDetector::getRandomColors(std::vector<cv::Scalar>& colors, int numColors)
 {
 
     for(int i=0; i < numColors; i++)
@@ -43,13 +45,13 @@ void Detector::getRandomColors(std::vector<cv::Scalar>& colors, int numColors)
 }
 
 // Retrun a random RGB color
-cv::Scalar Detector::getRandomColors()
+cv::Scalar MyDetector::getRandomColors()
 {
     return cv::Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
 }
 
 // Process detection results of front camera
-void Detector::processDetectionFront(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
+void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
     // Scan all detection results
     for (uint idx = 0 ; idx < car_occupants.size(); idx++ ) {
 
@@ -183,7 +185,7 @@ void Detector::processDetectionFront(std::vector<DetectionResult> car_detection_
 }
 
 // Process detection results of back camera
-void Detector::processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
+void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
 
 
     for (auto& occupancy:car_occupants){
@@ -242,7 +244,7 @@ void Detector::processDetectionBack(std::vector<DetectionResult> car_detection_r
 
 
 
-void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupants )
+void MyDetector::drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupants )
 {
 
 
@@ -300,7 +302,7 @@ void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupant
 //}
 
 // Draw detection results
-void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border , bool show_conf, cv::Point base )
+void MyDetector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border , bool show_conf, cv::Point base )
 {
     for(DetectionResult detection_result:detection_results) {
         // Set rectangle color
@@ -347,9 +349,9 @@ void Detector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat&
 
 
 
-int Detector::runDetector(cv::String source1,cv::String source2){
+int MyDetector::runDetector(cv::String source1,cv::String source2){
     // create objects from detectors
-    CarDetector cardetector(*settings);
+//    CarDetector cardetector(*settings);
     WindowsDetector windowsdetector(*settings) ;
     OccupantDetector occupantdetector(*settings) ;
 
@@ -357,15 +359,36 @@ int Detector::runDetector(cv::String source1,cv::String source2){
     _putenv_s("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
 
     // create VideoCapture objects for capturing video steams
-    cv::VideoCapture cap_1(source1,cv::CAP_FFMPEG);
 
-    // return with error code 1
-    if (!cap_1.isOpened())
-        return 1 ;
+    cv::VideoCapture cap_1,cap_2 ;
+    cv::Ptr<cv::cudacodec::VideoReader> gcap_1,gcap_2 ;
 
-    // set the first camera width and height variables
-    frame_width_camera_1 = cap_1.get(cv::CAP_PROP_FRAME_WIDTH);
-    frame_height_camera_1 = cap_1.get(cv::CAP_PROP_FRAME_HEIGHT);
+    // create empty Mat for storing frame for cameras
+    cv::Mat frame_1,frame_2,frame_concat;
+    cv::cuda::GpuMat gframe_1,gframe_2;
+    if (settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool()){
+//        cv::cuda::setGlDevice();
+
+        gcap_1 = cv::cudacodec::createVideoReader(source1);
+
+        // return with error code 1
+        if (!gcap_1->nextFrame(gframe_1))
+            return 1 ;
+
+        // set the first camera width and height variables
+        frame_width_camera_1 = gcap_1->format().width ;
+        frame_height_camera_1 = gcap_1->format().height ;
+    }
+    else {
+        cap_1=cv::VideoCapture (source1,cv::CAP_FFMPEG);
+        // return with error code 1
+        if (!cap_1.isOpened())
+            return 1 ;
+
+        // set the first camera width and height variables
+        frame_width_camera_1 = cap_1.get(cv::CAP_PROP_FRAME_WIDTH);
+        frame_height_camera_1 = cap_1.get(cv::CAP_PROP_FRAME_HEIGHT);
+    }
 
     // set the first camera ROI
     cv::Point a;
@@ -375,28 +398,47 @@ int Detector::runDetector(cv::String source1,cv::String source2){
                     frame_height_camera_1 - (ROI_PAD*2))} ;
 
     // initialize the second camera
-    cv::VideoCapture cap_2(source2,cv::CAP_FFMPEG);
+     bool second_camera = source2!="" ;
+    if(source2!="") {
+        if (settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool()){
+            gcap_2 = cv::cudacodec::createVideoReader(source2);
 
-    // check the second camera status
-    bool second_camera = cap_2.isOpened() ;
-    if (second_camera) {
-        // set the second camera width and height variables
-        frame_width_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_WIDTH);
-        frame_height_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-        // set the second camera ROI
-        ROI_Camera_2 = {cv::Point(ROI_PAD,ROI_PAD),
-                        cv::Point(frame_width_camera_2  - (ROI_PAD*2),
-                        frame_height_camera_2 - (ROI_PAD*2))} ;
+            // set the first camera width and height variables
+            frame_width_camera_2 = gcap_2->format().width ;
+            frame_height_camera_2 = gcap_2->format().height ; ;
+
+        }
+        else {
+
+            cap_2 = cv::VideoCapture (source2,cv::CAP_FFMPEG);
+
+            // check the second camera status
+            second_camera = cap_2.isOpened() ;
+            if (second_camera) {
+                // set the second camera width and height variables
+                frame_width_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_WIDTH);
+                frame_height_camera_2 = cap_2.get(cv::CAP_PROP_FRAME_HEIGHT);
+
+            }
+
+        }
+
+
     }
+
+    // set the second camera ROI
+    ROI_Camera_2 = {cv::Point(ROI_PAD,ROI_PAD),
+                    cv::Point(frame_width_camera_2  - (ROI_PAD*2),
+                    frame_height_camera_2 - (ROI_PAD*2))} ;
+
 
     // create an empty vector for storing detection result
     std::vector<CarOccupancy> car_occupancy ;
     run=true ;
 
-    // create empty Mat for storing frame for cameras
-    cv::Mat frame_1,frame_2
-            ,frame_concat;
+
+
     for ( ;; ){
         if(!run) {
             cv::destroyAllWindows() ;
@@ -405,19 +447,22 @@ int Detector::runDetector(cv::String source1,cv::String source2){
 
         }
         // return with error code 2
-        if(!cap_1.grab()) {
+        if(!cap_1.read(frame_1) && !gcap_1->nextFrame(gframe_1)) {
             qDebug() << "Can not grab images from camera 1." << endl;
             return 2;
         }
 
-        cap_1.retrieve( frame_1 ) ;
+//        cap_1.retrieve( frame_1 ) ;
 
 
         // stop the program if there is no more images
-        if(frame_1.rows==0 ){
+        if(frame_1.rows==0 && gframe_1.rows==0 ){
             cv::destroyAllWindows() ;
             return 0 ;
         }
+
+        if(settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool())
+            gframe_1.download(frame_1);
 
         // Run tiny-yolo car detector on the input frame
 //        std::vector<DetectionResult> car_results_camera_1 =
@@ -442,16 +487,17 @@ int Detector::runDetector(cv::String source1,cv::String source2){
         if(second_camera) {
 
             // if there is no response from the second camera retrun 4 and exit
-            if(!cap_2.grab()) {
+            if(!cap_2.read(frame_2) && !gcap_2->nextFrame(gframe_2)) {
                 qDebug() << "Can not grab images from camera 2." << endl;
                 return 4;
             }
 
-            // get frame from the second camera
-            cap_2.retrieve( frame_2 ) ;
-
             // check in the first camera exist just one car
             if(car_occupancy.size()==1){
+
+
+                if(settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool())
+                    gframe_2.download(frame_2);
 
                 // detect back windows in frame from the second windows
                 windows_results_back = windowsdetector.detect(frame_2);

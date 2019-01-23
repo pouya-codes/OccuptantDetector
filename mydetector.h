@@ -16,11 +16,11 @@
 
 
 
-class Detector
+class MyDetector
 {
 
 public:
-    Detector(DBManager& dbmanager,AppSettings& settings);
+    MyDetector(DBManager& dbmanager,AppSettings& settings);
     int runDetector(cv::String source1,cv::String source2) ;
     void stopDetector() ;
     void resumeDetector() ;

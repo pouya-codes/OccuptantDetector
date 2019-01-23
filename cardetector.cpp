@@ -11,7 +11,7 @@ std::vector<DetectionResult> CarDetector::detect(cv::Mat frame) {
     cv::Mat inputBlob = cv::dnn::blobFromImage(frame, 1 / 255.F , cv::Size(416, 416), cv::Scalar(), true, false); //Convert Mat to batch of images
     net.setInput(inputBlob);
     std::vector<cv::Mat> outs;
-    net.forward(outs, getOutputsNames(net));  //compute output
+//    net.forward(outs, getOutputsNames(net));  //compute output
     std::vector<DetectionResult> detection_results = postprocess(frame, outs);
     return detection_results;
 

@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <detector.h>
+#include <mydetector.h>
 #include <QModelIndex>
 #include <QItemSelectionModel>
 #include <QtSql/qsqldatabase.h>
@@ -32,7 +32,6 @@ private slots:
     void on_tableViewSelectionModel_currentRowChanged(QModelIndex index1,QModelIndex index2);
 //    void on_tableViewSelectionModel_currentRowChanged(QModelIndex index1,QModelIndex index2);
 
-    void on_pushButton_Browse_clicked();
 
 
     void on_rb_orginal_clicked();
@@ -52,7 +51,7 @@ private:
     void setPictures() ;
     int selected_row_id ;
     Ui::MainWindow *ui;
-    Detector* detector ;
+    MyDetector* detector ;
     AppSettings* settings ;
     DBManager* dbmanager ;
     QPixmap Front_Image_Raw, Back_Image_Raw, Front_Image_Processed, Back_Image_Processed ;

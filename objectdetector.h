@@ -1,10 +1,13 @@
 #ifndef OBJECTDETECTOR_H
 #define OBJECTDETECTOR_H
+#define OPENCV
+
 #include <setting.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <QString>
+#include "yolo_v2_class.hpp"
 
 
 enum ClassNames {wind_window,front_rear,back_rear,car,occupant} ;
@@ -22,21 +25,9 @@ class ObjectDetector
 {
 public:
     virtual std::vector<DetectionResult> detect(cv::Mat frame) = 0;
-    virtual std::vector<DetectionResult> postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs ) = 0;
+    virtual std::vector<DetectionResult> postprocess(std::vector<bbox_t> result_vec) = 0;
     virtual ~ObjectDetector() {}
-    std::vector<cv::String> getOutputsNames(const cv::dnn::Net& net)
-    {
-        static std::vector<cv::String> names;
-    //    if (names.empty())
-    //    {
-            std::vector<int> outLayers = net.getUnconnectedOutLayers();
-            std::vector<cv::String> layersNames = net.getLayerNames();
-            names.resize(outLayers.size());
-            for (size_t i = 0; i < outLayers.size(); ++i)
-                names[i] = layersNames[outLayers[i] - 1];
-    //    }
-        return names;
-    }
+
     cv::Mat equalizeIntensity(const cv::Mat& inputImage)
     {
         if(inputImage.channels() >= 3)

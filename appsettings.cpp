@@ -1,4 +1,5 @@
 #include "appsettings.h"
+#include "QDebug"
 AppSettings::AppSettings()
 {
     settingsFilePath = QDir::currentPath() + "/settings.ini";
@@ -78,6 +79,13 @@ void AppSettings::loadSettings() {
 
     if (settings->value(KEY_DETECT_DRIVER).toString()=="")
         settings->setValue(KEY_DETECT_DRIVER, false);
+
+    if (settings->value(KEY_USE_GPU_FOR_DECODE).toString()=="")
+        settings->setValue(KEY_USE_GPU_FOR_DECODE, false);
+
+
+
+
 
 }
 // swap RGB-->BGR

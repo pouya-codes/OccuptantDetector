@@ -41,15 +41,13 @@ public:
     QGroupBox *groupBox_3;
     QGridLayout *gridLayout_3;
     QDoubleSpinBox *sb_windows;
-    QPushButton *btn_save_path;
     QLabel *label_11;
-    QCheckBox *cb_save_videos;
+    QCheckBox *cb_use_gpu;
     QDoubleSpinBox *sb_car_tiny;
     QLabel *label_9;
     QDoubleSpinBox *sb_car_spp;
     QDoubleSpinBox *sb_occupant;
     QLabel *label_12;
-    QLineEdit *le_save_path;
     QCheckBox *cb_driver_detection;
     QLabel *label_10;
     QHBoxLayout *horizontalLayout;
@@ -149,23 +147,17 @@ public:
 
         gridLayout_3->addWidget(sb_windows, 0, 2, 1, 1);
 
-        btn_save_path = new QPushButton(groupBox_3);
-        btn_save_path->setObjectName(QStringLiteral("btn_save_path"));
-        btn_save_path->setEnabled(false);
-
-        gridLayout_3->addWidget(btn_save_path, 2, 1, 1, 1);
-
         label_11 = new QLabel(groupBox_3);
         label_11->setObjectName(QStringLiteral("label_11"));
 
         gridLayout_3->addWidget(label_11, 1, 1, 1, 1);
 
-        cb_save_videos = new QCheckBox(groupBox_3);
-        cb_save_videos->setObjectName(QStringLiteral("cb_save_videos"));
-        cb_save_videos->setEnabled(false);
-        cb_save_videos->setLayoutDirection(Qt::RightToLeft);
+        cb_use_gpu = new QCheckBox(groupBox_3);
+        cb_use_gpu->setObjectName(QStringLiteral("cb_use_gpu"));
+        cb_use_gpu->setEnabled(true);
+        cb_use_gpu->setLayoutDirection(Qt::RightToLeft);
 
-        gridLayout_3->addWidget(cb_save_videos, 2, 2, 1, 1);
+        gridLayout_3->addWidget(cb_use_gpu, 2, 2, 1, 1);
 
         sb_car_tiny = new QDoubleSpinBox(groupBox_3);
         sb_car_tiny->setObjectName(QStringLiteral("sb_car_tiny"));
@@ -199,12 +191,6 @@ public:
         label_12->setObjectName(QStringLiteral("label_12"));
 
         gridLayout_3->addWidget(label_12, 1, 3, 1, 1);
-
-        le_save_path = new QLineEdit(groupBox_3);
-        le_save_path->setObjectName(QStringLiteral("le_save_path"));
-        le_save_path->setEnabled(false);
-
-        gridLayout_3->addWidget(le_save_path, 2, 0, 1, 1);
 
         cb_driver_detection = new QCheckBox(groupBox_3);
         cb_driver_detection->setObjectName(QStringLiteral("cb_driver_detection"));
@@ -432,9 +418,8 @@ public:
         label_8->setText(QApplication::translate("AppSettingsDialog", "\330\257\331\210\330\261\330\250\333\214\331\206 \330\257\331\210\331\205", nullptr));
         btn_source2->setText(QApplication::translate("AppSettingsDialog", "\330\247\331\206\330\252\330\256\330\247\330\250 \331\201\330\247\333\214\331\204", nullptr));
         groupBox_3->setTitle(QApplication::translate("AppSettingsDialog", "\330\252\331\206\330\270\333\214\331\205\330\247\330\252 \331\206\330\261\331\205 \330\247\331\201\330\262\330\247\330\261", nullptr));
-        btn_save_path->setText(QApplication::translate("AppSettingsDialog", "\330\247\331\206\330\252\330\256\330\247\330\250 \331\205\330\263\333\214\330\261", nullptr));
         label_11->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\252 \330\252\330\264\330\256\333\214\330\265 \331\205\330\247\330\264\333\214\331\206 \331\207\330\247", nullptr));
-        cb_save_videos->setText(QApplication::translate("AppSettingsDialog", "\330\260\330\256\333\214\330\261\331\207 \330\252\330\265\330\247\331\210\333\214\330\261", nullptr));
+        cb_use_gpu->setText(QApplication::translate("AppSettingsDialog", "\330\257\333\214\332\251\330\257 \330\252\330\265\331\210\333\214\330\261 \330\250\330\247 \332\251\330\247\330\261\330\252 \332\257\330\261\330\247\331\201\333\214\332\251", nullptr));
         label_9->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\252 \331\210\330\254\331\210\330\257 \331\205\330\247\330\264\333\214\331\206", nullptr));
         label_12->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\263\330\252 \330\252\330\264\330\256\333\214\330\265 \330\263\330\261\331\206\330\264\333\214\331\206 \331\207\330\247", nullptr));
         cb_driver_detection->setText(QApplication::translate("AppSettingsDialog", "\330\252\330\264\330\256\333\214\330\265 \330\261\330\247\331\206\331\206\330\257\331\207", nullptr));

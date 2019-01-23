@@ -40,8 +40,6 @@ private slots:
 
     void on_btn_source2_clicked();
 
-    void on_btn_save_path_clicked();
-
     void on_buttonBox_accepted();
 
 
@@ -52,9 +50,9 @@ private slots:
 
 
 
-    void on_cb_save_videos_stateChanged(int arg1);
-
     void on_cb_driver_detection_stateChanged(int arg1);
+
+    void on_cb_use_gpu_stateChanged(int arg1);
 
 private:
     std::vector<QString> line_edits_keys ;

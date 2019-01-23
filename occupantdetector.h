@@ -3,14 +3,15 @@
 #include <objectdetector.h>
 #include <appsettings.h>
 
+
 class OccupantDetector : public ObjectDetector
 {
 public:
     OccupantDetector(AppSettings& settings);
     std::vector<DetectionResult> detect(cv::Mat frame) ;
-    std::vector<DetectionResult> postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs ) ;
+    std::vector<DetectionResult> postprocess(std::vector<bbox_t> result_vec ) ;
 private:
-    cv::dnn::Net net ;
+    Detector* net ;
     AppSettings* settings ;
 };
 

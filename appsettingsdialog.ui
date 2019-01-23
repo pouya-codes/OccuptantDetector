@@ -85,16 +85,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="btn_save_path">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>انتخاب مسیر</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QLabel" name="label_11">
         <property name="text">
@@ -103,15 +93,15 @@
        </widget>
       </item>
       <item row="2" column="2">
-       <widget class="QCheckBox" name="cb_save_videos">
+       <widget class="QCheckBox" name="cb_use_gpu">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="layoutDirection">
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>ذخیره تصاویر</string>
+         <string>دیکد تصویر با کارت گرافیک</string>
         </property>
        </widget>
       </item>
@@ -162,13 +152,6 @@
        <widget class="QLabel" name="label_12">
         <property name="text">
          <string>حسایست تشخیص سرنشین ها</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLineEdit" name="le_save_path">
-        <property name="enabled">
-         <bool>false</bool>
         </property>
        </widget>
       </item>

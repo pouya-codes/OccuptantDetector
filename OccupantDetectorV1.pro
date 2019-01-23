@@ -16,7 +16,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     windowsdetector.cpp \
-    detector.cpp \
     cardetector.cpp \
     occupantdetector.cpp \
     caroccupancy.cpp \
@@ -25,10 +24,10 @@ SOURCES += main.cpp\
     clickablelabel.cpp \
     dbmanager.cpp \
     qdateconvertor.cpp \
-    videostreamer.cpp
+    videostreamer.cpp \
+    mydetector.cpp
 
 HEADERS  += mainwindow.h \
-    detector.h \
     setting.h \
     asmOpenCV.h \
     windowsdetector.h \
@@ -41,7 +40,8 @@ HEADERS  += mainwindow.h \
     clickablelabel.h \
     dbmanager.h \
     qdateconvertor.h \
-    videostreamer.h
+    videostreamer.h \
+    mydetector.h
 
 FORMS    += mainwindow.ui \
     appsettingsdialog.ui
@@ -55,14 +55,19 @@ win32 {
 #INCLUDEPATH += D:/Develop/OpenCV/BulidMSCV4/install/include
 INCLUDEPATH += D:/Develop/OpenCV/buildMSVC4.0.1/install/include
 INCLUDEPATH += D:/Develop/Library/darknet/include
-LIBS += -LD:/Develop/Library/darknet/build/darknet/x64/yolo_cpp_dll.dll
+
+LIBS += -LD:/Develop/Library/darknet/build/darknet/x64/ \
+        -lyolo_cpp_dll
+
+
 LIBS += -LD:/Develop/OpenCV/buildMSVC4.0.1/install/x64/vc15/lib \
 -lopencv_core401 \
 -lopencv_imgproc401 \
 -lopencv_highgui401 \
 -lopencv_imgcodecs401 \
 -lopencv_dnn401 \
--lopencv_videoio401
+-lopencv_videoio401 \
+-lopencv_cudacodec401
 
 
 }

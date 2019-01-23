@@ -117,7 +117,7 @@ QString DBManager::currentDateTimeMiladi() {
 }
 
 void DBManager::insertResult(CarOccupancy occupant) {
-    qDebug () << occupant.FrontOccupantNumber ;
+//    qDebug () << occupant.FrontOccupantNumber ;
 
     if (occupant.FrontOccupantNumber+occupant.BackOccupantNumber>0 ) {
         QSqlQuery query = QSqlQuery(db);
@@ -148,7 +148,7 @@ void DBManager::insertResult(CarOccupancy occupant) {
 
         query.bindValue( ":occupant_front", occupant.FrontOccupantNumber );
         query.bindValue( ":occupant_total", occupant.FrontOccupantNumber + occupant.BackOccupantNumber );
-        query.bindValue(":date", this->currentDateTimeJalali());
+        query.bindValue(":date", this->currentDateTimeJalali().split(" ")[1]);
         query.bindValue( ":imagedata_raw_front", inByteArrayFront );
         query.bindValue( ":imagedata_processed_front", inByteArrayFrontProcessed );
 
