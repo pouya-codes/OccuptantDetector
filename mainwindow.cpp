@@ -4,7 +4,7 @@
 #include "QMessageBox"
 
 
-
+// Set images on TableView row change
 void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1, QModelIndex index2){
     selected_row_id = index1.sibling(index1.row(), 0).data().toInt();
     DBManager::DetectionImages images = dbmanager->getPicture(selected_row_id,table_date) ;
@@ -19,13 +19,14 @@ void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1
 }
 
 
-
+// Query detction results
 void MainWindow::queryData(QString date) {
     ui->tableView->setModel(dbmanager->getDataModel(date));
     QItemSelectionModel *sm = ui->tableView->selectionModel();
     connect(sm,SIGNAL(currentRowChanged(QModelIndex,QModelIndex) ),this,SLOT(on_tableViewSelectionModel_currentRowChanged(QModelIndex,QModelIndex)) );
 }
 
+// Set detection pictures
 void MainWindow::setPictures() {
     if (ui->rb_orginal->isChecked()){
         ui->lable_front_image->setPixmap(Front_Image_Raw);
@@ -43,16 +44,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Create DBManager and AppSettings objects
     settings = new AppSettings() ;
     dbmanager = new DBManager();
 
+    // Connect image lable signals to slots
     connect(ui->lable_front_image, SIGNAL(clicked()), this, SLOT (front_image_clicked()));
     connect(ui->lable_back_image , SIGNAL(clicked()), this, SLOT (back_image_clicked()));
     ui->statusBar->showMessage(dbmanager->currentDateTimeJalali().split(' ')[0]);
     ui->comboBox_date->addItems(dbmanager->GetTableNames());
     ui->comboBox_date->setCurrentIndex(0);
 
-
+    // changes program theme
 //    QFile style_file("/home/pouya/darkorange.stylesheet");
 //    if(style_file.open(QIODevice::ReadOnly))
 //        this->setStyleSheet(style_file.readAll());
@@ -67,12 +70,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    //    if(settings->getSetting(settings->KEY_SOURCE_1).toString()=="") {
-    //        QMessageBox messageBox;
-    //        messageBox.critical(0,"خطا","آدرس های ورودی را چک کنید.");
-    //        messageBox.setFixedSize(500,200);
-    //        return ;
-    //    }
+
     detector = new Detector(*dbmanager,*settings);
     detector->runDetector(settings->getSetting(settings->KEY_SOURCE_1).toString().toStdString(),settings->getSetting(settings->KEY_SOURCE_2).toString().toStdString()) ;
     queryData(ui->comboBox_date->currentText());

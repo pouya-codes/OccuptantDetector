@@ -13,16 +13,7 @@
 #include <thread>
 
 
-struct CarOccupant {
-    cv::Rect ROI ;
-    cv::Scalar Color ;
-    int OccupantNumber ;
-    cv::Mat driver_detected =cv::Mat(numberOfDetection,1,CV_8U, cv::Scalar(true? 0 : 1));
-    cv::Mat next_driver_detected = cv::Mat(numberOfDetection,1,CV_8U, cv::Scalar(0));
-    cv::Mat CarImage ;
-    float ConfidentCar ;
 
-};
 
 
 class Detector
@@ -37,10 +28,10 @@ private :
     cv::Mat rotateImage (cv::Mat frame,double angle) ;
     void getRandomColors(std::vector<cv::Scalar>& colors, int numColors);
     cv::Scalar getRandomColors() ;
-    void processDetection(std::vector<DetectionResult> detection_results,std::vector<CarOccupant>& car_occupants,cv::Mat image) ;
+
     void processDetectionFront(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
     void processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
-    void drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants ) ;
+//    void drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants ) ;
     void drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupants ) ;
     void drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border = 1 , bool show_conf =false, cv::Point base = cv::Point()) ;
     int frame_width_camera_1 ;

@@ -151,6 +151,7 @@ public:
 
         btn_save_path = new QPushButton(groupBox_3);
         btn_save_path->setObjectName(QStringLiteral("btn_save_path"));
+        btn_save_path->setEnabled(false);
 
         gridLayout_3->addWidget(btn_save_path, 2, 1, 1, 1);
 
@@ -161,6 +162,7 @@ public:
 
         cb_save_videos = new QCheckBox(groupBox_3);
         cb_save_videos->setObjectName(QStringLiteral("cb_save_videos"));
+        cb_save_videos->setEnabled(false);
         cb_save_videos->setLayoutDirection(Qt::RightToLeft);
 
         gridLayout_3->addWidget(cb_save_videos, 2, 2, 1, 1);
@@ -200,6 +202,7 @@ public:
 
         le_save_path = new QLineEdit(groupBox_3);
         le_save_path->setObjectName(QStringLiteral("le_save_path"));
+        le_save_path->setEnabled(false);
 
         gridLayout_3->addWidget(le_save_path, 2, 0, 1, 1);
 

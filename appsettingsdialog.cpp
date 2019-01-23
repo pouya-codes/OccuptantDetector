@@ -42,52 +42,78 @@ void AppSettingsDialog::setLableColor (ClickableLabel* lable, QColor color) {
 
 
 }
-
+// load setting and set UI values
 void AppSettingsDialog::loadSettings() {
 
-    line_edits = { ui->le_source1, ui->le_source2 ,
-                                ui->le_spp_cfg , ui->le_spp_weight,
-                                ui->le_tiny_cfg, ui->le_tiny_weight,
-                                ui->le_windows_cfg, ui->le_windows_weight, ui->le_save_path } ;
+    // set array for storing UI's line edits
+    line_edits = {
+        ui->le_source1, ui->le_source2 ,
+        ui->le_spp_cfg , ui->le_spp_weight,
+        ui->le_tiny_cfg, ui->le_tiny_weight,
+        ui->le_windows_cfg, ui->le_windows_weight, ui->le_save_path
+    } ;
 
-    line_edits_keys = {settings->KEY_SOURCE_1, settings->KEY_SOURCE_2,
-                      settings->KEY_OCCUPANT_CFG, settings->KEY_OCCUPANT_WEIGHTS,
-                      settings->KEY_TINY_CFG, settings->KEY_TINY_WEIGHTS,
-                      settings->KEY_WINDOWS_CFG, settings->KEY_WINDOWS_WEIGHTS, settings->KEY_SAVE_VIDEOS_PATH} ;
+    // set array for storing UI's line edits KEYS
+    line_edits_keys = {
+        settings->KEY_SOURCE_1, settings->KEY_SOURCE_2,
+        settings->KEY_OCCUPANT_CFG, settings->KEY_OCCUPANT_WEIGHTS,
+        settings->KEY_TINY_CFG, settings->KEY_TINY_WEIGHTS,
+        settings->KEY_WINDOWS_CFG, settings->KEY_WINDOWS_WEIGHTS, settings->KEY_SAVE_VIDEOS_PATH
+    } ;
 
-    spin_boxs = {ui->sb_car_spp,ui->sb_car_tiny,
-                 ui->sb_occupant,ui->sb_windows};
+    // set array for storing UI's spin boxs
+    spin_boxs = {
+        ui->sb_car_spp,ui->sb_car_tiny,
+                 ui->sb_occupant,ui->sb_windows
+    };
 
-    spin_boxs_keys = {settings->KEY_CAR_THREADSHOLD,settings->KEY_TINY_CAR_THREADSHOLD,
-                     settings->KEY_OCCUPANT_THREADSHOLD,settings->KEY_WINDOW_THREADSHOLD};
+    // set array for storing UI's spin boxs KEYS
+    spin_boxs_keys = {
+        settings->KEY_CAR_THREADSHOLD,settings->KEY_TINY_CAR_THREADSHOLD,
+        settings->KEY_OCCUPANT_THREADSHOLD,settings->KEY_WINDOW_THREADSHOLD
+    };
+
+    // set array for storing UI's colors
+    color_lables = {
+        ui->label_color_car,ui->label_color_occupant,
+        ui->label_color_window,ui->label_color_window_back
+    };
+
+    // set array for storing UI's colors KEYS
+    color_lable_keys = {
+        settings->KEY_COLOR_CAR,settings->KEY_COLOR_OCCUPANT,
+        settings->KEY_COLOR_WINDOW,settings->KEY_COLOR_WINDOW_BACK
+    };
+
+    // set array for storing UI's checkboxs
+    checkboxs = {
+        ui->cb_driver_detection,ui->cb_save_videos
+    };
+
+    // set array for storing UI's checkboxs KEYS
+    checkbox_keys = {
+        settings->KEY_DETECT_DRIVER,settings->KEY_SAVE_VIDEOS
+    };
 
 
-    color_lables = {ui->label_color_car,ui->label_color_occupant,
-                    ui->label_color_window,ui->label_color_window_back};
 
-    color_lable_keys = {settings->KEY_COLOR_CAR,settings->KEY_COLOR_OCCUPANT,
-                     settings->KEY_COLOR_WINDOW,settings->KEY_COLOR_WINDOW_BACK};
-
-    checkboxs = {ui->cb_driver_detection,ui->cb_save_videos};
-
-    checkbox_keys = {settings->KEY_DETECT_DRIVER,settings->KEY_SAVE_VIDEOS};
-
-
-
-
+    // set line edit values
     for (unsigned idx = 0; idx < line_edits_keys.size(); ++idx)
         line_edits[idx]->setText(settings->getSetting(line_edits_keys[idx]).toString()) ;
 
-
+    // set spin boxs values
     for (unsigned idx = 0; idx < spin_boxs_keys.size(); ++idx)
         spin_boxs[idx]->setValue(settings->getSetting(spin_boxs_keys[idx]).toDouble()) ;
 
+    // set colors values
     for (unsigned idx = 0; idx < color_lable_keys.size(); ++idx)
         setLableColor(color_lables[idx],settings->getSetting(color_lable_keys[idx]).value<QColor>()) ;
 
+    // set line edit values
     for (unsigned idx = 0; idx < checkbox_keys.size(); ++idx)
         checkboxs[idx]->setChecked(settings->getSetting(checkbox_keys[idx]).value<bool>()) ;
 
+    // set checkboxs values
     if(!ui->cb_save_videos->isChecked()){
         ui->btn_save_path->setEnabled(false) ;
         ui->le_save_path->setEnabled(false) ;
@@ -95,6 +121,7 @@ void AppSettingsDialog::loadSettings() {
 
 }
 
+// save setting
 void AppSettingsDialog::saveSettings() {
     for (unsigned idx = 0; idx < line_edits_keys.size(); ++idx)
         settings->setSetting(line_edits_keys[idx],line_edits[idx]->text());

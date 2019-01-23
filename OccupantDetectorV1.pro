@@ -52,15 +52,17 @@ unix: PKGCONFIG += opencv4
 }
 
 win32 {
-INCLUDEPATH += D:/Develop/OpenCV/BulidMSCV4/install/include
-
-LIBS += -LD:/Develop/OpenCV/BulidMSCV4/install/x64/vc15/lib \
--lopencv_core400 \
--lopencv_imgproc400 \
--lopencv_highgui400 \
--lopencv_imgcodecs400 \
--lopencv_dnn400 \
--lopencv_videoio400
+#INCLUDEPATH += D:/Develop/OpenCV/BulidMSCV4/install/include
+INCLUDEPATH += D:/Develop/OpenCV/buildMSVC4.0.1/install/include
+INCLUDEPATH += D:/Develop/Library/darknet/include
+LIBS += -LD:/Develop/Library/darknet/build/darknet/x64/yolo_cpp_dll.dll
+LIBS += -LD:/Develop/OpenCV/buildMSVC4.0.1/install/x64/vc15/lib \
+-lopencv_core401 \
+-lopencv_imgproc401 \
+-lopencv_highgui401 \
+-lopencv_imgcodecs401 \
+-lopencv_dnn401 \
+-lopencv_videoio401
 
 
 }

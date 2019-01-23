@@ -1,3 +1,5 @@
+/* This class is defined to save and load program settings and variables */
+
 #ifndef APPSETTINGS_H
 #define APPSETTINGS_H
 #include <QSettings>

@@ -6,17 +6,19 @@ AppSettings::AppSettings()
     loadSettings() ;
 
 }
-
+// get setting value by key
 QVariant AppSettings::getSetting(QString key) {
         return settings->value(key) ;
 }
+// get colors from setting by key
 cv::Scalar AppSettings::getSettingColor(QString key) {
     return qcolor2scalar(settings->value(key).value<QColor>()) ;
 }
-
+// set setting value by key
 void AppSettings::setSetting(QString key,QVariant value) {
     settings->setValue(key,value) ;
 }
+// load settings
 void AppSettings::loadSettings() {
     //set default setting
     if (settings->value(KEY_OCCUPANT_CFG).toString()=="")
@@ -78,15 +80,15 @@ void AppSettings::loadSettings() {
         settings->setValue(KEY_DETECT_DRIVER, false);
 
 }
-
+// swap RGB-->BGR
 cv::Scalar AppSettings::qcolor2scalar(QColor color)
 {
     int r,g,b;
     color.getRgb(&r, &g, &b);
-    return cv::Scalar(b,g,r); // swap RGB-->BGR
+    return cv::Scalar(b,g,r);
 }
-
+// swap RGB-->BGR
 QColor AppSettings::scalar2qcolor(cv::Scalar color)
 {
-    return QColor(color[2],color[1],color[0]); // swap RGB-->BGR
+    return QColor(color[2],color[1],color[0]);
 }

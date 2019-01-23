@@ -1,3 +1,5 @@
+// This class inherits ObjectDetector and Detects car in the input frame
+
 #ifndef CARDETECTOR_H
 #define CARDETECTOR_H
 #include <objectdetector.h>

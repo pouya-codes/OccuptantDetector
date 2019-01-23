@@ -4,7 +4,6 @@ DBManager::DBManager()
 {
     db = QSqlDatabase::addDatabase(DRIVER) ;
     if(QSqlDatabase::isDriverAvailable(DRIVER)) {
-//        QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
         db.setDatabaseName("results.db");
         if(!db.open())
           qWarning() << "ERROR: " << db.lastError();
@@ -12,7 +11,7 @@ DBManager::DBManager()
         QString queryText = "CREATE TABLE IF NOT EXISTS t" + todayDate+
                 " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
                   "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)" ;
-//        qDebug() << queryText ;
+
         QSqlQuery query(queryText);
         if(!query.isActive())
             qWarning() << "ERROR: " << query.lastError().text();
@@ -20,17 +19,22 @@ DBManager::DBManager()
     }
 
 }
+// Return All table names (dates)
 QStringList DBManager::GetTableNames () {
     QString querytxt ;
     querytxt = "SELECT name FROM sqlite_master WHERE type = 'table' and name!='sqlite_sequence' ORDER BY name DESC";
     QSqlQuery query;
     query.exec(querytxt) ;
+    // create an empty QStringList
     QStringList tableNames ;
+    // Replace 't' by '' in table names
     while (query.next())
         tableNames.append(query.value(0).toString().replace('t',""));
     return tableNames ;
 }
+// return sotred picture for a specific table row
 DBManager::DetectionImages DBManager::getPicture(int id, QString table_name) {
+        // prepate query
         QString querytxt ;
         querytxt = "SELECT imagedata_raw_front, imagedata_raw_back BLOB, imagedata_processed_front BLOB,"
                    "imagedata_processed_back BLOB FROM t"+table_name+" WHERE id = ?";
@@ -40,6 +44,7 @@ DBManager::DetectionImages DBManager::getPicture(int id, QString table_name) {
         query.exec() ;
         query.first() ;
 
+        // covert QByteArrys to Pixmaps
         QByteArray outByteArray = query.value( 0 ).toByteArray();
         QPixmap FrontRawPixmap = QPixmap();
         FrontRawPixmap.loadFromData( outByteArray );
@@ -57,7 +62,7 @@ DBManager::DetectionImages DBManager::getPicture(int id, QString table_name) {
         QPixmap BackProcessedPixmap = QPixmap();
         BackProcessedPixmap.loadFromData( outByteArray );
 
-
+        // return stored pictures
         DBManager::DetectionImages images = {FrontRawPixmap,BackRawPixmap,FrontProcessedPixmap,BackProcessedPixmap} ;
         return images;
 
@@ -97,18 +102,12 @@ QString DBManager::currentDateTimeJalali() {
     QString date_string = a.toString("yyyy-MM-dd hh,mm,ss,zzz") ;
     QStringList parts = date_string.split(' ');
     QStringList parts_date = parts[0].split('-') ;
-//    return a.toString("yyyy-MM-dd hh,mm,ss,zzz");
 
     QStringList shamsi=  mdate.ToJalali( parts_date[0],parts_date[1],parts_date[2]);
     QString JalailDate =shamsi.at(0)+
             "/"+QString("%1").arg(shamsi.at(1).toInt(),2,10,QLatin1Char('0'))+
             "/"+QString("%1").arg(shamsi.at(2).toInt(),2,10,QLatin1Char('0'))+ " " +parts[1];
     return JalailDate ;
-//    qDebug()<<JalailDate;
-//    // jalali to gregorian
-//    QStringList m= mdate.ToMiladi("1372","3","6");
-//    QString miladiDate= m.at(0)+"/"+ m.at(1)+"/"+m.at(2);
-//    qDebug()<<miladiDate;
 
 
 }

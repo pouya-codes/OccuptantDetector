@@ -1,3 +1,5 @@
+/* Define of appSettingDialog */
+
 #ifndef APPSETTINGSDIALOG_H
 #define APPSETTINGSDIALOG_H
 

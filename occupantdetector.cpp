@@ -4,6 +4,9 @@ OccupantDetector::OccupantDetector(AppSettings& settings)
 {
      net = cv::dnn::readNetFromDarknet(settings.getSetting(settings.KEY_OCCUPANT_CFG).toString().toStdString()
                                        ,settings.getSetting(settings.KEY_OCCUPANT_WEIGHTS).toString().toStdString());
+     net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+     net.setPreferableTarget(cv::dnn::DNN_TARGET_OPENCL);
+
      this->settings = &settings ;
 }
 
@@ -30,9 +33,6 @@ std::vector<DetectionResult> OccupantDetector::postprocess(cv::Mat& frame, const
             cv::Point classIdPoint;
             double confidence;
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-//            if(confidence>0.50){
-//                std::cout << classIdPoint.x << ":"<<confidence << std::endl;
-//            }
             if (
                     (confidence > settings->getSetting(settings->KEY_OCCUPANT_THREADSHOLD).toDouble()  && classIdPoint.x==0)
                     ||
