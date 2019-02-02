@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include "QFileDialog"
 #include "QMessageBox"
-
+#include "xlsxdocument.h"
 
 // Set images on TableView row change
 void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1, QModelIndex index2){
@@ -43,6 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+//    QXlsx::Document xlsx;
+//    xlsx.renameSheet("Sheet1","aa") ;
+//    xlsx.write("A1", "سلام");
+//    xlsx.saveAs("D:/Test.xlsx");
 
     // Create DBManager and AppSettings objects
     settings = new AppSettings() ;

@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = OccupantDetectorV1
 TEMPLATE = app
-
+include(qtxlsx/src/xlsx/qtxlsx.pri)
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -53,13 +53,11 @@ unix: PKGCONFIG += opencv4
 
 win32 {
 #INCLUDEPATH += D:/Develop/OpenCV/BulidMSCV4/install/include
+
 INCLUDEPATH += D:/Develop/OpenCV/buildMSVC4.0.1/install/include
 INCLUDEPATH += D:/Develop/Library/darknet/include
-
 LIBS += -LD:/Develop/Library/darknet/build/darknet/x64/ \
         -lyolo_cpp_dll
-
-
 LIBS += -LD:/Develop/OpenCV/buildMSVC4.0.1/install/x64/vc15/lib \
 -lopencv_core401 \
 -lopencv_imgproc401 \

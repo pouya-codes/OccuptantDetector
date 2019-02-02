@@ -59,7 +59,7 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
         // it save the result on database and remove it from array
         if (car_occupants[idx].ROI.area()<30000 || (ROI_Camera_1 & car_occupants[idx].ROI )!=car_occupants[idx].ROI)
         {
-//          qDebug() << car_occupants[idx].NextDriver.Confidence << car_occupants[idx].Driver.Confidence ;
+            //          qDebug() << car_occupants[idx].NextDriver.Confidence << car_occupants[idx].Driver.Confidence ;
 
             // Compare confidence of next driver occupant confidence with 0
             if (settings->getSetting(settings->KEY_DETECT_DRIVER).toBool() && car_occupants[idx].NextDriver.Confidence!=0 )
@@ -351,9 +351,12 @@ void MyDetector::drawPred(std::vector<DetectionResult> detection_results, cv::Ma
 
 int MyDetector::runDetector(cv::String source1,cv::String source2){
     // create objects from detectors
-//    CarDetector cardetector(*settings);
+    CarDetector cardetector(*settings);
     WindowsDetector windowsdetector(*settings) ;
     OccupantDetector occupantdetector(*settings) ;
+
+    cv::TickMeter tm;
+    double time_decode_source_1=0,time_decode_source_2=0, time_tiny_car=0, time_occupant=0, time_windows=0 ;
 
     // set environment variable to use GPU for decoding video stream
     _putenv_s("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
@@ -367,7 +370,7 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     cv::Mat frame_1,frame_2,frame_concat;
     cv::cuda::GpuMat gframe_1,gframe_2;
     if (settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool()){
-//        cv::cuda::setGlDevice();
+        //        cv::cuda::setGlDevice();
 
         gcap_1 = cv::cudacodec::createVideoReader(source1);
 
@@ -398,7 +401,7 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
                     frame_height_camera_1 - (ROI_PAD*2))} ;
 
     // initialize the second camera
-     bool second_camera = source2!="" ;
+    bool second_camera = source2!="" ;
     if(source2!="") {
         if (settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool()){
             gcap_2 = cv::cudacodec::createVideoReader(source2);
@@ -446,13 +449,15 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
 
 
         }
+        tm.reset(); tm.start();
         // return with error code 2
         if(!cap_1.read(frame_1) && !gcap_1->nextFrame(gframe_1)) {
             qDebug() << "Can not grab images from camera 1." << endl;
             return 2;
         }
-
-//        cap_1.retrieve( frame_1 ) ;
+        tm.stop();
+        time_decode_source_1 = tm.getTimeMilli();
+        //        cap_1.retrieve( frame_1 ) ;
 
 
         // stop the program if there is no more images
@@ -465,20 +470,26 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
             gframe_1.download(frame_1);
 
         // Run tiny-yolo car detector on the input frame
-//        std::vector<DetectionResult> car_results_camera_1 =
-//                cardetector.detect(frame_1);
+        //        std::vector<DetectionResult> car_results_camera_1 =
+        //                cardetector.detect(frame_1);
 
         // Create empty vectors for front and back windows detection results
         std::vector<DetectionResult> windows_results_front,windows_results_back ;
 
         // Process the input frame to detect front windows
+        tm.reset(); tm.start();
         windows_results_front = windowsdetector.detect(frame_1);
+        tm.stop();
+        time_windows = tm.getTimeMilli();
 
         // Create empty vectors for front and back occupants results
         std::vector<DetectionResult> occupant_results_front , occupant_results_back;
 
         // Process the input frame from the first camera to detect front occupants
+        tm.reset(); tm.start();
         occupant_results_front = occupantdetector.detect(frame_1);
+        tm.stop();
+        time_occupant = tm.getTimeMilli();
 
         // Process detection result
         processDetectionFront(occupant_results_front,windows_results_front,car_occupancy,frame_1) ;
@@ -487,10 +498,13 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
         if(second_camera) {
 
             // if there is no response from the second camera retrun 4 and exit
+            tm.reset(); tm.start();
             if(!cap_2.read(frame_2) && !gcap_2->nextFrame(gframe_2)) {
                 qDebug() << "Can not grab images from camera 2." << endl;
                 return 4;
             }
+            tm.stop();
+            time_decode_source_2 = tm.getTimeMilli();
 
             // check in the first camera exist just one car
             if(car_occupancy.size()==1){
@@ -538,8 +552,12 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
             drawPred(occupant_results_front,frame_1,2,true);
             frame_1.copyTo(frame_concat) ;
         }
-
-
+        if(settings->getSetting(settings->KEY_SHOW_TIMES).toBool()) {
+            cv::putText(frame_concat,"Docede Time Camera 1   : "+ std::to_string(time_decode_source_1),cv::Point(10,30),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
+            cv::putText(frame_concat,"Docede Time Camera 2   : "+ std::to_string(time_decode_source_2),cv::Point(10,50),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
+            cv::putText(frame_concat,"Occupant Detector Time: "+ std::to_string(time_occupant),cv::Point(10,70),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
+            cv::putText(frame_concat,"Windows Detector Time : "+ std::to_string(time_windows),cv::Point(10,90),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
+        }
         //cv::rectangle(frame_concat,ROI,cv::Scalar(0,255,0),5) ;
 
         // Show output frame
@@ -548,6 +566,10 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
 
         //quit on ESC button
         if(cv::waitKey(1)==27){
+            cap_1.release();
+            cap_2.release();
+            gcap_1.release();
+            gcap_2.release();
             cv::destroyAllWindows();
             break;
         }

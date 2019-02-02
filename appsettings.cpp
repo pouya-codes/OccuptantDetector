@@ -40,8 +40,6 @@ void AppSettings::loadSettings() {
     if (settings->value(KEY_WINDOWS_WEIGHTS).toString()=="")
         settings->setValue(KEY_WINDOWS_WEIGHTS, QString(QDir::currentPath() +  "/Model/windows/yolov3-tiny_20000.weights"));
 
-    if (settings->value(KEY_SAVE_VIDEOS_PATH).toString()=="")
-        settings->setValue(KEY_SAVE_VIDEOS_PATH, QString(QDir::currentPath() +  "/"));
 
 
     if (settings->value(KEY_WINDOW_THREADSHOLD).toString()=="")
@@ -74,8 +72,11 @@ void AppSettings::loadSettings() {
     if (settings->value(KEY_COLOR_WINDOW_BACK).toString()=="")
         settings->setValue(KEY_COLOR_WINDOW_BACK, QColor(0,255,255));
 
-    if (settings->value(KEY_SAVE_VIDEOS).toString()=="")
-        settings->setValue(KEY_SAVE_VIDEOS, false);
+    if (settings->value(KEY_USE_GPU_FOR_DECODE).toString()=="")
+        settings->setValue(KEY_USE_GPU_FOR_DECODE, false);
+
+    if (settings->value(KEY_SHOW_TIMES).toString()=="")
+        settings->setValue(KEY_SHOW_TIMES, false);
 
     if (settings->value(KEY_DETECT_DRIVER).toString()=="")
         settings->setValue(KEY_DETECT_DRIVER, false);

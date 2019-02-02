@@ -91,22 +91,23 @@ QSqlTableModel* DBManager::getDataModel(QString date) {
 
         dataModel->setHeaderData(0, Qt::Orientation::Horizontal, ("رکورد"));
         dataModel->setHeaderData(1,  Qt::Orientation::Horizontal, ("تعداد سرنشین"));
-        dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, ("تاریخ"));
+        dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, ("ساعت"));
         return  dataModel ;
 
 }
 
 QString DBManager::currentDateTimeJalali() {
 
-    QDateTime a = QDateTime::currentDateTime() ;
-    QString date_string = a.toString("yyyy-MM-dd hh,mm,ss,zzz") ;
-    QStringList parts = date_string.split(' ');
-    QStringList parts_date = parts[0].split('-') ;
 
-    QStringList shamsi=  mdate.ToJalali( parts_date[0],parts_date[1],parts_date[2]);
+    QDateTime a = QDateTime::currentDateTime() ;
+
+    QStringList shamsi=  mdate.ToJalali( QString::number(a.date().currentDate().year()),
+                                         QString::number(a.date().currentDate().month()),
+                                         QString::number(a.date().currentDate().day()));
     QString JalailDate =shamsi.at(0)+
             "/"+QString("%1").arg(shamsi.at(1).toInt(),2,10,QLatin1Char('0'))+
-            "/"+QString("%1").arg(shamsi.at(2).toInt(),2,10,QLatin1Char('0'))+ " " +parts[1];
+            "/"+QString("%1").arg(shamsi.at(2).toInt(),2,10,QLatin1Char('0'))+ " " +a.time().currentTime().toString();;
+
     return JalailDate ;
 
 

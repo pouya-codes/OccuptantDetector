@@ -219,6 +219,7 @@ Makefile: OccupantDetectorV1.pro C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\win32
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\toolchain.prf \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_pre.prf \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\default_pre.prf \
+		qtxlsx\src\xlsx\qtxlsx.pri \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\resolve_config.prf \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exclusive_builds_post.prf \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_post.prf \
@@ -388,6 +389,7 @@ C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\msvc-version.conf:
 C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\toolchain.prf:
 C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_pre.prf:
 C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\default_pre.prf:
+qtxlsx\src\xlsx\qtxlsx.pri:
 C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\resolve_config.prf:
 C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exclusive_builds_post.prf:
 C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_post.prf:

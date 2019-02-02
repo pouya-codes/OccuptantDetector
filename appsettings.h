@@ -42,8 +42,7 @@ public:
     QString KEY_USE_GPU_FOR_DECODE = "USE_GPU_FOR_DECODE" ;
 
     QString KEY_DETECT_DRIVER = "DETECT_DRIVER" ;
-    QString KEY_SAVE_VIDEOS = "SAVE_VIDEOS" ;
-    QString KEY_SAVE_VIDEOS_PATH = "SAVE_VIDEOS_PATH" ;
+    QString KEY_SHOW_TIMES= "SHOW_TIMES" ;
 
 
 private :

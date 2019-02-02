@@ -5,6 +5,7 @@
 #include <QColorDialog>
 #include <QDebug>
 
+
 AppSettingsDialog::AppSettingsDialog(AppSettings& settings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AppSettingsDialog)
@@ -88,12 +89,12 @@ void AppSettingsDialog::loadSettings() {
 
     // set array for storing UI's checkboxs
     checkboxs = {
-        ui->cb_driver_detection,ui->cb_use_gpu
+        ui->cb_driver_detection,ui->cb_use_gpu,ui->cb_show_time
     };
 
     // set array for storing UI's checkboxs KEYS
     checkbox_keys = {
-        settings->KEY_DETECT_DRIVER,settings->KEY_USE_GPU_FOR_DECODE
+        settings->KEY_DETECT_DRIVER,settings->KEY_USE_GPU_FOR_DECODE,settings->KEY_SHOW_TIMES
     };
 
 
@@ -260,5 +261,10 @@ void AppSettingsDialog::on_cb_driver_detection_stateChanged(int arg1)
 
 void AppSettingsDialog::on_cb_use_gpu_stateChanged(int arg1)
 {
-    settings->setSetting(settings->KEY_SAVE_VIDEOS,ui->cb_use_gpu->isChecked()) ;
+    settings->setSetting(settings->KEY_USE_GPU_FOR_DECODE,ui->cb_use_gpu->isChecked()) ;
+}
+
+void AppSettingsDialog::on_checkBox_stateChanged(int arg1)
+{
+    settings->setSetting(settings->KEY_SHOW_TIMES,ui->cb_show_time->isChecked()) ;
 }
