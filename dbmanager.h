@@ -2,6 +2,7 @@
 #define DBMANAGER_H
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlError>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlDriver>
 #include <QtSql/QSqlError>
@@ -26,8 +27,13 @@ public:
         QPixmap Front_Image_Processed ;
         QPixmap Back_Image_Processed ;
     };
-    DBManager();
-    QSqlTableModel* getDataModel(QString date);
+    DBManager(QString dbType);
+    bool openDatabase(const QString Server="",
+                      const QString User="",
+                      const QString Password="",
+                      const QString databaseName = "OccupantDetectorDB",
+                      bool trustedConnection = true ) ;
+    QSqlQueryModel* getDataModel(QString date);
     DetectionImages getPicture (int id, QString table_name) ;
     void insertResult(CarOccupancy occupant);
     QString currentDateTimeJalali() ;
@@ -35,9 +41,10 @@ public:
 
 private:
     QDateConvertor mdate;
-
+    QString SQLDriver ;
     QSqlDatabase db ;
-    QString DRIVER = "QSQLITE";
+    QString mdatabaseName;
+//    QString DRIVER = "QSQLITE";
 };
 
 #endif // DBMANAGER_H

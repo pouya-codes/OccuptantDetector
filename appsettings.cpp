@@ -84,6 +84,18 @@ void AppSettings::loadSettings() {
     if (settings->value(KEY_USE_GPU_FOR_DECODE).toString()=="")
         settings->setValue(KEY_USE_GPU_FOR_DECODE, false);
 
+    if (settings->value(KEY_DATABASE_TYPE).toString()=="")
+        settings->setValue(KEY_DATABASE_TYPE, "QSQLITE");
+
+    if (settings->value(KEY_SERVER_ADDRESS).toString()=="")
+        settings->setValue(KEY_SERVER_ADDRESS, "127.0.0.1");
+
+    if (settings->value(KEY_SERVER_USER).toString()=="")
+        settings->setValue(KEY_SERVER_USER, "sa");
+
+    if (settings->value(KEY_SERVER_PASSWORD).toString()=="")
+        settings->setValue(KEY_SERVER_PASSWORD, "sa");
+
 
 
 

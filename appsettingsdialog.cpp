@@ -52,7 +52,8 @@ void AppSettingsDialog::loadSettings() {
         ui->le_source1, ui->le_source2 ,
         ui->le_spp_cfg , ui->le_spp_weight,
         ui->le_tiny_cfg, ui->le_tiny_weight,
-        ui->le_windows_cfg, ui->le_windows_weight
+        ui->le_windows_cfg, ui->le_windows_weight,
+        ui->le_server,ui->le_user,ui->le_password
     } ;
 
     // set array for storing UI's line edits KEYS
@@ -60,7 +61,8 @@ void AppSettingsDialog::loadSettings() {
         settings->KEY_SOURCE_1, settings->KEY_SOURCE_2,
         settings->KEY_OCCUPANT_CFG, settings->KEY_OCCUPANT_WEIGHTS,
         settings->KEY_TINY_CFG, settings->KEY_TINY_WEIGHTS,
-        settings->KEY_WINDOWS_CFG, settings->KEY_WINDOWS_WEIGHTS
+        settings->KEY_WINDOWS_CFG, settings->KEY_WINDOWS_WEIGHTS,
+        settings->KEY_SERVER_ADDRESS,settings->KEY_SERVER_USER,settings->KEY_SERVER_PASSWORD
     } ;
 
     // set array for storing UI's spin boxs
@@ -115,6 +117,9 @@ void AppSettingsDialog::loadSettings() {
     // set checkboxs values
     for (unsigned idx = 0; idx < checkbox_keys.size(); ++idx)
         checkboxs[idx]->setChecked(settings->getSetting(checkbox_keys[idx]).value<bool>()) ;
+
+    ui->comboBox->setCurrentText(settings->getSetting(settings->KEY_DATABASE_TYPE).toString());
+
 
 
 
@@ -267,4 +272,20 @@ void AppSettingsDialog::on_cb_use_gpu_stateChanged(int arg1)
 void AppSettingsDialog::on_checkBox_stateChanged(int arg1)
 {
     settings->setSetting(settings->KEY_SHOW_TIMES,ui->cb_show_time->isChecked()) ;
+}
+
+void AppSettingsDialog::on_comboBox_currentIndexChanged(const QString &arg1)
+{
+    settings->setSetting(settings->KEY_DATABASE_TYPE,arg1) ;
+    if (arg1=="MSSQL") {
+        ui->le_server->setEnabled(true);
+        ui->le_user->setEnabled(true);
+        ui->le_password->setEnabled(true);
+    }
+    else {
+        ui->le_server->setEnabled(false);
+        ui->le_user->setEnabled(false);
+        ui->le_password->setEnabled(false);
+    }
+
 }

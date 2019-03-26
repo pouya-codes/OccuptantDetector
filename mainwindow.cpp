@@ -52,20 +52,15 @@ MainWindow::MainWindow(QWidget *parent) :
 //    xlsx.write("A1", "سلام");
 //    xlsx.saveAs("D:/Test.xlsx");
 
-    // Create DBManager and AppSettings objects
+    // Create AppSettings object
     settings = new AppSettings() ;
-    dbmanager = new DBManager();
 
     // Connect image lable signals to slots
     connect(ui->lable_front_image, SIGNAL(clicked()), this, SLOT (front_image_clicked()));
     connect(ui->lable_back_image , SIGNAL(clicked()), this, SLOT (back_image_clicked()));
 
-    // Showing today date on the statusBar
-    ui->statusBar->showMessage(dbmanager->currentDateTimeJalali().split(' ')[0]);
-
-    // Adding table names to combobox
-    ui->comboBox_date->addItems(dbmanager->GetTableNames());
-    ui->comboBox_date->setCurrentIndex(0);
+//    connect to the database
+    connectToDB() ;
 
     // changes program theme
 //    QFile style_file("/home/pouya/darkorange.stylesheet");
@@ -73,6 +68,21 @@ MainWindow::MainWindow(QWidget *parent) :
 //        this->setStyleSheet(style_file.readAll());
 
 
+}
+void MainWindow::connectToDB() {
+    // Create DBManager object
+    dbmanager = new DBManager(settings->getSetting(settings->KEY_DATABASE_TYPE).toString());
+    dbmanager->openDatabase(settings->getSetting(settings->KEY_SERVER_ADDRESS).toString(),
+                            settings->getSetting(settings->KEY_SERVER_USER).toString(),
+                            settings->getSetting(settings->KEY_SERVER_PASSWORD).toString());
+
+    // Showing today date on the statusBar
+    ui->statusBar->showMessage(dbmanager->currentDateTimeJalali().split(' ')[0]);
+
+    // Adding table names to combobox
+    ui->comboBox_date->clear();
+    ui->comboBox_date->addItems(dbmanager->GetTableNames());
+    ui->comboBox_date->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -94,7 +104,8 @@ void MainWindow::on_pushButton_Stop_clicked()
     AppSettingsDialog *objMyNewDialog;
     objMyNewDialog= new AppSettingsDialog(*settings,this);
     objMyNewDialog->setModal(true) ;
-    objMyNewDialog->show();
+    objMyNewDialog->exec();
+    connectToDB() ;
 }
 
 

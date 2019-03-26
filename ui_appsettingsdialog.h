@@ -69,7 +69,15 @@ public:
     QHBoxLayout *horizontalLayout_7;
     QComboBox *comboBox;
     QLabel *label_15;
-    QLineEdit *lineEdit;
+    QHBoxLayout *horizontalLayout_8;
+    QLineEdit *le_server;
+    QLabel *label_18;
+    QHBoxLayout *horizontalLayout_9;
+    QLineEdit *le_user;
+    QLabel *label_19;
+    QHBoxLayout *horizontalLayout_10;
+    QLineEdit *le_password;
+    QLabel *label_20;
     QGroupBox *groupBox;
     QGridLayout *gridLayout_2;
     QPushButton *btn_tiny_cfg;
@@ -323,21 +331,73 @@ public:
 
         gridLayout_3->addLayout(horizontalLayout_7, 4, 3, 1, 1);
 
-        lineEdit = new QLineEdit(groupBox_3);
-        lineEdit->setObjectName(QStringLiteral("lineEdit"));
+        horizontalLayout_8 = new QHBoxLayout();
+        horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
+        le_server = new QLineEdit(groupBox_3);
+        le_server->setObjectName(QStringLiteral("le_server"));
+        le_server->setEnabled(false);
+        QSizePolicy sizePolicy4(QSizePolicy::Ignored, QSizePolicy::Fixed);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(0);
+        sizePolicy4.setHeightForWidth(le_server->sizePolicy().hasHeightForWidth());
+        le_server->setSizePolicy(sizePolicy4);
 
-        gridLayout_3->addWidget(lineEdit, 4, 2, 1, 1);
+        horizontalLayout_8->addWidget(le_server);
+
+        label_18 = new QLabel(groupBox_3);
+        label_18->setObjectName(QStringLiteral("label_18"));
+
+        horizontalLayout_8->addWidget(label_18);
+
+
+        gridLayout_3->addLayout(horizontalLayout_8, 4, 2, 1, 1);
+
+        horizontalLayout_9 = new QHBoxLayout();
+        horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
+        le_user = new QLineEdit(groupBox_3);
+        le_user->setObjectName(QStringLiteral("le_user"));
+        le_user->setEnabled(false);
+        sizePolicy4.setHeightForWidth(le_user->sizePolicy().hasHeightForWidth());
+        le_user->setSizePolicy(sizePolicy4);
+
+        horizontalLayout_9->addWidget(le_user);
+
+        label_19 = new QLabel(groupBox_3);
+        label_19->setObjectName(QStringLiteral("label_19"));
+
+        horizontalLayout_9->addWidget(label_19);
+
+
+        gridLayout_3->addLayout(horizontalLayout_9, 4, 1, 1, 1);
+
+        horizontalLayout_10 = new QHBoxLayout();
+        horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
+        le_password = new QLineEdit(groupBox_3);
+        le_password->setObjectName(QStringLiteral("le_password"));
+        le_password->setEnabled(false);
+        sizePolicy4.setHeightForWidth(le_password->sizePolicy().hasHeightForWidth());
+        le_password->setSizePolicy(sizePolicy4);
+
+        horizontalLayout_10->addWidget(le_password);
+
+        label_20 = new QLabel(groupBox_3);
+        label_20->setObjectName(QStringLiteral("label_20"));
+
+        horizontalLayout_10->addWidget(label_20);
+
+
+        gridLayout_3->addLayout(horizontalLayout_10, 4, 0, 1, 1);
 
 
         verticalLayout->addWidget(groupBox_3);
 
         groupBox = new QGroupBox(AppSettingsDialog);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        QSizePolicy sizePolicy4(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
-        groupBox->setSizePolicy(sizePolicy4);
+        QSizePolicy sizePolicy5(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy5.setHorizontalStretch(0);
+        sizePolicy5.setVerticalStretch(0);
+        sizePolicy5.setHeightForWidth(groupBox->sizePolicy().hasHeightForWidth());
+        groupBox->setSizePolicy(sizePolicy5);
         groupBox->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         gridLayout_2 = new QGridLayout(groupBox);
         gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
@@ -477,6 +537,12 @@ public:
         comboBox->setItemText(1, QApplication::translate("AppSettingsDialog", "MSSQL", nullptr));
 
         label_15->setText(QApplication::translate("AppSettingsDialog", "\330\257\333\214\330\252\330\247\330\250\333\214\330\263", nullptr));
+        le_server->setText(QApplication::translate("AppSettingsDialog", "127.0.0.1", nullptr));
+        label_18->setText(QApplication::translate("AppSettingsDialog", "\330\242\330\257\330\261\330\263", nullptr));
+        le_user->setText(QApplication::translate("AppSettingsDialog", "sa", nullptr));
+        label_19->setText(QApplication::translate("AppSettingsDialog", "\331\206\330\247\331\205 \332\251\330\247\330\261\330\250\330\261\333\214", nullptr));
+        le_password->setText(QApplication::translate("AppSettingsDialog", "!@#qweASD", nullptr));
+        label_20->setText(QApplication::translate("AppSettingsDialog", "\330\261\331\205\330\262", nullptr));
         groupBox->setTitle(QApplication::translate("AppSettingsDialog", "\330\252\331\206\330\270\333\214\331\205\330\247\330\252 \331\205\330\257\331\204 \331\207\330\247", nullptr));
         btn_tiny_cfg->setText(QApplication::translate("AppSettingsDialog", "\330\247\331\206\330\252\330\256\330\247\330\250 \331\201\330\247\333\214\331\204", nullptr));
         label_2->setText(QApplication::translate("AppSettingsDialog", "\331\205\330\271\331\205\330\247\330\261\333\214 \331\205\330\257\331\204 \330\252\330\264\330\256\333\214\330\265 \330\263\330\261\331\206\330\264\333\214\331\206", nullptr));

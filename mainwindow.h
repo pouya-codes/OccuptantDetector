@@ -49,6 +49,7 @@ private:
     QString table_date ;
     void queryData(QString date);
     void setPictures() ;
+    void connectToDB() ;
     int selected_row_id ;
     Ui::MainWindow *ui;
     MyDetector* detector ;

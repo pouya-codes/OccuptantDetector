@@ -56,6 +56,8 @@ private slots:
 
     void on_checkBox_stateChanged(int arg1);
 
+    void on_comboBox_currentIndexChanged(const QString &arg1);
+
 private:
     std::vector<QString> line_edits_keys ;
     std::vector<QLineEdit*> line_edits;

@@ -1,28 +1,92 @@
 #include "dbmanager.h"
+#include "QSqlQueryModel"
 
-DBManager::DBManager()
+DBManager::DBManager(QString dbType)
 {
-    db = QSqlDatabase::addDatabase(DRIVER) ;
-    if(QSqlDatabase::isDriverAvailable(DRIVER)) {
-        db.setDatabaseName("results.db");
-        if(!db.open())
-          qWarning() << "ERROR: " << db.lastError();
-        QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
-        QString queryText = "CREATE TABLE IF NOT EXISTS t" + todayDate+
-                " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
-                  "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)" ;
+    QString driver ;
+    if (dbType=="QSQLITE")
+        driver = "QSQLITE" ;
+    else if (dbType=="MSSQL")
+        driver = "QODBC" ;
+    db = QSqlDatabase::addDatabase(driver) ;
+    this->SQLDriver = driver ;
 
-        QSqlQuery query(queryText);
-        if(!query.isActive())
-            qWarning() << "ERROR: " << query.lastError().text();
+}
+
+bool DBManager::openDatabase(const QString Server,
+                             const QString User,
+                             const QString Password,
+                             const QString databaseName,
+                             bool trustedConnection ) {
+    if(QSqlDatabase::isDriverAvailable(SQLDriver)) {
+        if(SQLDriver=="QSQLITE"){
+            db.setDatabaseName("results.db");
+            if(!db.open()) {
+                qWarning() << "ERROR: " << db.lastError();
+                return false ;
+            }
+            QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+            QString queryText = "CREATE TABLE IF NOT EXISTS t" + todayDate+
+                    " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
+                      "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)" ;
+
+            QSqlQuery query(queryText);
+            if(!query.isActive()) {
+                qWarning() << "ERROR: " << query.lastError().text();
+                return false ;
+            }
+
+        }
+
+        else if (SQLDriver=="QODBC") {
+            this->mdatabaseName = databaseName;
+            db.setDatabaseName(QString("DRIVER={%1};SERVER=%2;"
+                                       "UID=%3;PWD=%4;Trusted_Connection=%5;")
+                               .arg("SQL SERVER")
+                               .arg(Server)
+                               .arg(User)
+                               .arg(Password)
+                               .arg(trustedConnection ? "Yes" : "No"));
+            if(!db.open()) {
+
+                qWarning() << "ERROR: " << db.lastError();
+                return false ;
+            }
+
+            QString queryText = QString("if not exists(select * from sys.databases where name = '%1') "
+                                "create database %1").arg(databaseName) ;
+
+            QSqlQuery query(queryText);
+            if(!query.isActive()) {
+                qWarning() << "ERROR: " << query.lastError().text();
+                return false ;
+            }
+
+            QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+            queryText = QString("IF NOT EXISTS (SELECT * FROM %1.sys.sysobjects WHERE name='t%2' and xtype='U') CREATE TABLE [%1].[dbo].t%2 ([id] [int] IDENTITY(1,1) NOT NULL,[occupant_total] [int] NULL,[occupant_front] [int] NULL,[occupant_back] [int] NULL,[date] [varchar](50) NULL,[imagedata_raw_front] [varbinary](max) NULL,[imagedata_raw_back] [varbinary](max) NULL,[imagedata_processed_front] [varbinary](max) NULL,[imagedata_processed_back] [varbinary](max) NULL,CONSTRAINT [PK_Table_1] PRIMARY KEY CLUSTERED ([id] ASC) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]").arg(databaseName).arg(todayDate) ;
+
+            QSqlQuery queryTable(queryText);
+            if(!queryTable.isActive()) {
+                qWarning() << "ERROR: " << queryTable.lastError().text();
+                return false ;
+            }
+        }
+
 
     }
+    else
+        return false ;
+
 
 }
 // Return All table names (dates)
 QStringList DBManager::GetTableNames () {
     QString querytxt ;
-    querytxt = "SELECT name FROM sqlite_master WHERE type = 'table' and name!='sqlite_sequence' ORDER BY name DESC";
+    if(SQLDriver=="QSQLITE")
+        querytxt = "SELECT name FROM sqlite_master WHERE type = 'table' and name!='sqlite_sequence' ORDER BY name DESC";
+    else if (SQLDriver=="QODBC")
+        querytxt = QString("SELECT name FROM %1.sys.sysobjects WHERE xtype='U'").arg(mdatabaseName);
+
     QSqlQuery query;
     query.exec(querytxt) ;
     // create an empty QStringList
@@ -36,8 +100,16 @@ QStringList DBManager::GetTableNames () {
 DBManager::DetectionImages DBManager::getPicture(int id, QString table_name) {
         // prepate query
         QString querytxt ;
-        querytxt = "SELECT imagedata_raw_front, imagedata_raw_back BLOB, imagedata_processed_front BLOB,"
-                   "imagedata_processed_back BLOB FROM t"+table_name+" WHERE id = ?";
+
+        if(SQLDriver=="QSQLITE")
+            querytxt = QString("SELECT imagedata_raw_front, imagedata_raw_back , imagedata_processed_front ,"
+                       "imagedata_processed_back FROM t%1 WHERE id = ?").arg(table_name);
+
+        else if (SQLDriver=="QODBC")
+            querytxt = QString("SELECT imagedata_raw_front, imagedata_raw_back , imagedata_processed_front ,"
+                       "imagedata_processed_back FROM %1.dbo.t%2 WHERE id = ?").arg(mdatabaseName).arg(table_name);
+
+
         QSqlQuery query;
         query.prepare(querytxt);
         query.bindValue(0, id);
@@ -68,31 +140,19 @@ DBManager::DetectionImages DBManager::getPicture(int id, QString table_name) {
 
 
 }
-QSqlTableModel* DBManager::getDataModel(QString date) {
+QSqlQueryModel* DBManager::getDataModel(QString date) {
     //    editSelectedRowId = -2 ;
-        QSqlTableModel* dataModel = new QSqlTableModel();
-    //        connect(dataModel, SIGNAL( dataChanged(QModelIndex,QModelIndex,QVector<int>)), SLOT(handleAfterEdit(QModelIndex,QModelIndex,QVector<int>)));
 
-        dataModel->setTable("t"+date);
-        dataModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+        QSqlQueryModel *model = new QSqlQueryModel() ;
 
-    //    if (ui->lineEditSearch->text()!="") {
-    //        QString filter_txt = "code like '" + ui->lineEditSearch->text() + "%'";
-    //        dataModel->setFilter(filter_txt);
-    //    }
-
-        dataModel->select();
-        dataModel->removeColumn(1);
-        dataModel->removeColumn(2);
-        dataModel->removeColumn(3);
-        dataModel->removeColumn(3);
-        dataModel->removeColumn(3);
-        dataModel->removeColumn(3);
-
-        dataModel->setHeaderData(0, Qt::Orientation::Horizontal, ("رکورد"));
-        dataModel->setHeaderData(1,  Qt::Orientation::Horizontal, ("تعداد سرنشین"));
-        dataModel->setHeaderData(2,  Qt::Orientation::Horizontal, ("ساعت"));
-        return  dataModel ;
+        if(SQLDriver=="QSQLITE")
+             model->setQuery(QString("SELECT id,occupant_total,date FROM t%1").arg(date)) ;
+        else if (SQLDriver=="QODBC")
+             model->setQuery(QString("SELECT id,occupant_total,date FROM %1.dbo.t%2").arg(mdatabaseName).arg(date)) ;
+        model->setHeaderData(0, Qt::Orientation::Horizontal, ("رکورد"));
+        model->setHeaderData(1,  Qt::Orientation::Horizontal, ("تعداد سرنشین"));
+        model->setHeaderData(2,  Qt::Orientation::Horizontal, ("ساعت"));
+        return model;
 
 }
 
@@ -122,12 +182,27 @@ void DBManager::insertResult(CarOccupancy occupant) {
 
         QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
         QString queryText ;
-        if (occupant.BackCarImageProcessed.empty())
-            queryText = "INSERT INTO t" + todayDate+ +"  (occupant_total, occupant_front, date , imagedata_raw_front, imagedata_processed_front)"
-                                                          " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)" ;
-        else
-            queryText = "INSERT INTO t" + todayDate+ +"  (occupant_total, occupant_front,occupant_back, date , imagedata_raw_front, imagedata_processed_front , imagedata_raw_back, imagedata_processed_back)"
-                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)" ;
+        if (occupant.BackCarImageProcessed.empty()){
+            if(SQLDriver=="QSQLITE")
+                queryText = QString("INSERT INTO t%1 (occupant_total, occupant_front, date , imagedata_raw_front, imagedata_processed_front)"
+                                                              " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)").arg(todayDate) ;
+
+            else if (SQLDriver=="QODBC")
+                queryText = QString("INSERT INTO %1.dbo.t%2 (occupant_total, occupant_front, date , imagedata_raw_front, imagedata_processed_front)"
+                                                              " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)").arg(mdatabaseName).arg(todayDate) ;
+
+
+        }
+
+        else {
+            if(SQLDriver=="QSQLITE")
+                queryText = QString("INSERT INTO t%1 (occupant_total, occupant_front,occupant_back, date , imagedata_raw_front, imagedata_processed_front , imagedata_raw_back, imagedata_processed_back)"
+                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)").arg(todayDate) ;
+            else if (SQLDriver=="QODBC")
+                queryText = QString("INSERT INTO %1.dbo.t%2 (occupant_total, occupant_front,occupant_back, date , imagedata_raw_front, imagedata_processed_front , imagedata_raw_back, imagedata_processed_back)"
+                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)").arg(mdatabaseName).arg(todayDate) ;
+        }
+
 
 
         query.prepare( queryText );

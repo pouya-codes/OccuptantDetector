@@ -44,6 +44,11 @@ public:
     QString KEY_DETECT_DRIVER = "DETECT_DRIVER" ;
     QString KEY_SHOW_TIMES= "SHOW_TIMES" ;
 
+    QString KEY_DATABASE_TYPE = "DATABASE_TYPE" ;
+    QString KEY_SERVER_ADDRESS = "SERVER_ADDRESS" ;
+    QString KEY_SERVER_USER = "SERVER_USER" ;
+    QString KEY_SERVER_PASSWORD = "SERVER_PASSWORD" ;
+
 
 private :
     void loadSettings();
