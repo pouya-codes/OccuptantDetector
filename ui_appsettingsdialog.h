@@ -12,6 +12,7 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QDoubleSpinBox>
@@ -40,31 +41,35 @@ public:
     QPushButton *btn_source2;
     QGroupBox *groupBox_3;
     QGridLayout *gridLayout_3;
-    QLabel *label_11;
-    QDoubleSpinBox *sb_windows;
     QDoubleSpinBox *sb_car_tiny;
-    QDoubleSpinBox *sb_occupant;
-    QCheckBox *cb_use_gpu;
-    QDoubleSpinBox *sb_car_spp;
+    QDoubleSpinBox *sb_windows;
+    QLabel *label_11;
     QLabel *label_9;
+    QCheckBox *cb_use_gpu;
+    QDoubleSpinBox *sb_occupant;
+    QDoubleSpinBox *sb_car_spp;
+    QLabel *label_12;
     QLabel *label_10;
     QCheckBox *cb_driver_detection;
-    QLabel *label_12;
     QHBoxLayout *horizontalLayout_2;
     ClickableLabel *label_color_occupant;
     QLabel *label_16;
     QHBoxLayout *horizontalLayout;
     ClickableLabel *label_color_car;
     QLabel *label_14;
-    QHBoxLayout *horizontalLayout_3;
-    ClickableLabel *label_color_window;
-    QLabel *label_17;
     QHBoxLayout *horizontalLayout_4;
     QHBoxLayout *horizontalLayout_5;
     ClickableLabel *label_color_window_back;
     QLabel *label_13;
+    QHBoxLayout *horizontalLayout_3;
+    ClickableLabel *label_color_window;
+    QLabel *label_17;
     QHBoxLayout *horizontalLayout_6;
     QCheckBox *cb_show_time;
+    QHBoxLayout *horizontalLayout_7;
+    QComboBox *comboBox;
+    QLabel *label_15;
+    QLineEdit *lineEdit;
     QGroupBox *groupBox;
     QGridLayout *gridLayout_2;
     QPushButton *btn_tiny_cfg;
@@ -137,25 +142,11 @@ public:
         groupBox_3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
         gridLayout_3 = new QGridLayout(groupBox_3);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
-        label_11 = new QLabel(groupBox_3);
-        label_11->setObjectName(QStringLiteral("label_11"));
-
-        gridLayout_3->addWidget(label_11, 1, 1, 1, 1);
-
-        sb_windows = new QDoubleSpinBox(groupBox_3);
-        sb_windows->setObjectName(QStringLiteral("sb_windows"));
+        sb_car_tiny = new QDoubleSpinBox(groupBox_3);
+        sb_car_tiny->setObjectName(QStringLiteral("sb_car_tiny"));
         QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(sb_windows->sizePolicy().hasHeightForWidth());
-        sb_windows->setSizePolicy(sizePolicy);
-        sb_windows->setMaximum(1);
-        sb_windows->setSingleStep(0.05);
-
-        gridLayout_3->addWidget(sb_windows, 0, 2, 1, 1);
-
-        sb_car_tiny = new QDoubleSpinBox(groupBox_3);
-        sb_car_tiny->setObjectName(QStringLiteral("sb_car_tiny"));
         sizePolicy.setHeightForWidth(sb_car_tiny->sizePolicy().hasHeightForWidth());
         sb_car_tiny->setSizePolicy(sizePolicy);
         sb_car_tiny->setMaximum(1);
@@ -163,12 +154,24 @@ public:
 
         gridLayout_3->addWidget(sb_car_tiny, 0, 0, 1, 1);
 
-        sb_occupant = new QDoubleSpinBox(groupBox_3);
-        sb_occupant->setObjectName(QStringLiteral("sb_occupant"));
-        sb_occupant->setMaximum(1);
-        sb_occupant->setSingleStep(0.05);
+        sb_windows = new QDoubleSpinBox(groupBox_3);
+        sb_windows->setObjectName(QStringLiteral("sb_windows"));
+        sizePolicy.setHeightForWidth(sb_windows->sizePolicy().hasHeightForWidth());
+        sb_windows->setSizePolicy(sizePolicy);
+        sb_windows->setMaximum(1);
+        sb_windows->setSingleStep(0.05);
 
-        gridLayout_3->addWidget(sb_occupant, 1, 2, 1, 1);
+        gridLayout_3->addWidget(sb_windows, 0, 2, 1, 1);
+
+        label_11 = new QLabel(groupBox_3);
+        label_11->setObjectName(QStringLiteral("label_11"));
+
+        gridLayout_3->addWidget(label_11, 1, 1, 1, 1);
+
+        label_9 = new QLabel(groupBox_3);
+        label_9->setObjectName(QStringLiteral("label_9"));
+
+        gridLayout_3->addWidget(label_9, 0, 1, 1, 1);
 
         cb_use_gpu = new QCheckBox(groupBox_3);
         cb_use_gpu->setObjectName(QStringLiteral("cb_use_gpu"));
@@ -177,6 +180,13 @@ public:
 
         gridLayout_3->addWidget(cb_use_gpu, 2, 2, 1, 1);
 
+        sb_occupant = new QDoubleSpinBox(groupBox_3);
+        sb_occupant->setObjectName(QStringLiteral("sb_occupant"));
+        sb_occupant->setMaximum(1);
+        sb_occupant->setSingleStep(0.05);
+
+        gridLayout_3->addWidget(sb_occupant, 1, 2, 1, 1);
+
         sb_car_spp = new QDoubleSpinBox(groupBox_3);
         sb_car_spp->setObjectName(QStringLiteral("sb_car_spp"));
         sb_car_spp->setMaximum(1);
@@ -184,10 +194,10 @@ public:
 
         gridLayout_3->addWidget(sb_car_spp, 1, 0, 1, 1);
 
-        label_9 = new QLabel(groupBox_3);
-        label_9->setObjectName(QStringLiteral("label_9"));
+        label_12 = new QLabel(groupBox_3);
+        label_12->setObjectName(QStringLiteral("label_12"));
 
-        gridLayout_3->addWidget(label_9, 0, 1, 1, 1);
+        gridLayout_3->addWidget(label_12, 1, 3, 1, 1);
 
         label_10 = new QLabel(groupBox_3);
         label_10->setObjectName(QStringLiteral("label_10"));
@@ -204,11 +214,6 @@ public:
         cb_driver_detection->setLayoutDirection(Qt::RightToLeft);
 
         gridLayout_3->addWidget(cb_driver_detection, 2, 3, 1, 1);
-
-        label_12 = new QLabel(groupBox_3);
-        label_12->setObjectName(QStringLiteral("label_12"));
-
-        gridLayout_3->addWidget(label_12, 1, 3, 1, 1);
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
@@ -252,24 +257,6 @@ public:
 
         gridLayout_3->addLayout(horizontalLayout, 3, 3, 1, 1);
 
-        horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
-        label_color_window = new ClickableLabel(groupBox_3);
-        label_color_window->setObjectName(QStringLiteral("label_color_window"));
-        sizePolicy2.setHeightForWidth(label_color_window->sizePolicy().hasHeightForWidth());
-        label_color_window->setSizePolicy(sizePolicy2);
-        label_color_window->setMinimumSize(QSize(50, 0));
-
-        horizontalLayout_3->addWidget(label_color_window);
-
-        label_17 = new QLabel(groupBox_3);
-        label_17->setObjectName(QStringLiteral("label_17"));
-
-        horizontalLayout_3->addWidget(label_17);
-
-
-        gridLayout_3->addLayout(horizontalLayout_3, 3, 1, 1, 1);
-
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         horizontalLayout_5 = new QHBoxLayout();
@@ -290,6 +277,24 @@ public:
 
         gridLayout_3->addLayout(horizontalLayout_4, 3, 0, 1, 1);
 
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        label_color_window = new ClickableLabel(groupBox_3);
+        label_color_window->setObjectName(QStringLiteral("label_color_window"));
+        sizePolicy2.setHeightForWidth(label_color_window->sizePolicy().hasHeightForWidth());
+        label_color_window->setSizePolicy(sizePolicy2);
+        label_color_window->setMinimumSize(QSize(50, 0));
+
+        horizontalLayout_3->addWidget(label_color_window);
+
+        label_17 = new QLabel(groupBox_3);
+        label_17->setObjectName(QStringLiteral("label_17"));
+
+        horizontalLayout_3->addWidget(label_17);
+
+
+        gridLayout_3->addLayout(horizontalLayout_3, 3, 1, 1, 1);
+
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         cb_show_time = new QCheckBox(groupBox_3);
@@ -300,6 +305,28 @@ public:
 
 
         gridLayout_3->addLayout(horizontalLayout_6, 2, 1, 1, 1);
+
+        horizontalLayout_7 = new QHBoxLayout();
+        horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
+        comboBox = new QComboBox(groupBox_3);
+        comboBox->addItem(QString());
+        comboBox->addItem(QString());
+        comboBox->setObjectName(QStringLiteral("comboBox"));
+
+        horizontalLayout_7->addWidget(comboBox);
+
+        label_15 = new QLabel(groupBox_3);
+        label_15->setObjectName(QStringLiteral("label_15"));
+
+        horizontalLayout_7->addWidget(label_15);
+
+
+        gridLayout_3->addLayout(horizontalLayout_7, 4, 3, 1, 1);
+
+        lineEdit = new QLineEdit(groupBox_3);
+        lineEdit->setObjectName(QStringLiteral("lineEdit"));
+
+        gridLayout_3->addWidget(lineEdit, 4, 2, 1, 1);
 
 
         verticalLayout->addWidget(groupBox_3);
@@ -432,20 +459,24 @@ public:
         btn_source2->setText(QApplication::translate("AppSettingsDialog", "\330\247\331\206\330\252\330\256\330\247\330\250 \331\201\330\247\333\214\331\204", nullptr));
         groupBox_3->setTitle(QApplication::translate("AppSettingsDialog", "\330\252\331\206\330\270\333\214\331\205\330\247\330\252 \331\206\330\261\331\205 \330\247\331\201\330\262\330\247\330\261", nullptr));
         label_11->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\252 \330\252\330\264\330\256\333\214\330\265 \331\205\330\247\330\264\333\214\331\206 \331\207\330\247", nullptr));
-        cb_use_gpu->setText(QApplication::translate("AppSettingsDialog", "\330\257\333\214\332\251\330\257 \330\252\330\265\331\210\333\214\330\261 \330\250\330\247 \332\251\330\247\330\261\330\252 \332\257\330\261\330\247\331\201\333\214\332\251", nullptr));
         label_9->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\252 \331\210\330\254\331\210\330\257 \331\205\330\247\330\264\333\214\331\206", nullptr));
+        cb_use_gpu->setText(QApplication::translate("AppSettingsDialog", "\330\257\333\214\332\251\330\257 \330\252\330\265\331\210\333\214\330\261 \330\250\330\247 \332\251\330\247\330\261\330\252 \332\257\330\261\330\247\331\201\333\214\332\251", nullptr));
+        label_12->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\263\330\252 \330\252\330\264\330\256\333\214\330\265 \330\263\330\261\331\206\330\264\333\214\331\206 \331\207\330\247", nullptr));
         label_10->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\330\263\333\214\330\252 \330\252\330\264\330\256\333\214\330\265 \331\276\331\206\330\254\330\261\331\207 \331\207\330\247", nullptr));
         cb_driver_detection->setText(QApplication::translate("AppSettingsDialog", "\330\252\330\264\330\256\333\214\330\265 \330\261\330\247\331\206\331\206\330\257\331\207", nullptr));
-        label_12->setText(QApplication::translate("AppSettingsDialog", "\330\255\330\263\330\247\333\214\330\263\330\252 \330\252\330\264\330\256\333\214\330\265 \330\263\330\261\331\206\330\264\333\214\331\206 \331\207\330\247", nullptr));
         label_color_occupant->setText(QString());
         label_16->setText(QApplication::translate("AppSettingsDialog", "\330\261\331\206\332\257 \331\206\330\247\330\255\333\214\331\207 \330\263\330\261\331\206\330\264\333\214\331\206", nullptr));
         label_color_car->setText(QString());
         label_14->setText(QApplication::translate("AppSettingsDialog", "\330\261\331\206\332\257 \331\206\330\247\330\255\333\214\331\207 \331\205\330\247\330\264\333\214\331\206", nullptr));
-        label_color_window->setText(QString());
-        label_17->setText(QApplication::translate("AppSettingsDialog", "\330\261\331\206\332\257 \331\206\330\247\330\255\333\214\331\207 \331\276\331\206\330\254\330\261\331\207 \330\254\331\204\331\210", nullptr));
         label_color_window_back->setText(QString());
         label_13->setText(QApplication::translate("AppSettingsDialog", "\330\261\331\206\332\257 \331\206\330\247\330\255\333\214\331\207 \331\276\331\206\330\254\330\261\331\207 \330\271\331\202\330\250", nullptr));
+        label_color_window->setText(QString());
+        label_17->setText(QApplication::translate("AppSettingsDialog", "\330\261\331\206\332\257 \331\206\330\247\330\255\333\214\331\207 \331\276\331\206\330\254\330\261\331\207 \330\254\331\204\331\210", nullptr));
         cb_show_time->setText(QApplication::translate("AppSettingsDialog", "\331\206\331\205\330\247\333\214\330\264 \330\262\331\205\330\247\331\206 \331\276\330\261\330\257\330\247\330\262\330\264", nullptr));
+        comboBox->setItemText(0, QApplication::translate("AppSettingsDialog", "QSQLITE", nullptr));
+        comboBox->setItemText(1, QApplication::translate("AppSettingsDialog", "MSSQL", nullptr));
+
+        label_15->setText(QApplication::translate("AppSettingsDialog", "\330\257\333\214\330\252\330\247\330\250\333\214\330\263", nullptr));
         groupBox->setTitle(QApplication::translate("AppSettingsDialog", "\330\252\331\206\330\270\333\214\331\205\330\247\330\252 \331\205\330\257\331\204 \331\207\330\247", nullptr));
         btn_tiny_cfg->setText(QApplication::translate("AppSettingsDialog", "\330\247\331\206\330\252\330\256\330\247\330\250 \331\201\330\247\333\214\331\204", nullptr));
         label_2->setText(QApplication::translate("AppSettingsDialog", "\331\205\330\271\331\205\330\247\330\261\333\214 \331\205\330\257\331\204 \330\252\330\264\330\256\333\214\330\265 \330\263\330\261\331\206\330\264\333\214\331\206", nullptr));

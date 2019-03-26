@@ -2,14 +2,17 @@
 #include "ui_mainwindow.h"
 #include "QFileDialog"
 #include "QMessageBox"
-#include "xlsxdocument.h"
+//#include "xlsxdocument.h"
 
-// Set images on TableView row change
+// Set images when TableView row changed
 void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1, QModelIndex index2){
+    // get new row index
     selected_row_id = index1.sibling(index1.row(), 0).data().toInt();
+    // get pictures from db
     DBManager::DetectionImages images = dbmanager->getPicture(selected_row_id,table_date) ;
+    // enable save button
     ui->pb_save_images->setEnabled(true) ;
-
+    // set Images
     Front_Image_Raw = images.Front_Image_Raw ;
     Back_Image_Raw = images.Back_Image_Raw ;
     Front_Image_Processed = images.Front_Image_Processed ;
@@ -56,7 +59,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Connect image lable signals to slots
     connect(ui->lable_front_image, SIGNAL(clicked()), this, SLOT (front_image_clicked()));
     connect(ui->lable_back_image , SIGNAL(clicked()), this, SLOT (back_image_clicked()));
+
+    // Showing today date on the statusBar
     ui->statusBar->showMessage(dbmanager->currentDateTimeJalali().split(' ')[0]);
+
+    // Adding table names to combobox
     ui->comboBox_date->addItems(dbmanager->GetTableNames());
     ui->comboBox_date->setCurrentIndex(0);
 
@@ -73,6 +80,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// run decoder
 void MainWindow::on_pushButton_clicked()
 {
 
@@ -80,7 +88,7 @@ void MainWindow::on_pushButton_clicked()
     detector->runDetector(settings->getSetting(settings->KEY_SOURCE_1).toString().toStdString(),settings->getSetting(settings->KEY_SOURCE_2).toString().toStdString()) ;
     queryData(ui->comboBox_date->currentText());
 }
-
+// Open Program Setting
 void MainWindow::on_pushButton_Stop_clicked()
 {
     AppSettingsDialog *objMyNewDialog;

@@ -57,7 +57,7 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
 
         // if the area of detection is small or car's ROI have over lap with the first camera ROI,
         // it save the result on database and remove it from array
-        if (car_occupants[idx].ROI.area()<30000 || (ROI_Camera_1 & car_occupants[idx].ROI )!=car_occupants[idx].ROI)
+        if (car_occupants[idx].ROI.area()<ROI_Camera_1.area()/20 || (ROI_Camera_1 & car_occupants[idx].ROI )!=car_occupants[idx].ROI)
         {
             //          qDebug() << car_occupants[idx].NextDriver.Confidence << car_occupants[idx].Driver.Confidence ;
 
@@ -116,20 +116,14 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
     if (car_occupants.size()==0)
         return ;
     for (auto& occupancy:car_occupants){
-
         for (auto windows_result:windows_detection_results){
-
             // check window is in the car area
             if (windows_result.ClassName==wind_window && (windows_result.ROI & occupancy.ROI).area()>windows_result.ROI.area()/2) {
                 double last_confidence = 0 ;
-                //                DetectionResult* car_result;
                 for (auto detection_result:car_detection_results){
                     if (detection_result.ClassName==occupant) {
-
                         // check occupant is in wind area
                         if ((windows_result.ROI & detection_result.ROI).area() > detection_result.ROI.area()/2) {
-
-
                             if((detection_result.ROI.x + detection_result.ROI.width/2) > (windows_result.ROI.x+windows_result.ROI.width/2) ){
 
                                 if(detection_result.Confidence > occupancy.NextDriver.Confidence ) {
@@ -137,13 +131,9 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                                     occupancy.NextDriver.Confidence = detection_result.Confidence;
                                     occupancy.NextDriver.ROI = detection_result.ROI;
                                     image(detection_result.ROI).copyTo(occupancy.NextDriver.Image);
-
-
                                 }
                                 occupancy.NextDriver.ROI = detection_result.ROI ;
                             }
-
-
                             else {
 
                                 if(detection_result.Confidence > occupancy.Driver.Confidence  ){
@@ -153,14 +143,11 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                                     image(detection_result.ROI).copyTo(occupancy.Driver.Image);
                                 }
                                 occupancy.Driver.ROI = detection_result.ROI ;
-
-
                             }
                         }
-
                     }
-
                 }
+                // replace car image with a new one
                 if(last_confidence != 0 && last_confidence < (occupancy.Driver.Confidence + occupancy.NextDriver.Confidence))
                 {
                     for (auto detection_result:car_detection_results){
@@ -171,26 +158,18 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                             cv::rectangle(temp, occupancy.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             cv::rectangle(temp, occupancy.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             temp(detection_result.ROI).copyTo(occupancy.FrontCarImageProcessed) ;
-
                         }
                     }
-
                 }
-
-
             }
         }
     }
-
 }
 
 // Process detection results of back camera
 void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) {
-
-
     for (auto& occupancy:car_occupants){
         for (auto windows_result:windows_detection_results){
-
             // check window is in the car area
             if (windows_result.ClassName==back_rear) {
                 // calculate new confidence to replace back image with the new image
@@ -199,7 +178,6 @@ void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection
                 std::vector <OccupantResult> back_occupants ;
                 for (DetectionResult detection_result:car_detection_results){
                     if (detection_result.ClassName==occupant) {
-
                         // check occupant is in the window area
                         if ((windows_result.ROI & detection_result.ROI).area() > detection_result.ROI.area()/2) {
                             // store new detection result in back_occupants array
@@ -210,9 +188,7 @@ void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection
                             back_occupants.push_back(temp);
                             new_confidence += (double) detection_result.Confidence ;
                         }
-
                     }
-
                 }
                 // check weather the new detection result is more accurate from the last result
                 // if so it will replace the old result with the new one
@@ -229,12 +205,9 @@ void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection
                                 cv::rectangle(temp, backOccupancy.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             }
                             temp(detection_result.ROI).copyTo(occupancy.BackCarImageProcessed) ;
-
                         }
                     }
-
                 }
-
 
             }
         }
@@ -355,8 +328,8 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     WindowsDetector windowsdetector(*settings) ;
     OccupantDetector occupantdetector(*settings) ;
 
-    cv::TickMeter tm;
-    double time_decode_source_1=0,time_decode_source_2=0, time_tiny_car=0, time_occupant=0, time_windows=0 ;
+    cv::TickMeter tm,tm_total;
+    double time_decode_source_1=0,time_decode_source_2=0, time_total=0, time_occupant=0, time_windows=0 ;
 
     // set environment variable to use GPU for decoding video stream
     _putenv_s("OPENCV_FFMPEG_CAPTURE_OPTIONS", "video_codec;h264_cuvid|rtsp_transport;tcp");
@@ -369,8 +342,9 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     // create empty Mat for storing frame for cameras
     cv::Mat frame_1,frame_2,frame_concat;
     cv::cuda::GpuMat gframe_1,gframe_2;
-    if (settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool()){
-        //        cv::cuda::setGlDevice();
+    bool useGPUForDecode =  settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool() ;
+    if (useGPUForDecode){
+        cv::cuda::setGlDevice();
 
         gcap_1 = cv::cudacodec::createVideoReader(source1);
 
@@ -441,7 +415,7 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     run=true ;
 
 
-
+    tm_total.reset(); tm_total.start();
     for ( ;; ){
         if(!run) {
             cv::destroyAllWindows() ;
@@ -449,9 +423,11 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
 
 
         }
+        tm_total.reset(); tm_total.start();
         tm.reset(); tm.start();
         // return with error code 2
-        if(!cap_1.read(frame_1) && !gcap_1->nextFrame(gframe_1)) {
+
+        if(!cap_1.read(frame_1) && (useGPUForDecode && !gcap_1->nextFrame(gframe_1))) {
             qDebug() << "Can not grab images from camera 1." << endl;
             return 2;
         }
@@ -470,8 +446,9 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
             gframe_1.download(frame_1);
 
         // Run tiny-yolo car detector on the input frame
-        //        std::vector<DetectionResult> car_results_camera_1 =
-        //                cardetector.detect(frame_1);
+                std::vector<DetectionResult> car_results_camera_1 =
+                        cardetector.detect(frame_1);
+
 
         // Create empty vectors for front and back windows detection results
         std::vector<DetectionResult> windows_results_front,windows_results_back ;
@@ -499,7 +476,7 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
 
             // if there is no response from the second camera retrun 4 and exit
             tm.reset(); tm.start();
-            if(!cap_2.read(frame_2) && !gcap_2->nextFrame(gframe_2)) {
+            if(!cap_2.read(frame_2) && (useGPUForDecode && !gcap_2->nextFrame(gframe_2))) {
                 qDebug() << "Can not grab images from camera 2." << endl;
                 return 4;
             }
@@ -552,13 +529,17 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
             drawPred(occupant_results_front,frame_1,2,true);
             frame_1.copyTo(frame_concat) ;
         }
+        tm_total.stop();
+        time_total = tm_total.getTimeMilli();
         if(settings->getSetting(settings->KEY_SHOW_TIMES).toBool()) {
+
             cv::putText(frame_concat,"Docede Time Camera 1   : "+ std::to_string(time_decode_source_1),cv::Point(10,30),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
             cv::putText(frame_concat,"Docede Time Camera 2   : "+ std::to_string(time_decode_source_2),cv::Point(10,50),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
             cv::putText(frame_concat,"Occupant Detector Time: "+ std::to_string(time_occupant),cv::Point(10,70),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
             cv::putText(frame_concat,"Windows Detector Time : "+ std::to_string(time_windows),cv::Point(10,90),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
+            cv::putText(frame_concat,"FPS : "+ std::to_string(1000/time_total),cv::Point(10,110),cv::FONT_HERSHEY_COMPLEX,0.5,cv::Scalar(0,255,0),1) ;
         }
-        //cv::rectangle(frame_concat,ROI,cv::Scalar(0,255,0),5) ;
+        cv::rectangle(frame_concat,ROI_Camera_1,cv::Scalar(0,255,0),3) ;
 
         // Show output frame
         imshow("tracker",frame_concat);

@@ -6092,26 +6092,7 @@ release\appsettingsdialog.obj: appsettingsdialog.cpp appsettingsdialog.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtWidgets\qfiledialog.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtWidgets\QColorDialog \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtWidgets\qcolordialog.h \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDebug \
-		qtxlsx\src\xlsx\xlsxdocument.h \
-		qtxlsx\src\xlsx\xlsxglobal.h \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QtGlobal \
-		qtxlsx\src\xlsx\xlsxformat.h \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\QFont \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QByteArray \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\QList \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QExplicitlySharedDataPointer \
-		qtxlsx\src\xlsx\xlsxworksheet.h \
-		qtxlsx\src\xlsx\xlsxabstractsheet.h \
-		qtxlsx\src\xlsx\xlsxabstractooxmlfile.h \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QStringList \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QSharedPointer \
-		qtxlsx\src\xlsx\xlsxcell.h \
-		qtxlsx\src\xlsx\xlsxcellrange.h \
-		qtxlsx\src\xlsx\xlsxcellreference.h \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QMap \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QPointF \
-		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QObject
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDebug
 
 release\appsettings.obj: appsettings.cpp appsettings.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QSettings \

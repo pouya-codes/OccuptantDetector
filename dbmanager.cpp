@@ -104,6 +104,7 @@ QString DBManager::currentDateTimeJalali() {
     QStringList shamsi=  mdate.ToJalali( QString::number(a.date().currentDate().year()),
                                          QString::number(a.date().currentDate().month()),
                                          QString::number(a.date().currentDate().day()));
+
     QString JalailDate =shamsi.at(0)+
             "/"+QString("%1").arg(shamsi.at(1).toInt(),2,10,QLatin1Char('0'))+
             "/"+QString("%1").arg(shamsi.at(2).toInt(),2,10,QLatin1Char('0'))+ " " +a.time().currentTime().toString();;
@@ -111,10 +112,6 @@ QString DBManager::currentDateTimeJalali() {
     return JalailDate ;
 
 
-}
-QString DBManager::currentDateTimeMiladi() {
-    QDateTime a = QDateTime::currentDateTime() ;
-    return a.toString("yyyy-MM-dd hh,mm,ss,zzz");
 }
 
 void DBManager::insertResult(CarOccupancy occupant) {

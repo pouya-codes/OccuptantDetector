@@ -11,7 +11,6 @@ struct OccupantResult {
     float Confidence = 0 ;
 };
 
-
 class CarOccupancy
 {
 
@@ -35,12 +34,7 @@ public:
 
     bool PickImage  ;
 
-private :
-    void DetectFrontOccupant () ;
-    void DetectBackOccupant () ;
 
-    std::vector <DetectionResult> FrontOccupantROIs ;
-    std::vector <DetectionResult> BackOccupantROIs ;
 
 
 };

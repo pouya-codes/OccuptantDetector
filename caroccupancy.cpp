@@ -12,9 +12,3 @@ double CarOccupancy::GetBackOcuupanceConfidence() {
 
 }
 
-void CarOccupancy::DetectFrontOccupant () {
-
-}
-void CarOccupancy::DetectBackOccupant () {
-
-}

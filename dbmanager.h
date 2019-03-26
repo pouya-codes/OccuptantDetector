@@ -25,14 +25,12 @@ public:
         QPixmap Back_Image_Raw ;
         QPixmap Front_Image_Processed ;
         QPixmap Back_Image_Processed ;
-
     };
     DBManager();
     QSqlTableModel* getDataModel(QString date);
     DetectionImages getPicture (int id, QString table_name) ;
     void insertResult(CarOccupancy occupant);
     QString currentDateTimeJalali() ;
-    QString currentDateTimeMiladi() ;
     QStringList GetTableNames();
 
 private:

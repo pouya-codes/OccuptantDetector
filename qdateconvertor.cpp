@@ -88,12 +88,12 @@ QStringList QDateConvertor::ToJalali(QString year, QString month,QString day){
           jy += div(j_day_no-1, 365);
           j_day_no = (j_day_no-1)%365;
      }
-     int ii;
+     int ii=0;
      for (int i = 0; i < 11 && j_day_no >= j_days_in_month[i]; ++i){
           j_day_no -= j_days_in_month[i];
           ii=i;
      }
-     int  jm = ii+2;
+     int  jm = ii+1;
      int  jd = j_day_no+1;
      QStringList jalali;
      set_months();
