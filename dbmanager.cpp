@@ -26,9 +26,9 @@ bool DBManager::openDatabase(const QString Server,
                 return false ;
             }
             QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
-            QString queryText = "CREATE TABLE IF NOT EXISTS t" + todayDate+
+            QString queryText = QString("CREATE TABLE IF NOT EXISTS t%1"
                     " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
-                      "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)" ;
+                      "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)").arg(todayDate) ;
 
             QSqlQuery query(queryText);
             if(!query.isActive()) {
@@ -63,7 +63,7 @@ bool DBManager::openDatabase(const QString Server,
             }
 
             QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
-            queryText = QString("IF NOT EXISTS (SELECT * FROM %1.sys.sysobjects WHERE name='t%2' and xtype='U') CREATE TABLE [%1].[dbo].t%2 ([id] [int] IDENTITY(1,1) NOT NULL,[occupant_total] [int] NULL,[occupant_front] [int] NULL,[occupant_back] [int] NULL,[date] [varchar](50) NULL,[imagedata_raw_front] [varbinary](max) NULL,[imagedata_raw_back] [varbinary](max) NULL,[imagedata_processed_front] [varbinary](max) NULL,[imagedata_processed_back] [varbinary](max) NULL,CONSTRAINT [PK_Table_1] PRIMARY KEY CLUSTERED ([id] ASC) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]").arg(databaseName).arg(todayDate) ;
+            queryText = QString("IF NOT EXISTS (SELECT * FROM %1.sys.sysobjects WHERE name='t%2' and xtype='U') CREATE TABLE [%1].[dbo].t%2 ([id] [int] IDENTITY(1,1) NOT NULL,[occupant_total] [int] NULL,[occupant_front] [int] NULL,[occupant_back] [int] NULL,[date] [varchar](50) NULL,[imagedata_raw_front] [varbinary](max) NULL,[imagedata_raw_back] [varbinary](max) NULL,[imagedata_processed_front] [varbinary](max) NULL,[imagedata_processed_back] [varbinary](max) NULL)").arg(databaseName).arg(todayDate) ;
 
             QSqlQuery queryTable(queryText);
             if(!queryTable.isActive()) {
@@ -85,7 +85,7 @@ QStringList DBManager::GetTableNames () {
     if(SQLDriver=="QSQLITE")
         querytxt = "SELECT name FROM sqlite_master WHERE type = 'table' and name!='sqlite_sequence' ORDER BY name DESC";
     else if (SQLDriver=="QODBC")
-        querytxt = QString("SELECT name FROM %1.sys.sysobjects WHERE xtype='U'").arg(mdatabaseName);
+        querytxt = QString("SELECT name FROM %1.sys.sysobjects WHERE xtype='U' ORDER BY name DESC").arg(mdatabaseName);
 
     QSqlQuery query;
     query.exec(querytxt) ;
@@ -146,9 +146,9 @@ QSqlQueryModel* DBManager::getDataModel(QString date) {
         QSqlQueryModel *model = new QSqlQueryModel() ;
 
         if(SQLDriver=="QSQLITE")
-             model->setQuery(QString("SELECT id,occupant_total,date FROM t%1").arg(date)) ;
+             model->setQuery(QString("SELECT id,occupant_total,date FROM t%1 order by id DESC").arg(date)) ;
         else if (SQLDriver=="QODBC")
-             model->setQuery(QString("SELECT id,occupant_total,date FROM %1.dbo.t%2").arg(mdatabaseName).arg(date)) ;
+             model->setQuery(QString("SELECT id,occupant_total,date FROM %1.dbo.t%2 order by id DESC").arg(mdatabaseName).arg(date)) ;
         model->setHeaderData(0, Qt::Orientation::Horizontal, ("رکورد"));
         model->setHeaderData(1,  Qt::Orientation::Horizontal, ("تعداد سرنشین"));
         model->setHeaderData(2,  Qt::Orientation::Horizontal, ("ساعت"));

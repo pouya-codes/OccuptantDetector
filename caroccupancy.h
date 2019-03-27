@@ -32,7 +32,12 @@ public:
     cv::Mat BackCarImage ;
     cv::Mat BackCarImageProcessed ;
 
+    float FrontCarImageBlurriness ;
+    float BackCarImageBlurriness ;
+
     bool PickImage  ;
+
+    int track_id ;
 
 
 

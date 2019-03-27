@@ -52,6 +52,8 @@ private :
     cv::Rect ROI_Camera_1,ROI_Camera_2 ;
     int pad = 25 ;
 
+    float calcBlurriness(const cv::Mat &frame);
+
 //    cv::RNG rng(1);
 
 };

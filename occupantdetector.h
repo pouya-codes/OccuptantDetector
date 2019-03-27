@@ -13,6 +13,7 @@ public:
 private:
     Detector* net ;
     AppSettings* settings ;
+
 };
 
 #endif // OCCUPANTDETECTOR_H

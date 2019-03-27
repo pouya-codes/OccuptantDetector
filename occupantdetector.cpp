@@ -12,6 +12,7 @@ OccupantDetector::OccupantDetector(AppSettings& settings)
 std::vector<DetectionResult> OccupantDetector::detect(cv::Mat frame) {
 
     std::vector<bbox_t> result_vec = net->detect(frame, 0.1);
+    result_vec = net->tracking_id(result_vec) ;
     std::vector<DetectionResult> detection_results = postprocess(result_vec);
     return detection_results;
 
@@ -24,7 +25,7 @@ std::vector<DetectionResult> OccupantDetector::postprocess(std::vector<bbox_t> r
             (i.prob > settings->getSetting(settings->KEY_CAR_THREADSHOLD).toDouble()  && (i.obj_id==2 || i.obj_id==7 )))
         {
             cv::Rect ROI = cv::Rect(i.x, i.y, i.w, i.h) ;
-            detection_result.push_back({ROI,i.obj_id==0 ? occupant : car ,i.prob});
+            detection_result.push_back({ROI,i.obj_id==0 ? occupant : car ,i.prob, i.obj_id==0 ? -1 : (int) i.track_id});
 
         }
 

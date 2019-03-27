@@ -17,6 +17,7 @@ struct DetectionResult {
     cv::Rect ROI ;
     ClassNames ClassName ;
     float Confidence ;
+    int track_id = -1 ;
 };
 
 
