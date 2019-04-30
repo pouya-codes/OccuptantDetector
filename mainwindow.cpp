@@ -22,7 +22,7 @@ void MainWindow::on_tableViewSelectionModel_currentRowChanged(QModelIndex index1
 }
 
 
-// Query detction results
+// Query detction results for selected date
 void MainWindow::queryData(QString date) {
     ui->tableView->setModel(dbmanager->getDataModel(date));
     QItemSelectionModel *sm = ui->tableView->selectionModel();
@@ -32,12 +32,12 @@ void MainWindow::queryData(QString date) {
 // Set detection pictures
 void MainWindow::setPictures() {
     if (ui->rb_orginal->isChecked()){
-        ui->lable_front_image->setPixmap(Front_Image_Raw);
-        ui->lable_back_image->setPixmap(Back_Image_Raw);
+        ui->lable_front_image->setPixmap(Front_Image_Raw.scaled(ui->lable_front_image->width()-5,ui->lable_front_image->height()-5));
+        ui->lable_back_image->setPixmap(Back_Image_Raw.scaled(ui->lable_back_image->width()-5,ui->lable_back_image->height()-5));
     }
     else{
-        ui->lable_front_image->setPixmap(Front_Image_Processed);
-        ui->lable_back_image->setPixmap(Back_Image_Processed);
+        ui->lable_front_image->setPixmap(Front_Image_Processed.scaled(ui->lable_front_image->width()-5,ui->lable_front_image->height()-5));
+        ui->lable_back_image->setPixmap(Back_Image_Processed.scaled(ui->lable_back_image->width()-5,ui->lable_back_image->height()-5));
     }
 }
 
@@ -77,7 +77,8 @@ void MainWindow::connectToDB() {
                             settings->getSetting(settings->KEY_SERVER_PASSWORD).toString());
 
     // Showing today date on the statusBar
-    ui->statusBar->showMessage(dbmanager->currentDateTimeJalali().split(' ')[0]);
+    initalDate = dbmanager->currentDateTimeJalali().split(' ')[0] ;
+    ui->statusBar->showMessage(initalDate);
 
     // Adding table names to combobox
     ui->comboBox_date->clear();
@@ -89,14 +90,32 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+// update data
+void MainWindow::updateData() {
+    QString date = dbmanager->currentDateTimeJalali().split(' ')[0] ;
+    if(date != initalDate ) {
+        ui->comboBox_date->clear();
+        ui->comboBox_date->addItems(dbmanager->GetTableNames());
+        ui->comboBox_date->setCurrentIndex(0);
+        initalDate = date ;
+    }
+    queryData(ui->comboBox_date->currentText());
+}
 
 // run decoder
 void MainWindow::on_pushButton_clicked()
 {
+    // Start a timer to fetch inserted results every 2 seconds
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateData()));
+    timer->start(2000);
 
     detector = new MyDetector(*dbmanager,*settings);
     detector->runDetector(settings->getSetting(settings->KEY_SOURCE_1).toString().toStdString(),settings->getSetting(settings->KEY_SOURCE_2).toString().toStdString()) ;
+
+    timer->stop();
     queryData(ui->comboBox_date->currentText());
+
 }
 // Open Program Setting
 void MainWindow::on_pushButton_Stop_clicked()
@@ -122,6 +141,7 @@ void MainWindow::on_rb_processed_clicked()
 {
     setPictures() ;
 }
+// handle click on front image
 void MainWindow::front_image_clicked(){
     cv::Mat image;
     if (ui->rb_orginal->isChecked())
@@ -134,6 +154,7 @@ void MainWindow::front_image_clicked(){
             cv::destroyAllWindows() ;
     }
 }
+// handle click on back image
 void MainWindow::back_image_clicked(){
     cv::Mat image;
     if (ui->rb_orginal->isChecked())
@@ -148,24 +169,21 @@ void MainWindow::back_image_clicked(){
 
 }
 
+// save images on the disk
 void MainWindow::on_pb_save_images_clicked()
 {
     QString path = QFileDialog::getExistingDirectory(this,QDir::currentPath()) ;
     if (path!="" ){
         std::string out_path = QString(path +"/").toStdString() ;
-//        if (ui->rb_orginal->isChecked()){
             if (!Front_Image_Raw.isNull())
                 cv::imwrite(out_path+std::to_string(selected_row_id)+"_Front_Orginal.jpg",ASM::QPixmapToCvMat(Front_Image_Raw)) ;
             if (!Back_Image_Raw.isNull())
                 cv::imwrite(out_path+std::to_string(selected_row_id)+"_Back_Orginal.jpg",ASM::QPixmapToCvMat(Back_Image_Raw)) ;
-//        }
-//        else
-//        {
             if (!Front_Image_Processed.isNull())
                 cv::imwrite(out_path+std::to_string(selected_row_id)+"_Front_Processed.jpg",ASM::QPixmapToCvMat(Front_Image_Processed)) ;
             if (!Back_Image_Processed.isNull())
                 cv::imwrite(out_path+std::to_string(selected_row_id)+"_Back_Processed.jpg",ASM::QPixmapToCvMat(Back_Image_Processed)) ;
-//        }
+
     }
 
 }

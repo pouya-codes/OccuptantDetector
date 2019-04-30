@@ -2,7 +2,6 @@
 #define OBJECTDETECTOR_H
 #define OPENCV
 
-#include <setting.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/ocl.hpp>

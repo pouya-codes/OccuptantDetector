@@ -28,6 +28,7 @@ public:
         QPixmap Back_Image_Processed ;
     };
     DBManager(QString dbType);
+    bool createTable() ;
     bool openDatabase(const QString Server="",
                       const QString User="",
                       const QString Password="",
@@ -40,10 +41,12 @@ public:
     QStringList GetTableNames();
 
 private:
+
     QDateConvertor mdate;
     QString SQLDriver ;
     QSqlDatabase db ;
     QString mdatabaseName;
+    QString lastDate = "" ;
 //    QString DRIVER = "QSQLITE";
 };
 

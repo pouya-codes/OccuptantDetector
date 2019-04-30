@@ -69,6 +69,7 @@ public:
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         lable_front_image = new ClickableLabel(centralWidget);
         lable_front_image->setObjectName(QStringLiteral("lable_front_image"));
+        lable_front_image->setEnabled(true);
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -80,6 +81,7 @@ public:
 
         lable_back_image = new ClickableLabel(centralWidget);
         lable_back_image->setObjectName(QStringLiteral("lable_back_image"));
+        lable_back_image->setEnabled(true);
         lable_back_image->setStyleSheet(QStringLiteral("border: 2px solid black"));
 
         verticalLayout_2->addWidget(lable_back_image);

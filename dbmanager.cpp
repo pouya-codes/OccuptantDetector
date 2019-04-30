@@ -11,6 +11,53 @@ DBManager::DBManager(QString dbType)
     db = QSqlDatabase::addDatabase(driver) ;
     this->SQLDriver = driver ;
 
+
+}
+
+bool DBManager::createTable() {
+
+    QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+    if(todayDate!=this->lastDate) {
+        if(SQLDriver=="QSQLITE"){
+            QString queryText = QString("CREATE TABLE IF NOT EXISTS t%1"
+                    " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
+                      "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)").arg(todayDate) ;
+
+            QSqlQuery query(queryText);
+            if(!query.isActive()) {
+                qWarning() << "ERROR: " << query.lastError().text();
+                return false ;
+            }
+
+
+        }
+         else if (SQLDriver=="QODBC") {
+            QString queryText = QString("if not exists(select * from sys.databases where name = '%1') "
+                                "create database %1").arg(this->mdatabaseName) ;
+
+            QSqlQuery query(queryText);
+            if(!query.isActive()) {
+                qWarning() << "ERROR: " << query.lastError().text();
+                return false ;
+            }
+
+            QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+            queryText = QString("IF NOT EXISTS (SELECT * FROM %1.sys.sysobjects WHERE name='t%2' and xtype='U') CREATE TABLE [%1].[dbo].t%2 ([id] [int] IDENTITY(1,1) NOT NULL,[occupant_total] [int] NULL,[occupant_front] [int] NULL,[occupant_back] [int] NULL,[date] [varchar](50) NULL,[imagedata_raw_front] [varbinary](max) NULL,[imagedata_raw_back] [varbinary](max) NULL,[imagedata_processed_front] [varbinary](max) NULL,[imagedata_processed_back] [varbinary](max) NULL)").arg(this->mdatabaseName).arg(todayDate) ;
+
+            QSqlQuery queryTable(queryText);
+            if(!queryTable.isActive()) {
+                qWarning() << "ERROR: " << queryTable.lastError().text();
+                return false ;
+            }
+
+        }
+
+        this->lastDate = todayDate ;
+
+    }
+
+
+    return true ;
 }
 
 bool DBManager::openDatabase(const QString Server,
@@ -25,16 +72,7 @@ bool DBManager::openDatabase(const QString Server,
                 qWarning() << "ERROR: " << db.lastError();
                 return false ;
             }
-            QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
-            QString queryText = QString("CREATE TABLE IF NOT EXISTS t%1"
-                    " (id INTEGER PRIMARY KEY AUTOINCREMENT,occupant_total INTEGER,occupant_front INTEGER,occupant_back INTEGER ,date varchar(50),"
-                      "imagedata_raw_front BLOB, imagedata_raw_back BLOB, imagedata_processed_front BLOB, imagedata_processed_back BLOB)").arg(todayDate) ;
 
-            QSqlQuery query(queryText);
-            if(!query.isActive()) {
-                qWarning() << "ERROR: " << query.lastError().text();
-                return false ;
-            }
 
         }
 
@@ -53,26 +91,10 @@ bool DBManager::openDatabase(const QString Server,
                 return false ;
             }
 
-            QString queryText = QString("if not exists(select * from sys.databases where name = '%1') "
-                                "create database %1").arg(databaseName) ;
 
-            QSqlQuery query(queryText);
-            if(!query.isActive()) {
-                qWarning() << "ERROR: " << query.lastError().text();
-                return false ;
-            }
-
-            QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
-            queryText = QString("IF NOT EXISTS (SELECT * FROM %1.sys.sysobjects WHERE name='t%2' and xtype='U') CREATE TABLE [%1].[dbo].t%2 ([id] [int] IDENTITY(1,1) NOT NULL,[occupant_total] [int] NULL,[occupant_front] [int] NULL,[occupant_back] [int] NULL,[date] [varchar](50) NULL,[imagedata_raw_front] [varbinary](max) NULL,[imagedata_raw_back] [varbinary](max) NULL,[imagedata_processed_front] [varbinary](max) NULL,[imagedata_processed_back] [varbinary](max) NULL)").arg(databaseName).arg(todayDate) ;
-
-            QSqlQuery queryTable(queryText);
-            if(!queryTable.isActive()) {
-                qWarning() << "ERROR: " << queryTable.lastError().text();
-                return false ;
-            }
         }
 
-
+        return createTable() ;
     }
     else
         return false ;
@@ -178,18 +200,23 @@ void DBManager::insertResult(CarOccupancy occupant) {
 //    qDebug () << occupant.FrontOccupantNumber ;
 
     if (occupant.FrontOccupantNumber+occupant.BackOccupantNumber>0 ) {
+
+        if (!createTable()) {
+            qDebug() << "Error in making table" ;
+            return ;
+        }
         QSqlQuery query = QSqlQuery(db);
 
-        QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
+//        QString todayDate= this->currentDateTimeJalali().split(" ")[0].replace('/','_');
         QString queryText ;
         if (occupant.BackCarImageProcessed.empty()){
             if(SQLDriver=="QSQLITE")
                 queryText = QString("INSERT INTO t%1 (occupant_total, occupant_front, date , imagedata_raw_front, imagedata_processed_front)"
-                                                              " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)").arg(todayDate) ;
+                                                              " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)").arg(lastDate) ;
 
             else if (SQLDriver=="QODBC")
                 queryText = QString("INSERT INTO %1.dbo.t%2 (occupant_total, occupant_front, date , imagedata_raw_front, imagedata_processed_front)"
-                                                              " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)").arg(mdatabaseName).arg(todayDate) ;
+                                                              " VALUES (:occupant_total, :occupant_front, :date , :imagedata_raw_front , :imagedata_processed_front)").arg(mdatabaseName).arg(lastDate) ;
 
 
         }
@@ -197,10 +224,10 @@ void DBManager::insertResult(CarOccupancy occupant) {
         else {
             if(SQLDriver=="QSQLITE")
                 queryText = QString("INSERT INTO t%1 (occupant_total, occupant_front,occupant_back, date , imagedata_raw_front, imagedata_processed_front , imagedata_raw_back, imagedata_processed_back)"
-                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)").arg(todayDate) ;
+                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)").arg(lastDate) ;
             else if (SQLDriver=="QODBC")
                 queryText = QString("INSERT INTO %1.dbo.t%2 (occupant_total, occupant_front,occupant_back, date , imagedata_raw_front, imagedata_processed_front , imagedata_raw_back, imagedata_processed_back)"
-                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)").arg(mdatabaseName).arg(todayDate) ;
+                                                       " VALUES (:occupant_total, :occupant_front , :occupant_back , :date , :imagedata_raw_front , :imagedata_processed_front , :imagedata_raw_back , :imagedata_processed_back)").arg(mdatabaseName).arg(lastDate) ;
         }
 
 
@@ -211,13 +238,16 @@ void DBManager::insertResult(CarOccupancy occupant) {
         QByteArray inByteArrayFront;
         QBuffer inBufferFront( &inByteArrayFront );
         inBufferFront.open( QIODevice::WriteOnly );
-        FrontPixmap.save( &inBufferFront, "PNG" ); // write inPixmap into inByteArray in PNG format
+        FrontPixmap.save( &inBufferFront, "JPEG" ); // write inPixmap into inByteArray in JPEG format
+
+//        cv::Mat temp ;
+//        cv::cvtColor(occupant.FrontCarImageProcessed,temp,cv::COLOR_RGB2RGBA) ;
 
         QPixmap FrontProcessedPixmap = ASM::cvMatToQPixmap(occupant.FrontCarImageProcessed) ;
         QByteArray inByteArrayFrontProcessed;
         QBuffer inBufferFrontProcessed( &inByteArrayFrontProcessed );
         inBufferFrontProcessed.open( QIODevice::WriteOnly );
-        FrontProcessedPixmap.save( &inBufferFrontProcessed, "PNG" ); // write inPixmap into inByteArray in PNG format
+        FrontProcessedPixmap.save( &inBufferFrontProcessed, "JPEG" ); // write inPixmap into inByteArray in JPEG format
 
         query.bindValue( ":occupant_front", occupant.FrontOccupantNumber );
         query.bindValue( ":occupant_total", occupant.FrontOccupantNumber + occupant.BackOccupantNumber );
@@ -230,13 +260,13 @@ void DBManager::insertResult(CarOccupancy occupant) {
             QByteArray inByteArrayBack;
             QBuffer inBufferBack( &inByteArrayBack );
             inBufferBack.open( QIODevice::WriteOnly );
-            BackPixmap.save( &inBufferBack, "PNG" ); // write inPixmap into inByteArray in PNG format
+            BackPixmap.save( &inBufferBack, "JPEG" ); // write inPixmap into inByteArray in JPEG format
 
             QPixmap BackProcessedPixmap = ASM::cvMatToQPixmap(occupant.BackCarImageProcessed) ;
             QByteArray inByteArrayBackProcessed;
             QBuffer inBufferBackProcessed( &inByteArrayBackProcessed );
             inBufferBackProcessed.open( QIODevice::WriteOnly );
-            BackProcessedPixmap.save( &inBufferBackProcessed, "PNG" ); // write inPixmap into inByteArray in PNG format
+            BackProcessedPixmap.save( &inBufferBackProcessed, "JPEG" ); // write inPixmap into inByteArray in JPEG format
 
             query.bindValue( ":occupant_front", occupant.BackOccupantNumber );
             query.bindValue( ":imagedata_raw_back", inByteArrayBack );

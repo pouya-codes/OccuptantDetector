@@ -1,7 +1,8 @@
 #include "caroccupancy.h"
 
-CarOccupancy::CarOccupancy(cv::Mat front_image,cv::Mat back_image)
+CarOccupancy::CarOccupancy()
 {
+
 
 }
 double CarOccupancy::GetBackOcuupanceConfidence() {

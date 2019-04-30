@@ -13,6 +13,7 @@
 #include <appsettings.h>
 #include <appsettingsdialog.h>
 #include <dbmanager.h>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -33,7 +34,7 @@ private slots:
 //    void on_tableViewSelectionModel_currentRowChanged(QModelIndex index1,QModelIndex index2);
 
 
-
+    void updateData() ;
     void on_rb_orginal_clicked();
 
     void on_rb_processed_clicked();
@@ -56,6 +57,8 @@ private:
     AppSettings* settings ;
     DBManager* dbmanager ;
     QPixmap Front_Image_Raw, Back_Image_Raw, Front_Image_Processed, Back_Image_Processed ;
+    QTimer * timer;
+    QString initalDate ;
 
 
 

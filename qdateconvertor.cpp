@@ -93,7 +93,7 @@ QStringList QDateConvertor::ToJalali(QString year, QString month,QString day){
           j_day_no -= j_days_in_month[i];
           ii=i;
      }
-     int  jm = ii+1;
+     int  jm = ii+2;
      int  jd = j_day_no+1;
      QStringList jalali;
      set_months();

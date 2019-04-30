@@ -24,11 +24,9 @@ SOURCES += main.cpp\
     clickablelabel.cpp \
     dbmanager.cpp \
     qdateconvertor.cpp \
-    videostreamer.cpp \
     mydetector.cpp
 
 HEADERS  += mainwindow.h \
-    setting.h \
     asmOpenCV.h \
     windowsdetector.h \
     objectdetector.h \
@@ -40,7 +38,6 @@ HEADERS  += mainwindow.h \
     clickablelabel.h \
     dbmanager.h \
     qdateconvertor.h \
-    videostreamer.h \
     mydetector.h
 
 FORMS    += mainwindow.ui \
@@ -54,18 +51,19 @@ unix: PKGCONFIG += opencv4
 win32 {
 #INCLUDEPATH += D:/Develop/OpenCV/BulidMSCV4/install/include
 
-INCLUDEPATH += D:/Develop/OpenCV/buildMSVC4.0.1/install/include
-INCLUDEPATH += D:/Develop/Library/darknet/include
-LIBS += -LD:/Develop/Library/darknet/build/darknet/x64/ \
+INCLUDEPATH += D:/Develop/OpenCV/opencv-4.1.0/build/install/include
+INCLUDEPATH += D:/Develop/darknet/include
+LIBS += -LD:/Develop/darknet/build/darknet/x64/ \
         -lyolo_cpp_dll
-LIBS += -LD:/Develop/OpenCV/buildMSVC4.0.1/install/x64/vc15/lib \
--lopencv_core401 \
--lopencv_imgproc401 \
--lopencv_highgui401 \
--lopencv_imgcodecs401 \
--lopencv_dnn401 \
--lopencv_videoio401 \
--lopencv_cudacodec401
+LIBS += -LD:/Develop/OpenCV/opencv-4.1.0/build/install/x64/vc15/lib \
+-lopencv_core410 \
+-lopencv_imgproc410 \
+-lopencv_highgui410 \
+-lopencv_imgcodecs410 \
+#-lopencv_dnn410 \
+-lopencv_videoio410 \
+-lopencv_cudacodec410
 
+#LIBS += -LD:/Develop/OpenCV/buildMSVC4.0.1/bin/Debug
 
 }

@@ -49,28 +49,15 @@ public:
     QString KEY_SERVER_USER = "SERVER_USER" ;
     QString KEY_SERVER_PASSWORD = "SERVER_PASSWORD" ;
 
+    const int ROI_PAD = 20 ;
+    const cv::Scalar front_rear_color = cv::Scalar(200,200,200);
+
 
 private :
     void loadSettings();
 
     QSettings* settings ;
     QString settingsFilePath;
-
-
-
-
-    const cv::Scalar car_color = cv::Scalar(255,0,0);
-    const cv::Scalar occupant_color = cv::Scalar(0,255,0);
-    const cv::Scalar windwindow_color = cv::Scalar(0,0,255);
-    const cv::Scalar back_rear_color = cv::Scalar(100,100,100);
-    const cv::Scalar front_rear_color = cv::Scalar(200,200,200);
-
-    const float confidentThredshold = 0.2 ;
-    const bool detectDriver = false ;
-    const int numberOfDetection = 3 ;
-    const int ROI_PAD = 20 ;
-
-
     cv::Scalar qcolor2scalar(QColor color);
     QColor scalar2qcolor(cv::Scalar color) ;
 

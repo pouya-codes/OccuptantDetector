@@ -1,6 +1,5 @@
 #ifndef CAROCCUPANT_H
 #define CAROCCUPANT_H
-#include "setting.h"
 #include "objectdetector.h"
 
 struct OccupantResult {
@@ -15,7 +14,7 @@ class CarOccupancy
 {
 
 public:
-    CarOccupancy(cv::Mat front_image= cv::Mat(),cv::Mat back_image=cv::Mat());
+    CarOccupancy();
     double GetBackOcuupanceConfidence () ;
 
     int FrontOccupantNumber ;
@@ -38,6 +37,8 @@ public:
     bool PickImage  ;
 
     int track_id ;
+
+    int missed_frame = 3 ;
 
 
 

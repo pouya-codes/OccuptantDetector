@@ -1,6 +1,6 @@
 #include "mydetector.h"
 #include "QSysInfo"
-#include "videostreamer.h"
+
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/core/opengl.hpp>
 
@@ -14,9 +14,7 @@ MyDetector::MyDetector(DBManager& dbmanager,AppSettings& settings )
     this->settings = &settings;
 
 }
-void MyDetector::stopDetector() {
-    this->run = false ;
-}
+
 
 
 float MyDetector::calcBlurriness(const cv::Mat &frame)
@@ -74,49 +72,57 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
         if (car_occupants[idx].ROI.area()<ROI_Camera_1.area()/20 || (ROI_Camera_1 & car_occupants[idx].ROI )!=car_occupants[idx].ROI)
         {
 
+            car_occupants[idx].missed_frame -- ;
+            if(car_occupants[idx].missed_frame==0) {
+                // Compare confidence of next driver occupant confidence with 0
+                if (settings->getSetting(settings->KEY_DETECT_DRIVER).toBool() && car_occupants[idx].NextDriver.Confidence!=0 )
+                    car_occupants[idx].FrontOccupantNumber+= 1 ;
 
-            // Compare confidence of next driver occupant confidence with 0
-            if (settings->getSetting(settings->KEY_DETECT_DRIVER).toBool() && car_occupants[idx].NextDriver.Confidence!=0 )
-                car_occupants[idx].FrontOccupantNumber+= 1 ;
+                // Check weather detecting driver is enable or not
+                // Compare confidence of driver confidence with 0
+                if (car_occupants[idx].Driver.Confidence!=0 )
+                    car_occupants[idx].FrontOccupantNumber+= 1 ;
 
-            // Check weather detecting driver is enable or not
-            // Compare confidence of driver confidence with 0
-            if (car_occupants[idx].Driver.Confidence!=0 )
-                car_occupants[idx].FrontOccupantNumber+= 1 ;
+                // Store data on DB
+                dbmanager->insertResult(car_occupants[idx]) ;
 
-            // Store data on DB
-            dbmanager->insertResult(car_occupants[idx]) ;
+                // Remove saved result from occupants array
+                car_occupants.erase(car_occupants.begin()+ idx);
+            }
 
-            // Remove saved result from occupants array
-            car_occupants.erase(car_occupants.begin()+ idx);
+
 
         }
     }
 
     // Check weather the detected car already exist in the occupants array or not
-
     for (auto detection_result:car_detection_results){
+        // Check the detection result is a car
         if (detection_result.ClassName==car) {
 
             bool exist= false ;
+            // Check all the existing car in the car_occupants array
             for (auto& car_occupant:car_occupants){
-//                if ((car_occupant.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5))
-                if (car_occupant.track_id == detection_result.track_id){
+                //                if ((car_occupant.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5))
+                if (car_occupant.track_id == detection_result.track_id || (car_occupant.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5)){
                     exist=true;
+                    car_occupant.missed_frame = 3;
 
                     car_occupant.ROI = detection_result.ROI;
                     car_occupant.ConfidentCar = detection_result.Confidence ;
 
                     bool overLap = (detection_result.ROI & cv::Rect(0, 0,image.cols,image.rows)).area() == detection_result.ROI.area();
 
-                    if((car_occupant.Driver.Confidence + car_occupant.NextDriver.Confidence ==0) && overLap && detection_result.ROI.area()!= 0 && car_occupant.FrontCarImageBlurriness > calcBlurriness(image(detection_result.ROI))){
+                    if((car_occupant.Driver.Confidence + car_occupant.NextDriver.Confidence ==0) &&
+                            overLap && detection_result.ROI.area()!= 0 &&
+                            car_occupant.FrontCarImageBlurriness > calcBlurriness(image(detection_result.ROI))){
                         image(detection_result.ROI).copyTo(car_occupant.FrontCarImage);
                     }
 
                     break;
                 }
             }
-            // the car already has not been detected
+            // the car already has not been detected and the car size is larger than 1/20 of camera 1 ROI and the ROI of the car is in the Detection ROI
             if(!exist && detection_result.ROI.area()>=ROI_Camera_1.area()/20 && (ROI_Camera_1 & detection_result.ROI)==detection_result.ROI){
 
                 CarOccupancy newCar ;
@@ -141,9 +147,11 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
     if (car_occupants.size()==0)
         return ;
     for (auto& occupancy:car_occupants){
+
         for (auto windows_result:windows_detection_results){
             // check window is in the car area
             if (windows_result.ClassName==wind_window && (windows_result.ROI & occupancy.ROI).area()>windows_result.ROI.area()/2) {
+                // store last detection confidence
                 float last_confidence = 0 ;
 
                 for (auto detection_result:car_detection_results){
@@ -153,7 +161,7 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                             if((detection_result.ROI.x + detection_result.ROI.width/2) > (windows_result.ROI.x+windows_result.ROI.width/2) ){
 
                                 if(detection_result.Confidence > occupancy.NextDriver.Confidence ) {
-                                    last_confidence += occupancy.NextDriver.Confidence ;
+                                    last_confidence += occupancy.NextDriver.Confidence +0.001 ;
                                     occupancy.NextDriver.Confidence = detection_result.Confidence;
                                     occupancy.NextDriver.ROI = detection_result.ROI;
                                     image(detection_result.ROI).copyTo(occupancy.NextDriver.Image);
@@ -164,12 +172,12 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                             else {
 
                                 if(detection_result.Confidence > occupancy.Driver.Confidence  ){
-                                    last_confidence += occupancy.Driver.Confidence ;
+                                    last_confidence += occupancy.Driver.Confidence +0.001 ;
                                     occupancy.Driver.Confidence = detection_result.Confidence;
                                     occupancy.Driver.ROI = detection_result.ROI;
                                     image(detection_result.ROI).copyTo(occupancy.Driver.Image);
                                 }
-                                qDebug() << "Driver" ;
+                                //                                qDebug() << "Driver" ;
                                 occupancy.Driver.ROI = detection_result.ROI ;
                             }
                         }
@@ -177,11 +185,16 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                 }
                 // replace car image with a new one
 
-                if(  last_confidence < (occupancy.Driver.Confidence + occupancy.NextDriver.Confidence))
+                if(last_confidence!=0 && last_confidence < (occupancy.Driver.Confidence + occupancy.NextDriver.Confidence))
                 {
+//                    qDebug() << last_confidence << "-" << occupancy.Driver.Confidence + occupancy.NextDriver.Confidence ;
                     for (auto detection_result:car_detection_results){
-//                        if (detection_result.ClassName==car && (occupancy.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5))
-                        if (detection_result.ClassName==car && occupancy.track_id == detection_result.track_id){
+                        //                        if (detection_result.ClassName==car && (occupancy.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5))
+                        if (detection_result.ClassName==car &&
+                           (occupancy.track_id == detection_result.track_id || (occupancy.ROI & detection_result.ROI).area()>(detection_result.ROI.area()/1.5))
+                           && detection_result.ROI.x+detection_result.ROI.width<image.cols
+                           && detection_result.ROI.y+detection_result.ROI.height<image.rows
+                           ){
 
                             cv::Mat temp ;
                             image(detection_result.ROI).copyTo(occupancy.FrontCarImage) ;
@@ -189,11 +202,15 @@ void MyDetector::processDetectionFront(std::vector<DetectionResult> car_detectio
                             cv::rectangle(temp, occupancy.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             cv::rectangle(temp, occupancy.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),2);
                             temp(detection_result.ROI).copyTo(occupancy.FrontCarImageProcessed) ;
+//                            cv::imshow("sa",occupancy.FrontCarImageProcessed) ;
+//                            cv::waitKey(0) ;
 
                         }
                     }
                 }
+
             }
+
         }
     }
 }
@@ -205,7 +222,7 @@ void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection
             // check window is in the car area
             if (windows_result.ClassName==back_rear) {
                 // calculate new confidence to replace back image with the new image
-                double new_confidence = 0 ;
+                float new_confidence = 0 ;
                 // create an empty vector to store back occupants detection results
                 std::vector <OccupantResult> back_occupants ;
                 for (DetectionResult detection_result:car_detection_results){
@@ -218,7 +235,7 @@ void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection
                             temp.ROI = detection_result.ROI ;
                             temp.Confidence = detection_result.Confidence  ;
                             back_occupants.push_back(temp);
-                            new_confidence += (double) detection_result.Confidence ;
+                            new_confidence += detection_result.Confidence + 0.001 ;
                         }
                     }
                 }
@@ -247,65 +264,6 @@ void MyDetector::processDetectionBack(std::vector<DetectionResult> car_detection
 
 }
 
-
-
-void MyDetector::drawResult(cv::Mat& frame,std::vector<CarOccupancy> &car_occupants )
-{
-
-
-    //    qDebug() << car_occupants.size() ;
-    for (auto car_occupant:car_occupants){
-        //        if (!car_occupant.CarImage.empty()) {
-        //            cv::Mat resized_car ;
-        //            cv::resize(car_occupant.CarImage,resized_car,cv::Size(50,50)) ;
-        //            cv::copyMakeBorder(resized_car,resized_car,3,3,3,3,cv::BORDER_CONSTANT,car_occupant.Color);
-        //            cv::Mat destinationROI = frame( cv::Rect(frame.cols-60,70*idx,resized_car.cols,resized_car.rows) );
-        //            resized_car.copyTo( destinationROI );
-        //            cv::putText(frame,std::to_string(car_occupant.OccupantNumber),cv::Point(frame.cols-30,(70*idx)+25),cv::FONT_HERSHEY_SCRIPT_SIMPLEX,1,cv::Scalar(0,255,0),2) ;
-        //            idx++ ;
-        //        }
-
-        //        rectangle(frame, car_occupant.ROI, settings->getSettingColor(settings->KEY_COLOR_CAR),4);
-        rectangle(frame, car_occupant.ROI, car_occupant.Color,4);
-        //        rectangle(frame, car_occupant.Driver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
-        //        rectangle(frame, car_occupant.NextDriver.ROI, settings->getSettingColor(settings->KEY_COLOR_OCCUPANT),4);
-
-
-        //        if(cv::countNonZero(car_occupant.driver_detected)==numberOfDetection)
-        //            cv::circle(frame,cv::Point(car_occupant.ROI.x+10,car_occupant.ROI.y-10),5,cv::Scalar(0,0,255),-1);
-        //        if(cv::countNonZero(car_occupant.next_driver_detected)==numberOfDetection)
-        //            cv::circle(frame,cv::Point(car_occupant.ROI.x+30,car_occupant.ROI.y-10),5,cv::Scalar(0,0,255),-1);
-
-    }
-
-}
-
-//void Detector::drawResult(cv::Mat& frame,std::vector<CarOccupant> &car_occupants )
-//{
-
-
-//    int idx = 0 ;
-//    for (auto car_occupant:car_occupants){
-//        if (!car_occupant.CarImage.empty()) {
-//            cv::Mat resized_car ;
-//            cv::resize(car_occupant.CarImage,resized_car,cv::Size(50,50)) ;
-//            cv::copyMakeBorder(resized_car,resized_car,3,3,3,3,cv::BORDER_CONSTANT,car_occupant.Color);
-//            cv::Mat destinationROI = frame( cv::Rect(frame.cols-60,70*idx,resized_car.cols,resized_car.rows) );
-//            resized_car.copyTo( destinationROI );
-//            cv::putText(frame,std::to_string(car_occupant.OccupantNumber),cv::Point(frame.cols-30,(70*idx)+25),cv::FONT_HERSHEY_SCRIPT_SIMPLEX,1,cv::Scalar(0,255,0),2) ;
-//            idx++ ;
-//        }
-
-//        rectangle(frame, car_occupant.ROI, car_occupant.Color,4);
-//        if(cv::countNonZero(car_occupant.driver_detected)==numberOfDetection)
-//            cv::circle(frame,cv::Point(car_occupant.ROI.x+10,car_occupant.ROI.y-10),5,cv::Scalar(0,0,255),-1);
-//        if(cv::countNonZero(car_occupant.next_driver_detected)==numberOfDetection)
-//            cv::circle(frame,cv::Point(car_occupant.ROI.x+30,car_occupant.ROI.y-10),5,cv::Scalar(0,0,255),-1);
-
-//    }
-
-//}
-
 // Draw detection results
 void MyDetector::drawPred(std::vector<DetectionResult> detection_results, cv::Mat& frame,int border , bool show_conf, cv::Point base )
 {
@@ -323,7 +281,7 @@ void MyDetector::drawPred(std::vector<DetectionResult> detection_results, cv::Ma
             color = settings->getSettingColor(settings->KEY_COLOR_WINDOW)  ;
             break;
         case front_rear:
-            color = front_rear_color ;
+            color = settings->front_rear_color ;
             break;
         case back_rear:
             color = settings->getSettingColor(settings->KEY_COLOR_WINDOW_BACK)  ;
@@ -376,7 +334,7 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     cv::cuda::GpuMat gframe_1,gframe_2;
     bool useGPUForDecode =  settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool() ;
     if (useGPUForDecode){
-        cv::cuda::setGlDevice();
+//        cv::cuda::setGlDevice();
 
         gcap_1 = cv::cudacodec::createVideoReader(source1);
 
@@ -402,20 +360,21 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     // set the first camera ROI
     cv::Point a;
     cv::Point b;
-    ROI_Camera_1 = {cv::Point(ROI_PAD,ROI_PAD),
-                    cv::Point(frame_width_camera_1  - (ROI_PAD*2),
-                    frame_height_camera_1 - (ROI_PAD*2))} ;
+    ROI_Camera_1 = {cv::Point(settings->ROI_PAD,settings->ROI_PAD),
+                    cv::Point(frame_width_camera_1  - (settings->ROI_PAD*2),
+                    frame_height_camera_1 - (settings->ROI_PAD*2))} ;
 
     // initialize the second camera
     bool second_camera = source2!="" ;
     if(source2!="") {
-        if (settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool()){
+        if (useGPUForDecode){
             gcap_2 = cv::cudacodec::createVideoReader(source2);
 
 
             // set the first camera width and height variables
             frame_width_camera_2 = gcap_2->format().width ;
-            frame_height_camera_2 = gcap_2->format().height ; ;
+            frame_height_camera_2 = gcap_2->format().height ;
+
 
         }
         else {
@@ -437,9 +396,9 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
     }
 
     // set the second camera ROI
-    ROI_Camera_2 = {cv::Point(ROI_PAD,ROI_PAD),
-                    cv::Point(frame_width_camera_2  - (ROI_PAD*2),
-                    frame_height_camera_2 - (ROI_PAD*2))} ;
+    ROI_Camera_2 = {cv::Point(settings->ROI_PAD,settings->ROI_PAD),
+                    cv::Point(frame_width_camera_2  - (settings->ROI_PAD*2),
+                    frame_height_camera_2 - (settings->ROI_PAD*2))} ;
 
 
     // create an empty vector for storing detection result
@@ -459,8 +418,9 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
         tm.reset(); tm.start();
         // return with error code 2
 
-        if(!cap_1.read(frame_1) && (useGPUForDecode && !gcap_1->nextFrame(gframe_1))) {
+        if((!useGPUForDecode && !cap_1.read(frame_1)) || (useGPUForDecode && !gcap_1->nextFrame(gframe_1))) {
             qDebug() << "Can not grab images from camera 1." << endl;
+            cv::destroyAllWindows() ;
             return 2;
         }
         tm.stop();
@@ -474,12 +434,12 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
             return 0 ;
         }
 
-        if(settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool())
+        if(useGPUForDecode)
             gframe_1.download(frame_1);
 
         // Run tiny-yolo car detector on the input frame
-//                std::vector<DetectionResult> car_results_camera_1 =
-//                        cardetector.detect(frame_1);
+        //                std::vector<DetectionResult> car_results_camera_1 =
+        //                        cardetector.detect(frame_1);
 
 
         // Create empty vectors for front and back windows detection results
@@ -509,19 +469,19 @@ int MyDetector::runDetector(cv::String source1,cv::String source2){
 
             // if there is no response from the second camera retrun 4 and exit
             tm.reset(); tm.start();
-            if(!cap_2.read(frame_2) && (useGPUForDecode && !gcap_2->nextFrame(gframe_2))) {
+            if((!useGPUForDecode && !cap_2.read(frame_2)) || (useGPUForDecode && !gcap_2->nextFrame(gframe_2))) {
                 qDebug() << "Can not grab images from camera 2." << endl;
+                cv::destroyAllWindows() ;
                 return 4;
             }
+            if(useGPUForDecode)
+                gframe_2.download(frame_2);
             tm.stop();
             time_decode_source_2 = tm.getTimeMilli();
 
+
             // check in the first camera exist just one car
             if(car_occupancy.size()==1){
-
-
-                if(settings->getSetting(settings->KEY_USE_GPU_FOR_DECODE).toBool())
-                    gframe_2.download(frame_2);
 
                 // detect back windows in frame from the second windows
                 windows_results_back = windowsdetector.detect(frame_2);
