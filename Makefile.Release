@@ -87,7 +87,8 @@ SOURCES       = qtxlsx\src\xlsx\xlsxdocpropscore.cpp \
 		clickablelabel.cpp \
 		dbmanager.cpp \
 		qdateconvertor.cpp \
-		mydetector.cpp release\moc_xlsxdocument.cpp \
+		mydetector.cpp \
+		facedetector.cpp release\moc_xlsxdocument.cpp \
 		release\moc_mainwindow.cpp \
 		release\moc_appsettingsdialog.cpp \
 		release\moc_clickablelabel.cpp
@@ -134,6 +135,7 @@ OBJECTS       = release\xlsxdocpropscore.obj \
 		release\dbmanager.obj \
 		release\qdateconvertor.obj \
 		release\mydetector.obj \
+		release\facedetector.obj \
 		release\moc_xlsxdocument.obj \
 		release\moc_mainwindow.obj \
 		release\moc_appsettingsdialog.obj \
@@ -196,7 +198,8 @@ DIST          =  qtxlsx\src\xlsx\xlsxdocpropscore_p.h \
 		clickablelabel.h \
 		dbmanager.h \
 		qdateconvertor.h \
-		mydetector.h qtxlsx\src\xlsx\xlsxdocpropscore.cpp \
+		mydetector.h \
+		facedetector.h qtxlsx\src\xlsx\xlsxdocpropscore.cpp \
 		qtxlsx\src\xlsx\xlsxdocpropsapp.cpp \
 		qtxlsx\src\xlsx\xlsxrelationships.cpp \
 		qtxlsx\src\xlsx\xlsxutility.cpp \
@@ -238,7 +241,8 @@ DIST          =  qtxlsx\src\xlsx\xlsxdocpropscore_p.h \
 		clickablelabel.cpp \
 		dbmanager.cpp \
 		qdateconvertor.cpp \
-		mydetector.cpp
+		mydetector.cpp \
+		facedetector.cpp
 QMAKE_TARGET  = OccupantDetectorV1
 DESTDIR        = release\ #avoid trailing-slash linebreak
 TARGET         = OccupantDetectorV1.exe
@@ -316,7 +320,7 @@ all: Makefile.Release  $(DESTDIR_TARGET)
 $(DESTDIR_TARGET): ui_mainwindow.h ui_appsettingsdialog.h $(OBJECTS) 
 	$(LINKER) $(LFLAGS) /MANIFEST:embed /OUT:$(DESTDIR_TARGET) @<<
 release\xlsxdocpropscore.obj release\xlsxdocpropsapp.obj release\xlsxrelationships.obj release\xlsxutility.obj release\xlsxsharedstrings.obj release\xlsxcontenttypes.obj release\xlsxtheme.obj release\xlsxformat.obj release\xlsxstyles.obj release\xlsxworkbook.obj release\xlsxabstractsheet.obj release\xlsxworksheet.obj release\xlsxchartsheet.obj release\xlsxzipwriter.obj release\xlsxdrawing.obj release\xlsxzipreader.obj release\xlsxdocument.obj release\xlsxcell.obj release\xlsxdatavalidation.obj release\xlsxcellreference.obj release\xlsxcellrange.obj release\xlsxrichstring.obj release\xlsxconditionalformatting.obj release\xlsxcolor.obj release\xlsxnumformatparser.obj release\xlsxdrawinganchor.obj release\xlsxmediafile.obj release\xlsxabstractooxmlfile.obj release\xlsxchart.obj release\xlsxsimpleooxmlfile.obj release\xlsxcellformula.obj release\main.obj release\mainwindow.obj release\windowsdetector.obj release\cardetector.obj release\occupantdetector.obj release\caroccupancy.obj
-release\appsettingsdialog.obj release\appsettings.obj release\clickablelabel.obj release\dbmanager.obj release\qdateconvertor.obj release\mydetector.obj release\moc_xlsxdocument.obj release\moc_mainwindow.obj release\moc_appsettingsdialog.obj release\moc_clickablelabel.obj
+release\appsettingsdialog.obj release\appsettings.obj release\clickablelabel.obj release\dbmanager.obj release\qdateconvertor.obj release\mydetector.obj release\facedetector.obj release\moc_xlsxdocument.obj release\moc_mainwindow.obj release\moc_appsettingsdialog.obj release\moc_clickablelabel.obj
 $(LIBS)
 <<
 
@@ -326,10 +330,10 @@ qmake: FORCE
 qmake_all: FORCE
 
 dist:
-	$(ZIP) OccupantDetectorV1.zip $(SOURCES) $(DIST) OccupantDetectorV1.pro C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\spec_pre.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\angle.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\windows-vulkan.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\msvc-desktop.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\qconfig.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3danimation.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3danimation_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickanimation.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickanimation_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickscene2d.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickscene2d_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_accessibility_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_devicediscovery_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_edid_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_egl_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_fb_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_fontdatabase_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_platformcompositor_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioningquick.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioningquick_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_texttospeech.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_texttospeech_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_theme_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_vulkan_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webview.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webview_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_windowsuiautomation_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_zlib_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qt_functions.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qt_config.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\win32-msvc\qmake.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\spec_post.prf .qmake.stash C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\msvc-version.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\toolchain.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_pre.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\default_pre.prf qtxlsx\src\xlsx\qtxlsx.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\resolve_config.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_post.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\build_pass.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\resources.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qtquickcompiler.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\precompile_header.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\warn_on.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qt.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\moc.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\uic.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qmake_use.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\file_copies.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\windows.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exceptions.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\yacc.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\lex.prf OccupantDetectorV1.pro C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\qtmain.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Widgets.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Gui.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Sql.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Core.prl      C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\data\dummy.cpp qtxlsx\src\xlsx\xlsxdocpropscore_p.h qtxlsx\src\xlsx\xlsxdocpropsapp_p.h qtxlsx\src\xlsx\xlsxrelationships_p.h qtxlsx\src\xlsx\xlsxutility_p.h qtxlsx\src\xlsx\xlsxsharedstrings_p.h qtxlsx\src\xlsx\xlsxcontenttypes_p.h qtxlsx\src\xlsx\xlsxtheme_p.h qtxlsx\src\xlsx\xlsxformat.h qtxlsx\src\xlsx\xlsxworkbook.h qtxlsx\src\xlsx\xlsxstyles_p.h qtxlsx\src\xlsx\xlsxabstractsheet.h qtxlsx\src\xlsx\xlsxabstractsheet_p.h qtxlsx\src\xlsx\xlsxworksheet.h qtxlsx\src\xlsx\xlsxworksheet_p.h qtxlsx\src\xlsx\xlsxchartsheet.h qtxlsx\src\xlsx\xlsxchartsheet_p.h qtxlsx\src\xlsx\xlsxzipwriter_p.h qtxlsx\src\xlsx\xlsxworkbook_p.h qtxlsx\src\xlsx\xlsxformat_p.h qtxlsx\src\xlsx\xlsxglobal.h qtxlsx\src\xlsx\xlsxdrawing_p.h qtxlsx\src\xlsx\xlsxzipreader_p.h qtxlsx\src\xlsx\xlsxdocument.h qtxlsx\src\xlsx\xlsxdocument_p.h qtxlsx\src\xlsx\xlsxcell.h qtxlsx\src\xlsx\xlsxcell_p.h qtxlsx\src\xlsx\xlsxdatavalidation.h qtxlsx\src\xlsx\xlsxdatavalidation_p.h qtxlsx\src\xlsx\xlsxcellreference.h qtxlsx\src\xlsx\xlsxcellrange.h qtxlsx\src\xlsx\xlsxrichstring_p.h qtxlsx\src\xlsx\xlsxrichstring.h qtxlsx\src\xlsx\xlsxconditionalformatting.h qtxlsx\src\xlsx\xlsxconditionalformatting_p.h qtxlsx\src\xlsx\xlsxcolor_p.h qtxlsx\src\xlsx\xlsxnumformatparser_p.h qtxlsx\src\xlsx\xlsxdrawinganchor_p.h qtxlsx\src\xlsx\xlsxmediafile_p.h qtxlsx\src\xlsx\xlsxabstractooxmlfile.h qtxlsx\src\xlsx\xlsxabstractooxmlfile_p.h qtxlsx\src\xlsx\xlsxchart.h qtxlsx\src\xlsx\xlsxchart_p.h qtxlsx\src\xlsx\xlsxsimpleooxmlfile_p.h qtxlsx\src\xlsx\xlsxcellformula.h qtxlsx\src\xlsx\xlsxcellformula_p.h mainwindow.h asmOpenCV.h windowsdetector.h objectdetector.h cardetector.h occupantdetector.h caroccupancy.h appsettingsdialog.h appsettings.h clickablelabel.h dbmanager.h qdateconvertor.h mydetector.h  qtxlsx\src\xlsx\xlsxdocpropscore.cpp qtxlsx\src\xlsx\xlsxdocpropsapp.cpp qtxlsx\src\xlsx\xlsxrelationships.cpp qtxlsx\src\xlsx\xlsxutility.cpp qtxlsx\src\xlsx\xlsxsharedstrings.cpp qtxlsx\src\xlsx\xlsxcontenttypes.cpp qtxlsx\src\xlsx\xlsxtheme.cpp qtxlsx\src\xlsx\xlsxformat.cpp qtxlsx\src\xlsx\xlsxstyles.cpp qtxlsx\src\xlsx\xlsxworkbook.cpp qtxlsx\src\xlsx\xlsxabstractsheet.cpp qtxlsx\src\xlsx\xlsxworksheet.cpp qtxlsx\src\xlsx\xlsxchartsheet.cpp qtxlsx\src\xlsx\xlsxzipwriter.cpp qtxlsx\src\xlsx\xlsxdrawing.cpp qtxlsx\src\xlsx\xlsxzipreader.cpp qtxlsx\src\xlsx\xlsxdocument.cpp qtxlsx\src\xlsx\xlsxcell.cpp qtxlsx\src\xlsx\xlsxdatavalidation.cpp qtxlsx\src\xlsx\xlsxcellreference.cpp qtxlsx\src\xlsx\xlsxcellrange.cpp qtxlsx\src\xlsx\xlsxrichstring.cpp qtxlsx\src\xlsx\xlsxconditionalformatting.cpp qtxlsx\src\xlsx\xlsxcolor.cpp qtxlsx\src\xlsx\xlsxnumformatparser.cpp qtxlsx\src\xlsx\xlsxdrawinganchor.cpp qtxlsx\src\xlsx\xlsxmediafile.cpp qtxlsx\src\xlsx\xlsxabstractooxmlfile.cpp qtxlsx\src\xlsx\xlsxchart.cpp qtxlsx\src\xlsx\xlsxsimpleooxmlfile.cpp qtxlsx\src\xlsx\xlsxcellformula.cpp main.cpp mainwindow.cpp windowsdetector.cpp cardetector.cpp occupantdetector.cpp caroccupancy.cpp appsettingsdialog.cpp appsettings.cpp clickablelabel.cpp dbmanager.cpp qdateconvertor.cpp mydetector.cpp mainwindow.ui appsettingsdialog.ui    
+	$(ZIP) OccupantDetectorV1.zip $(SOURCES) $(DIST) OccupantDetectorV1.pro C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\spec_pre.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\angle.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\windows-vulkan.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\msvc-desktop.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\qconfig.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3danimation.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3danimation_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickanimation.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickanimation_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickscene2d.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3dquickscene2d_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_accessibility_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_devicediscovery_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_edid_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_egl_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_fb_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_fontdatabase_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_platformcompositor_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioningquick.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_positioningquick_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_texttospeech.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_texttospeech_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_theme_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_vulkan_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webview.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_webview_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_windowsuiautomation_support_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\modules\qt_lib_zlib_private.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qt_functions.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qt_config.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\win32-msvc\qmake.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\spec_post.prf .qmake.stash C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\common\msvc-version.conf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\toolchain.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_pre.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\default_pre.prf qtxlsx\src\xlsx\qtxlsx.pri C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\resolve_config.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\default_post.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\build_pass.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\resources.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qtquickcompiler.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\precompile_header.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\warn_on.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qt.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\moc.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\uic.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\qmake_use.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\file_copies.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\win32\windows.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\exceptions.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\yacc.prf C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\lex.prf OccupantDetectorV1.pro C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\qtmain.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Widgets.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Gui.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Sql.prl C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\lib\Qt5Core.prl      C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\mkspecs\features\data\dummy.cpp qtxlsx\src\xlsx\xlsxdocpropscore_p.h qtxlsx\src\xlsx\xlsxdocpropsapp_p.h qtxlsx\src\xlsx\xlsxrelationships_p.h qtxlsx\src\xlsx\xlsxutility_p.h qtxlsx\src\xlsx\xlsxsharedstrings_p.h qtxlsx\src\xlsx\xlsxcontenttypes_p.h qtxlsx\src\xlsx\xlsxtheme_p.h qtxlsx\src\xlsx\xlsxformat.h qtxlsx\src\xlsx\xlsxworkbook.h qtxlsx\src\xlsx\xlsxstyles_p.h qtxlsx\src\xlsx\xlsxabstractsheet.h qtxlsx\src\xlsx\xlsxabstractsheet_p.h qtxlsx\src\xlsx\xlsxworksheet.h qtxlsx\src\xlsx\xlsxworksheet_p.h qtxlsx\src\xlsx\xlsxchartsheet.h qtxlsx\src\xlsx\xlsxchartsheet_p.h qtxlsx\src\xlsx\xlsxzipwriter_p.h qtxlsx\src\xlsx\xlsxworkbook_p.h qtxlsx\src\xlsx\xlsxformat_p.h qtxlsx\src\xlsx\xlsxglobal.h qtxlsx\src\xlsx\xlsxdrawing_p.h qtxlsx\src\xlsx\xlsxzipreader_p.h qtxlsx\src\xlsx\xlsxdocument.h qtxlsx\src\xlsx\xlsxdocument_p.h qtxlsx\src\xlsx\xlsxcell.h qtxlsx\src\xlsx\xlsxcell_p.h qtxlsx\src\xlsx\xlsxdatavalidation.h qtxlsx\src\xlsx\xlsxdatavalidation_p.h qtxlsx\src\xlsx\xlsxcellreference.h qtxlsx\src\xlsx\xlsxcellrange.h qtxlsx\src\xlsx\xlsxrichstring_p.h qtxlsx\src\xlsx\xlsxrichstring.h qtxlsx\src\xlsx\xlsxconditionalformatting.h qtxlsx\src\xlsx\xlsxconditionalformatting_p.h qtxlsx\src\xlsx\xlsxcolor_p.h qtxlsx\src\xlsx\xlsxnumformatparser_p.h qtxlsx\src\xlsx\xlsxdrawinganchor_p.h qtxlsx\src\xlsx\xlsxmediafile_p.h qtxlsx\src\xlsx\xlsxabstractooxmlfile.h qtxlsx\src\xlsx\xlsxabstractooxmlfile_p.h qtxlsx\src\xlsx\xlsxchart.h qtxlsx\src\xlsx\xlsxchart_p.h qtxlsx\src\xlsx\xlsxsimpleooxmlfile_p.h qtxlsx\src\xlsx\xlsxcellformula.h qtxlsx\src\xlsx\xlsxcellformula_p.h mainwindow.h asmOpenCV.h windowsdetector.h objectdetector.h cardetector.h occupantdetector.h caroccupancy.h appsettingsdialog.h appsettings.h clickablelabel.h dbmanager.h qdateconvertor.h mydetector.h facedetector.h  qtxlsx\src\xlsx\xlsxdocpropscore.cpp qtxlsx\src\xlsx\xlsxdocpropsapp.cpp qtxlsx\src\xlsx\xlsxrelationships.cpp qtxlsx\src\xlsx\xlsxutility.cpp qtxlsx\src\xlsx\xlsxsharedstrings.cpp qtxlsx\src\xlsx\xlsxcontenttypes.cpp qtxlsx\src\xlsx\xlsxtheme.cpp qtxlsx\src\xlsx\xlsxformat.cpp qtxlsx\src\xlsx\xlsxstyles.cpp qtxlsx\src\xlsx\xlsxworkbook.cpp qtxlsx\src\xlsx\xlsxabstractsheet.cpp qtxlsx\src\xlsx\xlsxworksheet.cpp qtxlsx\src\xlsx\xlsxchartsheet.cpp qtxlsx\src\xlsx\xlsxzipwriter.cpp qtxlsx\src\xlsx\xlsxdrawing.cpp qtxlsx\src\xlsx\xlsxzipreader.cpp qtxlsx\src\xlsx\xlsxdocument.cpp qtxlsx\src\xlsx\xlsxcell.cpp qtxlsx\src\xlsx\xlsxdatavalidation.cpp qtxlsx\src\xlsx\xlsxcellreference.cpp qtxlsx\src\xlsx\xlsxcellrange.cpp qtxlsx\src\xlsx\xlsxrichstring.cpp qtxlsx\src\xlsx\xlsxconditionalformatting.cpp qtxlsx\src\xlsx\xlsxcolor.cpp qtxlsx\src\xlsx\xlsxnumformatparser.cpp qtxlsx\src\xlsx\xlsxdrawinganchor.cpp qtxlsx\src\xlsx\xlsxmediafile.cpp qtxlsx\src\xlsx\xlsxabstractooxmlfile.cpp qtxlsx\src\xlsx\xlsxchart.cpp qtxlsx\src\xlsx\xlsxsimpleooxmlfile.cpp qtxlsx\src\xlsx\xlsxcellformula.cpp main.cpp mainwindow.cpp windowsdetector.cpp cardetector.cpp occupantdetector.cpp caroccupancy.cpp appsettingsdialog.cpp appsettings.cpp clickablelabel.cpp dbmanager.cpp qdateconvertor.cpp mydetector.cpp facedetector.cpp mainwindow.ui appsettingsdialog.ui    
 
 clean: compiler_clean 
-	-$(DEL_FILE) release\xlsxdocpropscore.obj release\xlsxdocpropsapp.obj release\xlsxrelationships.obj release\xlsxutility.obj release\xlsxsharedstrings.obj release\xlsxcontenttypes.obj release\xlsxtheme.obj release\xlsxformat.obj release\xlsxstyles.obj release\xlsxworkbook.obj release\xlsxabstractsheet.obj release\xlsxworksheet.obj release\xlsxchartsheet.obj release\xlsxzipwriter.obj release\xlsxdrawing.obj release\xlsxzipreader.obj release\xlsxdocument.obj release\xlsxcell.obj release\xlsxdatavalidation.obj release\xlsxcellreference.obj release\xlsxcellrange.obj release\xlsxrichstring.obj release\xlsxconditionalformatting.obj release\xlsxcolor.obj release\xlsxnumformatparser.obj release\xlsxdrawinganchor.obj release\xlsxmediafile.obj release\xlsxabstractooxmlfile.obj release\xlsxchart.obj release\xlsxsimpleooxmlfile.obj release\xlsxcellformula.obj release\main.obj release\mainwindow.obj release\windowsdetector.obj release\cardetector.obj release\occupantdetector.obj release\caroccupancy.obj release\appsettingsdialog.obj release\appsettings.obj release\clickablelabel.obj release\dbmanager.obj release\qdateconvertor.obj release\mydetector.obj release\moc_xlsxdocument.obj release\moc_mainwindow.obj release\moc_appsettingsdialog.obj release\moc_clickablelabel.obj
+	-$(DEL_FILE) release\xlsxdocpropscore.obj release\xlsxdocpropsapp.obj release\xlsxrelationships.obj release\xlsxutility.obj release\xlsxsharedstrings.obj release\xlsxcontenttypes.obj release\xlsxtheme.obj release\xlsxformat.obj release\xlsxstyles.obj release\xlsxworkbook.obj release\xlsxabstractsheet.obj release\xlsxworksheet.obj release\xlsxchartsheet.obj release\xlsxzipwriter.obj release\xlsxdrawing.obj release\xlsxzipreader.obj release\xlsxdocument.obj release\xlsxcell.obj release\xlsxdatavalidation.obj release\xlsxcellreference.obj release\xlsxcellrange.obj release\xlsxrichstring.obj release\xlsxconditionalformatting.obj release\xlsxcolor.obj release\xlsxnumformatparser.obj release\xlsxdrawinganchor.obj release\xlsxmediafile.obj release\xlsxabstractooxmlfile.obj release\xlsxchart.obj release\xlsxsimpleooxmlfile.obj release\xlsxcellformula.obj release\main.obj release\mainwindow.obj release\windowsdetector.obj release\cardetector.obj release\occupantdetector.obj release\caroccupancy.obj release\appsettingsdialog.obj release\appsettings.obj release\clickablelabel.obj release\dbmanager.obj release\qdateconvertor.obj release\mydetector.obj release\facedetector.obj release\moc_xlsxdocument.obj release\moc_mainwindow.obj release\moc_appsettingsdialog.obj release\moc_clickablelabel.obj
 	-$(DEL_FILE) release\OccupantDetectorV1.exp
 
 distclean: clean 
@@ -766,6 +770,7 @@ release\moc_mainwindow.cpp: C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtWidgets\
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDate \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QMap \
+		facedetector.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QModelIndex \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QItemSelectionModel \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qitemselectionmodel.h \
@@ -4614,6 +4619,7 @@ release\main.obj: main.cpp mainwindow.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDate \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QMap \
+		facedetector.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QModelIndex \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QItemSelectionModel \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qitemselectionmodel.h \
@@ -4940,6 +4946,7 @@ release\mainwindow.obj: mainwindow.cpp mainwindow.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDate \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QMap \
+		facedetector.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QModelIndex \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QItemSelectionModel \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qitemselectionmodel.h \
@@ -6862,8 +6869,226 @@ release\mydetector.obj: mydetector.cpp mydetector.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDate \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qdatetime.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QMap \
+		facedetector.h \
 		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QSysInfo \
 		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\opengl.hpp
+
+release\facedetector.obj: facedetector.cpp facedetector.h \
+		objectdetector.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\opencv.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\opencv_modules.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cvdef.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\hal\interface.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cv_cpu_dispatch.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cv_cpu_helper.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\fast_math.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\version.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\base.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cvstd.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cvstd_wrapper.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\neon_utils.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\vsx_utils.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\check.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\traits.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\matx.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\saturate.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\types.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\mat.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\bufferpool.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\mat.inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\persistence.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\operations.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cvstd.inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\utility.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\optim.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\ovx.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\calib3d.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\features2d.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\miniflann.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\defines.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\config.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\affine.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn\dnn.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn\version.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn\dict.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn\layer.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn\dnn.inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\dnn\utils\inference_engine.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\flann_base.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\general.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\matrix.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\params.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\any.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\saving.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\nn_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\result_set.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\all_indices.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\kdtree_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\dynamic_bitset.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\dist.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\heap.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\allocator.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\random.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\kdtree_single_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\kmeans_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\logger.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\composite_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\linear_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\hierarchical_clustering_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\lsh_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\lsh_table.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\autotuned_index.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\ground_truth.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\index_testing.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\timer.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\flann\sampling.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\highgui.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\imgcodecs.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videoio.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\imgproc.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\ml.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\ml\ml.inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\objdetect.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\objdetect\detection_based_tracker.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\photo.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\shape.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\shape\emdL1.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\shape\shape_transformer.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\shape\hist_cost.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\shape\shape_distance.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\warpers.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\warpers.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cuda.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cuda_types.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\cuda.inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\warpers_inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\matchers.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\motion_estimators.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\util.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\util_inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\camera.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\exposure_compensate.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\seam_finders.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\stitching\detail\blenders.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\superres.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\superres\optical_flow.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\video.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\video\tracking.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\video\background_segm.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\stabilizer.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\global_motion.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\optical_flow.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudaoptflow.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\motion_core.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\outlier_rejection.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudaimgproc.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\motion_stabilizing.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\frame_source.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\log.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\inpainting.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\fast_marching.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\fast_marching_inl.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\deblurring.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\wobble_suppression.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\videostab\ring_buffer.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudaarithm.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudabgsegm.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudacodec.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudafeatures2d.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudafilters.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudaobjdetect.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudastereo.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\cudawarping.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\ocl.hpp \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QString \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstring.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qchar.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qglobal.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qconfig-bootstrapped.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qconfig.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qtcore-config.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qsystemdetection.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qprocessordetection.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qcompilerdetection.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qtypeinfo.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qsysinfo.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qlogging.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qflags.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qatomic.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qbasicatomic.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qatomic_bootstrap.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qgenericatomic.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qatomic_cxx11.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qatomic_msvc.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qglobalstatic.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qmutex.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qnumeric.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qversiontagging.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qbytearray.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qrefcount.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qnamespace.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qarraydata.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstringliteral.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstringalgorithms.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstringview.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstringbuilder.h \
+		..\..\darknet\include\yolo_v2_class.hpp \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\highgui\highgui_c.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\core_c.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\core\types_c.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\imgproc\imgproc_c.h \
+		..\..\OpenCV\opencv-4.1.0\build\install\include\opencv2\imgproc\types_c.h \
+		appsettings.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QSettings \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qsettings.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qobject.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qobjectdefs.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qobjectdefs_impl.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qlist.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qalgorithms.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qiterator.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qhashfunctions.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qpair.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qbytearraylist.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstringlist.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qregexp.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qstringmatcher.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qcoreevent.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qscopedpointer.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qmetatype.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qvarlengtharray.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qcontainerfwd.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qobject_impl.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qvariant.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qmap.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qdebug.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qhash.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qtextstream.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qiodevice.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qlocale.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qshareddata.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qvector.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qpoint.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qset.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qcontiguouscache.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qsharedpointer.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qsharedpointer_impl.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\QDir \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qdir.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qfileinfo.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qfile.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtCore\qfiledevice.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\QColor \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\qcolor.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\qtguiglobal.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\qtgui-config.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\qrgb.h \
+		C:\Qt\Qt5.11.2\5.11.2\msvc2017_64\include\QtGui\qrgba64.h
 
 release\moc_xlsxdocument.obj: release\moc_xlsxdocument.cpp 
 

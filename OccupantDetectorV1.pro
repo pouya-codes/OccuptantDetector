@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     clickablelabel.cpp \
     dbmanager.cpp \
     qdateconvertor.cpp \
-    mydetector.cpp
+    mydetector.cpp \
+    facedetector.cpp
 
 HEADERS  += mainwindow.h \
     asmOpenCV.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     clickablelabel.h \
     dbmanager.h \
     qdateconvertor.h \
-    mydetector.h
+    mydetector.h \
+    facedetector.h
 
 FORMS    += mainwindow.ui \
     appsettingsdialog.ui

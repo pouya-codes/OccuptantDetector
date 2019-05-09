@@ -8,6 +8,7 @@
 #include "windowsdetector.h"
 #include "occupantdetector.h"
 #include "dbmanager.h"
+#include "facedetector.h"
 
 #include <thread>
 
@@ -27,6 +28,9 @@ private :
     void getRandomColors(std::vector<cv::Scalar>& colors, int numColors);
     cv::Scalar getRandomColors() ;
 
+
+    cv::Mat equalizeIntensity(const cv::Mat& inputImage) ;
+
     void processDetectionFront(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
     void processDetectionBack(std::vector<DetectionResult> car_detection_results,std::vector<DetectionResult> windows_detection_results,std::vector<CarOccupancy>& car_occupants,cv::Mat image) ;
 
@@ -45,6 +49,11 @@ private :
     bool run ;
     DBManager *dbmanager ;
     cv::Rect ROI_Camera_1,ROI_Camera_2 ;
+
+    CarDetector* cardetector ;
+    WindowsDetector* windowsdetector ;
+    OccupantDetector* occupantdetector ;
+    FaceDetector* facedetector ;
 
 
     float calcBlurriness(const cv::Mat &frame);
