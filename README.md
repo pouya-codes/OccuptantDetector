@@ -39,7 +39,7 @@ Here are the steps to set up the project locally.
 
 1. Clone the repo
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/pouya1991/OccuptantDetector.git
 ```
 
 2. Open the project in Qt
